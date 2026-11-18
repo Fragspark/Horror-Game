@@ -1,0 +1,11 @@
+Model Information:
+* title:	Old Gas Stove and Oven
+* source:	https://sketchfab.com/3d-models/old-gas-stove-and-oven-d98dd28d47424d7aaedfd33685af0427
+* author:	Glowbox 3D (https://sketchfab.com/ra3id)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Old Gas Stove and Oven" (https://sketchfab.com/3d-models/old-gas-stove-and-oven-d98dd28d47424d7aaedfd33685af0427) by Glowbox 3D (https://sketchfab.com/ra3id) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
