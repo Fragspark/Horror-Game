@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" uid="uid://45piv1n64tcx" path="res://assets/models/side_table.gltf/side_table_tall_01_4k.gltf" id="1_model"]
+[ext_resource type="Script" path="res://assets/props/prop_matte.gd" id="9_matte"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_side"]
+height = 0.7612
+radius = 0.192
+
+[node name="SideTable" type="StaticBody3D"]
+script = ExtResource("9_matte")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3806, 0)
+shape = SubResource("CylinderShape3D_side")
+
+[node name="Model" parent="." instance=ExtResource("1_model")]

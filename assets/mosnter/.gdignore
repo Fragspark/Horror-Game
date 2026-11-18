@@ -1,0 +1,3 @@
+# Rohdownloads (Duplikate von assets/monster/*.fbx). Vom Spiel entkoppelt:
+# Godot importiert/exportiert diesen Ordner nicht. Verbindliche Quelle ist
+# res://assets/monster/ bzw. res://scenes/monster/distorted_wand.tscn.

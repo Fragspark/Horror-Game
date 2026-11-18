@@ -1,0 +1,39 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c2uly2yoe44fp"]
+
+[sub_resource type="FastNoiseLite" id="Noise_n"]
+noise_type = 3
+seed = 41
+frequency = 0.08
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTex_normal"]
+noise = SubResource("Noise_n")
+seamless = true
+as_normal_map = true
+bump_strength = 6.0
+
+[sub_resource type="Gradient" id="Grad_r"]
+colors = PackedColorArray(0.82, 0.82, 0.82, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="Noise_r"]
+noise_type = 3
+seed = 48
+frequency = 0.048
+
+[sub_resource type="NoiseTexture2D" id="NoiseTex_rough"]
+noise = SubResource("Noise_r")
+color_ramp = SubResource("Grad_r")
+seamless = true
+
+[resource]
+resource_name = "Wallpaper_Aged"
+albedo_color = Color(0.2200, 0.2006, 0.1704, 1)
+roughness = 0.9
+roughness_texture = SubResource("NoiseTex_rough")
+normal_enabled = true
+normal_scale = 0.25
+normal_texture = SubResource("NoiseTex_normal")
+uv1_scale = Vector3(0.8, 0.8, 0.8)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

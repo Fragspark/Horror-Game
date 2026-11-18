@@ -1,0 +1,12 @@
+[gd_resource type="NavigationMesh" format=3]
+
+[resource]
+geometry_parsed_geometry_type = 1
+geometry_source_geometry_mode = 1
+geometry_source_group_name = &"nav_source"
+cell_size = 0.1
+cell_height = 0.1
+agent_height = 1.9
+agent_radius = 0.3
+agent_max_climb = 0.3
+region_min_size = 1.0

@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" uid="uid://c7cb51cmd6ep3" path="res://assets/models/dining_table.gltf/dining_table_4k.gltf" id="1_model"]
+[ext_resource type="Script" path="res://assets/props/prop_matte.gd" id="9_matte"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_table"]
+size = Vector3(2.047, 0.791, 1.1523)
+
+[node name="DiningTable" type="StaticBody3D"]
+script = ExtResource("9_matte")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3955, 0)
+shape = SubResource("BoxShape3D_table")
+
+[node name="Model" parent="." instance=ExtResource("1_model")]

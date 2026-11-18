@@ -1,0 +1,21 @@
+﻿# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Godot export / mono
+export_presets.cfg
+.mono/
+data_*/
+mono_crash.*.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/
+
+# Archives
+*.rar
+*.zip

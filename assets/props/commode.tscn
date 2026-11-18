@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" uid="uid://bgd8u8inu6v4l" path="res://assets/models/gcommode.gltf/gallinera_table_4k.gltf" id="1_model"]
+[ext_resource type="Script" path="res://assets/props/prop_matte.gd" id="9_matte"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_commode"]
+size = Vector3(0.8301, 0.4878, 0.5183)
+
+[node name="Commode" type="StaticBody3D"]
+script = ExtResource("9_matte")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2439, 0)
+shape = SubResource("BoxShape3D_commode")
+
+[node name="Model" parent="." instance=ExtResource("1_model")]

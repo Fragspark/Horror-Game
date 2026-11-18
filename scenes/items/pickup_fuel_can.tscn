@@ -1,0 +1,63 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://addons/cogito/CogitoObjects/cogito_object.gd" id="1_object"]
+[ext_resource type="Resource" path="res://scenes/items/Cogito_FuelCan.tres" id="2_item"]
+[ext_resource type="PackedScene" path="res://addons/cogito/Components/Interactions/PickupComponent.tscn" id="3_pickup"]
+[ext_resource type="Script" path="res://addons/cogito/InventoryPD/CustomResources/InventorySlotPD.gd" id="4_slot"]
+
+[sub_resource type="BoxMesh" id="Mesh_body"]
+size = Vector3(0.36, 0.46, 0.18)
+
+[sub_resource type="BoxMesh" id="Mesh_cap"]
+size = Vector3(0.09, 0.07, 0.09)
+
+[sub_resource type="CylinderMesh" id="Mesh_handle"]
+top_radius = 0.025
+bottom_radius = 0.025
+height = 0.16
+radial_segments = 8
+rings = 1
+
+[sub_resource type="BoxShape3D" id="Shape_can"]
+size = Vector3(0.38, 0.5, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="Material_can"]
+resource_name = "FuelCan_Red"
+albedo_color = Color(0.439216, 0.101961, 0.0784314, 1)
+metallic = 0.35
+roughness = 0.55
+
+[sub_resource type="Resource" id="Resource_slotdata"]
+script = ExtResource("4_slot")
+inventory_item = ExtResource("2_item")
+
+[node name="Pickup_FuelCan" type="RigidBody3D"]
+collision_layer = 2
+collision_mask = 0
+freeze = true
+mass = 6.0
+script = ExtResource("1_object")
+cogito_name = "Benzinkanister"
+display_name = "Benzinkanister"
+custom_aabb = AABB(0, 0, 0, 0.38, 0.5, 0.2)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("Mesh_body")
+surface_material_override/0 = SubResource("Material_can")
+
+[node name="Cap" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.265, 0)
+mesh = SubResource("Mesh_cap")
+surface_material_override/0 = SubResource("Material_can")
+
+[node name="Handle" type="MeshInstance3D" parent="."]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -0.06, 0.29, 0)
+mesh = SubResource("Mesh_handle")
+surface_material_override/0 = SubResource("Material_can")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape_can")
+
+[node name="PickupComponent" parent="." instance=ExtResource("3_pickup")]
+slot_data = SubResource("Resource_slotdata")
+interaction_text = "Aufheben"

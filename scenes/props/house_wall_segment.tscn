@@ -1,0 +1,49 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scenes/props/house_wall_segment.gd" id="1_script"]
+[ext_resource type="Material" path="res://assets/materials/wood_wainscoting.tres" id="2_wain"]
+[ext_resource type="Material" path="res://assets/materials/wood_beams_trim.tres" id="3_trim"]
+[ext_resource type="Material" path="res://assets/materials/wallpaper_aged.tres" id="4_paper"]
+
+[sub_resource type="BoxShape3D" id="Shape_wall"]
+size = Vector3(3, 3, 0.2)
+
+[sub_resource type="BoxMesh" id="Mesh_wain"]
+size = Vector3(3, 0.98, 0.2)
+
+[sub_resource type="BoxMesh" id="Mesh_trim"]
+size = Vector3(3, 0.04, 0.23)
+
+[sub_resource type="BoxMesh" id="Mesh_base"]
+size = Vector3(3, 0.12, 0.215)
+
+[sub_resource type="BoxMesh" id="Mesh_paper"]
+size = Vector3(3, 1.98, 0.2)
+
+[node name="HouseWallSegment" type="StaticBody3D"]
+script = ExtResource("1_script")
+upper_material = ExtResource("4_paper")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("Shape_wall")
+
+[node name="Wainscoting" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49, 0)
+mesh = SubResource("Mesh_wain")
+surface_material_override/0 = ExtResource("2_wain")
+
+[node name="Baseboard" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("Mesh_base")
+surface_material_override/0 = ExtResource("3_trim")
+
+[node name="TrimCap" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("Mesh_trim")
+surface_material_override/0 = ExtResource("3_trim")
+
+[node name="Wallpaper" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.01, 0)
+mesh = SubResource("Mesh_paper")
+surface_material_override/0 = ExtResource("4_paper")

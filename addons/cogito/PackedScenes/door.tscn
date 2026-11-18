@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://bdyukj85qkut0"]
+
+[ext_resource type="Script" uid="uid://cismjpvxmsbf2" path="res://addons/cogito/CogitoObjects/cogito_door.gd" id="1_v6apr"]
+[ext_resource type="AudioStream" uid="uid://bipwc8kk30bub" path="res://addons/cogito/Assets/Audio/Kenney/doorOpen_1.ogg" id="2_syv37"]
+[ext_resource type="AudioStream" uid="uid://g8n7a73j5qqo" path="res://addons/cogito/Assets/Audio/Kenney/doorClose_4.ogg" id="3_mv414"]
+[ext_resource type="AudioStream" uid="uid://btoufmp0rtgi" path="res://addons/cogito/Assets/Audio/Kenney/beltHandle2.ogg" id="4_amxf0"]
+[ext_resource type="PackedScene" uid="uid://l61jtpfxu5x5" path="res://addons/cogito/Components/Interactions/BasicInteraction.tscn" id="5_m5t06"]
+
+[ext_resource type="Material" path="res://assets/materials/door_wood.tres" id="6_wood"]
+[ext_resource type="Material" path="res://assets/materials/door_frame_wood.tres" id="7_frame"]
+[ext_resource type="Material" path="res://assets/materials/door_knob.tres" id="8_knob"]
+
+[ext_resource type="PackedScene" path="res://assets/models/door.fbx" id="20_doormodel"]
+[ext_resource type="Script" path="res://assets/props/door_model.gd" id="21_doormodelgd"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ik1yl"]
+size = Vector3(0.045, 1.95, 0.92)
+
+[sub_resource type="BoxMesh" id="BoxMesh_br66c"]
+size = Vector3(0.18, 2.1, 0.04)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ub8li"]
+size = Vector3(0.18, 0.06, 0.92)
+
+[sub_resource type="SphereMesh" id="SphereMesh_knob"]
+radius = 0.035
+height = 0.07
+
+[sub_resource type="BoxMesh" id="BoxMesh_sill"]
+size = Vector3(0.18, 0.02, 0.92)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fx78h"]
+size = Vector3(0.1, 2.1, 1)
+
+[node name="Door" type="AnimatableBody3D" unique_id=958061773 node_paths=PackedStringArray("audio_player")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -10.8, 0, 5.1)
+collision_layer = 3
+script = ExtResource("1_v6apr")
+audio_player = NodePath("AudioStreamPlayer3D")
+open_sound = ExtResource("2_syv37")
+close_sound = ExtResource("3_mv414")
+unlock_sound = ExtResource("4_amxf0")
+key_hint = "Key needed."
+
+[node name="DoorModel" parent="." instance=ExtResource("20_doormodel")]
+transform = Transform3D(0, 0, -0.35473, 0, 0.4085, 0, 0.37681, 0, 0, 3.6362, -0.7297, 0.23369)
+script = ExtResource("21_doormodelgd")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=716485924 groups=["door_frame"]]
+top_level = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0.98)
+mesh = SubResource("BoxMesh_br66c")
+skeleton = NodePath("../..")
+surface_material_override/0 = ExtResource("7_frame")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=22553527 groups=["door_frame"]]
+top_level = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0.02)
+mesh = SubResource("BoxMesh_br66c")
+skeleton = NodePath("../..")
+surface_material_override/0 = ExtResource("7_frame")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="." unique_id=1234782503 groups=["door_frame"]]
+top_level = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.07, 0.5)
+mesh = SubResource("BoxMesh_ub8li")
+skeleton = NodePath("../..")
+surface_material_override/0 = ExtResource("7_frame")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="." unique_id=1512414493 groups=["door_frame"]]
+top_level = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 0.5)
+mesh = SubResource("BoxMesh_sill")
+skeleton = NodePath("../..")
+surface_material_override/0 = ExtResource("7_frame")
+
+
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1727189945]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0.5)
+shape = SubResource("BoxShape3D_fx78h")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=1850148686]
+volume_db = -26.0
+bus = &"SFX"
+
+[node name="BasicInteraction" parent="." unique_id=1685076009 instance=ExtResource("5_m5t06")]
+interaction_text = "Interact"

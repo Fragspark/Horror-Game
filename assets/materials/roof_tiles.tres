@@ -1,0 +1,15 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/textures/roof/roof_tile_color.png" id="1_c"]
+[ext_resource type="Texture2D" path="res://assets/textures/roof/roof_tile_normal.png" id="2_n"]
+
+[resource]
+resource_name = "Roof_Tiles_Clay"
+albedo_texture = ExtResource("1_c")
+roughness = 0.85
+normal_enabled = true
+normal_texture = ExtResource("2_n")
+normal_scale = 1.0
+uv1_scale = Vector3(0.25, 0.25, 0.25)
+uv1_triplanar = true
+texture_filter = 5

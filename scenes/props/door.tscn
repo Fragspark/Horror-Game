@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://bdyukj85qkut0" path="res://addons/cogito/PackedScenes/door.tscn" id="1_base"]
+[ext_resource type="AudioStream" uid="uid://yfvwe2x7i0ya" path="res://assets/audio/wooden_creak.wav" id="2_creak"]
+
+; Interaktive Tuer (Oeffnen/Schliessen per Tween, 3D-Audio ueber den eingebauten
+; AudioStreamPlayer3D, Interaktionstext, optional abschliessbar). Basis ist die
+; COGITO-Tuer des Projekts; hier mit dem Holzknarzen als Horror-Sound.
+; Ursprung = Tuerangel, das Blatt reicht 0.92 m in +Z (Wand verlaeuft entlang Z).
+[node name="Door" instance=ExtResource("1_base")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+open_sound = ExtResource("2_creak")
+close_sound = ExtResource("2_creak")
+rattle_sound = ExtResource("2_creak")

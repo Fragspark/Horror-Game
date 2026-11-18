@@ -1,0 +1,44 @@
+[gd_resource type="StandardMaterial3D" load_steps=6 format=3]
+
+[sub_resource type="FastNoiseLite" id="Noise_n"]
+noise_type = 3
+seed = 41
+frequency = 0.08
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="NoiseTex_normal"]
+width = 512
+height = 512
+seamless = true
+as_normal_map = true
+bump_strength = 6.0
+noise = SubResource("Noise_n")
+
+[sub_resource type="FastNoiseLite" id="Noise_r"]
+noise_type = 3
+seed = 48
+frequency = 0.0480
+
+[sub_resource type="Gradient" id="Grad_r"]
+colors = PackedColorArray(0.82, 0.82, 0.82, 1, 1, 1, 1, 1)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTex_rough"]
+width = 512
+height = 512
+seamless = true
+color_ramp = SubResource("Grad_r")
+noise = SubResource("Noise_r")
+
+[resource]
+resource_name = "Wallpaper_Hallway_Sage"
+albedo_color = Color(0.1359, 0.1596, 0.1445, 1)
+roughness = 0.88
+roughness_texture = SubResource("NoiseTex_rough")
+roughness_texture_channel = 0
+normal_enabled = true
+normal_scale = 0.25
+normal_texture = SubResource("NoiseTex_normal")
+uv1_scale = Vector3(0.8, 0.8, 0.8)
+uv1_triplanar = true
+uv1_world_triplanar = true
+texture_filter = 5

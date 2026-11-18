@@ -1,0 +1,2070 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scenes/scripts/flickering_light.gd" id="1_flicker"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/concrete_basement.tres" id="mat_concrete_basement"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/wood_beams_trim.tres" id="mat_wood_dark_ext"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/wood_dark_furniture.tres" id="mat_wood_dark_furn"]
+[ext_resource type="PackedScene" path="res://assets/props/steel_shelves.tscn" id="prop_steel_shelves"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_rust"]
+resource_name = "Basement_Rust"
+albedo_color = Color(0.22, 0.135, 0.085, 1)
+metallic = 0.55
+roughness = 0.82
+
+[sub_resource type="StandardMaterial3D" id="Mat_metal"]
+resource_name = "Basement_Iron"
+albedo_color = Color(0.14, 0.145, 0.15, 1)
+metallic = 0.7
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Mat_coal"]
+resource_name = "Basement_Coal"
+albedo_color = Color(0.018, 0.018, 0.02, 1)
+roughness = 1.0
+metallic_specular = 0.12
+
+[sub_resource type="StandardMaterial3D" id="Mat_wet"]
+resource_name = "Basement_Puddle"
+albedo_color = Color(0.035, 0.04, 0.045, 1)
+roughness = 0.12
+metallic = 0.35
+metallic_specular = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_linen"]
+resource_name = "Basement_Old_Linen"
+albedo_color = Color(0.34, 0.32, 0.27, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_glass"]
+resource_name = "Basement_Glass"
+albedo_color = Color(0.02, 0.026, 0.04, 1)
+roughness = 0.28
+metallic = 0.3
+metallic_specular = 0.5
+emission_enabled = true
+emission = Color(0.05, 0.07, 0.11, 1)
+emission_energy_multiplier = 0.5
+
+[sub_resource type="StandardMaterial3D" id="Mat_bulb"]
+resource_name = "Basement_Bulb"
+albedo_color = Color(1, 0.82, 0.58, 1)
+shading_mode = 0
+emission_enabled = true
+emission = Color(1, 0.68, 0.4, 1)
+emission_energy_multiplier = 1.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_deadbulb"]
+resource_name = "Basement_Dead_Bulb"
+albedo_color = Color(0.16, 0.15, 0.13, 1)
+roughness = 0.4
+emission_enabled = true
+emission = Color(0.03, 0.026, 0.02, 1)
+emission_energy_multiplier = 0.3
+
+[sub_resource type="SphereMesh" id="Mesh_bulb"]
+radius = 0.04
+height = 0.08
+radial_segments = 10
+rings = 5
+
+[sub_resource type="FogMaterial" id="Fog_damp"]
+density = 0.07
+albedo = Color(0.11, 0.12, 0.135, 1)
+edge_fade = 0.8
+
+[node name="Basement" type="Node3D" groups=["nav_source"]]
+
+[node name="Shell" type="Node3D" parent="."]
+
+[node name="Floor" type="CSGBox3D" parent="Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.15, -3)
+use_collision = true
+size = Vector3(18.3, 0.3, 18.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="WestWall" type="CSGBox3D" parent="Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, -1.65, -3)
+use_collision = true
+size = Vector3(0.3, 2.7, 18.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="EastWall" type="CSGBox3D" parent="Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, -1.65, -3)
+use_collision = true
+size = Vector3(0.3, 2.7, 18.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="SouthWall" type="CSGBox3D" parent="Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.65, 6)
+use_collision = true
+size = Vector3(18.3, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="NorthWall" type="CSGBox3D" parent="Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.65, -12)
+use_collision = true
+size = Vector3(18.3, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="Walls" type="Node3D" parent="."]
+
+[node name="CorridorWestSeg0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, -1.65, -10.125)
+use_collision = true
+size = Vector3(0.3, 2.7, 3.45)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorWestSeg1" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, -1.65, -5.85)
+use_collision = true
+size = Vector3(0.3, 2.7, 1.9)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorWestSeg2" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, -1.65, -2.025)
+use_collision = true
+size = Vector3(0.3, 2.7, 1.25)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorWestSeg3" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, -1.65, 1.5)
+use_collision = true
+size = Vector3(0.3, 2.7, 3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorWestSeg4" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, -1.65, 5.125)
+use_collision = true
+size = Vector3(0.3, 2.7, 1.45)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorWestLintel0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, -0.65, -7.6)
+use_collision = true
+size = Vector3(0.3, 0.7, 1.6)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorWestLintel1" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, -0.65, -3.775)
+use_collision = true
+size = Vector3(0.3, 0.7, 2.25)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorWestLintel2" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, -0.65, -0.7)
+use_collision = true
+size = Vector3(0.3, 0.7, 1.4)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorWestLintel3" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7, -0.65, 3.7)
+use_collision = true
+size = Vector3(0.3, 0.7, 1.4)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorEastSeg0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, -1.65, -10.125)
+use_collision = true
+size = Vector3(0.3, 2.7, 3.45)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorEastSeg1" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, -1.65, -5.85)
+use_collision = true
+size = Vector3(0.3, 2.7, 1.9)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorEastSeg2" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, -1.65, -2.025)
+use_collision = true
+size = Vector3(0.3, 2.7, 1.25)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorEastSeg3" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, -1.65, 1.5)
+use_collision = true
+size = Vector3(0.3, 2.7, 3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorEastSeg4" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, -1.65, 5.125)
+use_collision = true
+size = Vector3(0.3, 2.7, 1.45)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorEastLintel0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, -0.65, -7.6)
+use_collision = true
+size = Vector3(0.3, 0.7, 1.6)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorEastLintel1" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, -0.65, -3.775)
+use_collision = true
+size = Vector3(0.3, 0.7, 2.25)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorEastLintel2" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, -0.65, -0.7)
+use_collision = true
+size = Vector3(0.3, 0.7, 1.4)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CorridorEastLintel3" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, -0.65, 3.7)
+use_collision = true
+size = Vector3(0.3, 0.7, 1.4)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossNorthSeg0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.725, -1.65, -4.7)
+use_collision = true
+size = Vector3(2.25, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossNorthSeg1" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.525, -1.65, -4.7)
+use_collision = true
+size = Vector3(3.35, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossNorthSeg2" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.525, -1.65, -4.7)
+use_collision = true
+size = Vector3(3.35, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossNorthSeg3" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.725, -1.65, -4.7)
+use_collision = true
+size = Vector3(2.25, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossNorthLintel0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9, -0.65, -4.7)
+use_collision = true
+size = Vector3(1.4, 0.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossNorthLintel1" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.65, -4.7)
+use_collision = true
+size = Vector3(3.7, 0.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossNorthLintel2" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9, -0.65, -4.7)
+use_collision = true
+size = Vector3(1.4, 0.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossSouthSeg0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.725, -1.65, -2.85)
+use_collision = true
+size = Vector3(2.25, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossSouthSeg1" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.525, -1.65, -2.85)
+use_collision = true
+size = Vector3(3.35, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossSouthSeg2" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.525, -1.65, -2.85)
+use_collision = true
+size = Vector3(3.35, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossSouthSeg3" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.725, -1.65, -2.85)
+use_collision = true
+size = Vector3(2.25, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossSouthLintel0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.9, -0.65, -2.85)
+use_collision = true
+size = Vector3(1.4, 0.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossSouthLintel1" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.65, -2.85)
+use_collision = true
+size = Vector3(3.7, 0.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CrossSouthLintel2" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9, -0.65, -2.85)
+use_collision = true
+size = Vector3(1.4, 0.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="LaundryRootWallSeg0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.625, -1.65, 1.2)
+use_collision = true
+size = Vector3(2.45, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="LaundryRootWallSeg1" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.45, -1.65, 1.2)
+use_collision = true
+size = Vector3(3.5, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="LaundryRootWallLintel0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.8, -0.65, 1.2)
+use_collision = true
+size = Vector3(1.2, 0.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CoalWineWallSeg0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.45, -1.65, 1.2)
+use_collision = true
+size = Vector3(3.5, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CoalWineWallSeg1" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.625, -1.65, 1.2)
+use_collision = true
+size = Vector3(2.45, 2.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="CoalWineWallLintel0" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, -0.65, 1.2)
+use_collision = true
+size = Vector3(1.2, 0.7, 0.3)
+material = ExtResource("mat_concrete_basement")
+
+[node name="StairShaftWall" type="CSGBox3D" parent="Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.375, -1.65, -9)
+use_collision = true
+size = Vector3(0.15, 2.7, 3.2)
+material = ExtResource("mat_concrete_basement")
+
+[node name="Stairs" type="Node3D" parent="."]
+
+[node name="Step01" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -0.39, -7.56)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Step02" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -0.64, -7.88)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Step03" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -0.89, -8.2)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Step04" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -1.14, -8.52)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Step05" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -1.39, -8.84)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Step06" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -1.64, -9.16)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Step07" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -1.89, -9.48)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Step08" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -2.14, -9.8)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Step09" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -2.39, -10.12)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Step10" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -2.64, -10.44)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Step11" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -2.89, -10.76)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Step12" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.15, -3.15, -11.08)
+use_collision = true
+size = Vector3(1.4, 0.28, 0.36)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="StairStringer" type="CSGBox3D" parent="Stairs"]
+transform = Transform3D(1, 0, 0, 0, 0.807, 0.5906, 0, -0.5906, 0.807, -8.15, -1.5, -9.35)
+use_collision = true
+size = Vector3(1.46, 0.14, 5)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Beams" type="Node3D" parent="."]
+
+[node name="CrossBeam0" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, -3.2)
+use_collision = true
+size = Vector3(17.6, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CrossBeam1" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, -4.2)
+use_collision = true
+size = Vector3(17.6, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="SouthBeamW0" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.275, -0.42, 1)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="SouthBeamE0" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.275, -0.42, 1)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="SouthBeamW1" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.275, -0.42, 2.6)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="SouthBeamE1" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.275, -0.42, 2.6)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="SouthBeamW2" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.275, -0.42, 4)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="SouthBeamE2" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.275, -0.42, 4)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="SouthBeamW3" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.275, -0.42, 5.2)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="SouthBeamE3" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.275, -0.42, 5.2)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="NorthBeamW0" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, -0.42, -5.2)
+use_collision = true
+size = Vector3(5.6, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="NorthBeamW1" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, -0.42, -6.2)
+use_collision = true
+size = Vector3(5.6, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="NorthBeamW2" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, -0.42, -7.2)
+use_collision = true
+size = Vector3(5.6, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="NorthBeamE0" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.275, -0.42, -5.2)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="NorthBeamE1" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.275, -0.42, -6.4)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="NorthBeamE2" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.275, -0.42, -7.6)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="NorthBeamE3" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.275, -0.42, -8.8)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="NorthBeamE4" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.275, -0.42, -10)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="NorthBeamE5" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.275, -0.42, -11.2)
+use_collision = true
+size = Vector3(7.15, 0.16, 0.14)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorPost0" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.38, -1.65, -10)
+use_collision = true
+size = Vector3(0.16, 2.7, 0.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorPostE0" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.38, -1.65, -10)
+use_collision = true
+size = Vector3(0.16, 2.7, 0.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorBeam0" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, -10)
+use_collision = true
+size = Vector3(3.1, 0.16, 0.12)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorPost1" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.38, -1.65, -6)
+use_collision = true
+size = Vector3(0.16, 2.7, 0.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorPostE1" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.38, -1.65, -6)
+use_collision = true
+size = Vector3(0.16, 2.7, 0.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorBeam1" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, -6)
+use_collision = true
+size = Vector3(3.1, 0.16, 0.12)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorPost2" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.38, -1.65, -2)
+use_collision = true
+size = Vector3(0.16, 2.7, 0.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorPostE2" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.38, -1.65, -2)
+use_collision = true
+size = Vector3(0.16, 2.7, 0.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorBeam2" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, -2)
+use_collision = true
+size = Vector3(3.1, 0.16, 0.12)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorPost3" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.38, -1.65, 2)
+use_collision = true
+size = Vector3(0.16, 2.7, 0.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorPostE3" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.38, -1.65, 2)
+use_collision = true
+size = Vector3(0.16, 2.7, 0.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorBeam3" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 2)
+use_collision = true
+size = Vector3(3.1, 0.16, 0.12)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorPost4" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.38, -1.65, 5)
+use_collision = true
+size = Vector3(0.16, 2.7, 0.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorPostE4" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.38, -1.65, 5)
+use_collision = true
+size = Vector3(0.16, 2.7, 0.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CorridorBeam4" type="CSGBox3D" parent="Beams"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.42, 5)
+use_collision = true
+size = Vector3(3.1, 0.16, 0.12)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="Pipes" type="Node3D" parent="."]
+
+[node name="CorridorPipe0" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, -1.15, -0.58, -3)
+radius = 0.07
+height = 17
+radial_segments = 14
+material = SubResource("Mat_rust")
+
+[node name="CorridorPipe1" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 1.1, -0.58, -3)
+radius = 0.05
+height = 17
+radial_segments = 14
+material = SubResource("Mat_rust")
+
+[node name="CorridorPipe2" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 1.22, -0.58, -3)
+radius = 0.04
+height = 17
+radial_segments = 14
+material = SubResource("Mat_rust")
+
+[node name="CrossPipe0" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, -0.62, -3.35)
+radius = 0.055
+height = 17
+radial_segments = 14
+material = SubResource("Mat_rust")
+
+[node name="CrossPipe1" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0, -0.62, -4.05)
+radius = 0.045
+height = 17
+radial_segments = 14
+material = SubResource("Mat_rust")
+
+[node name="BoilerRiser" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, -0.85, -9.9)
+radius = 0.09
+height = 1.6
+radial_segments = 14
+material = SubResource("Mat_rust")
+
+[node name="BoilerArm" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -6.4, -0.58, -9.9)
+radius = 0.08
+height = 3.6
+radial_segments = 14
+material = SubResource("Mat_rust")
+
+[node name="BoilerValve" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -5, -0.58, -9.9)
+radius = 0.13
+height = 0.06
+radial_segments = 12
+material = SubResource("Mat_metal")
+
+[node name="WallPipe0" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.8, -1.55, -2)
+radius = 0.05
+height = 2.6
+radial_segments = 12
+material = SubResource("Mat_rust")
+
+[node name="WallPipe1" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.8, -1.55, -4)
+radius = 0.05
+height = 2.6
+radial_segments = 12
+material = SubResource("Mat_rust")
+
+[node name="WallPipe2" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.8, -1.55, -10.5)
+radius = 0.05
+height = 2.6
+radial_segments = 12
+material = SubResource("Mat_rust")
+
+[node name="WallPipe3" type="CSGCylinder3D" parent="Pipes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.8, -1.55, -6)
+radius = 0.05
+height = 2.6
+radial_segments = 12
+material = SubResource("Mat_rust")
+
+[node name="BoilerRoom" type="Node3D" parent="."]
+
+[node name="Boiler" type="CSGCylinder3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, -2.15, -9.9)
+use_collision = true
+radius = 0.58
+height = 1.7
+radial_segments = 24
+material = SubResource("Mat_rust")
+
+[node name="BoilerTop" type="CSGCylinder3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, -1.22, -9.9)
+use_collision = true
+radius = 0.63
+height = 0.12
+radial_segments = 24
+material = SubResource("Mat_rust")
+
+[node name="BoilerDoor" type="CSGCylinder3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, -4.6, -2.3, -9.29)
+radius = 0.28
+height = 0.04
+radial_segments = 16
+material = SubResource("Mat_coal")
+
+[node name="Furnace" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1, -2.5, -10.9)
+use_collision = true
+size = Vector3(1.5, 1, 1)
+material = SubResource("Mat_metal")
+
+[node name="FurnaceDoor" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1, -2.45, -10.38)
+size = Vector3(0.6, 0.45, 0.04)
+material = SubResource("Mat_coal")
+
+[node name="CoalBunkerWallA" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -2.65, -8.6)
+use_collision = true
+size = Vector3(0.12, 0.7, 2.4)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CoalBunkerWallB" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9, -2.65, -8.6)
+use_collision = true
+size = Vector3(0.12, 0.7, 2.4)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CoalBunkerWallC" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.95, -2.65, -9.78)
+use_collision = true
+size = Vector3(1.9, 0.7, 0.12)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CoalHeap" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.95, -2.82, -8.9)
+size = Vector3(1.7, 0.36, 1.7)
+material = SubResource("Mat_coal")
+
+[node name="BoilerShelfBody" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, -2.15, -6.0)
+use_collision = true
+size = Vector3(0.5, 1.7, 1.6)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="BoilerShelfShelf0" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, -2.7167, -6.0)
+use_collision = true
+size = Vector3(0.4, 0.04, 1.64)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="BoilerShelfShelf1" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, -2.15, -6.0)
+use_collision = true
+size = Vector3(0.4, 0.04, 1.64)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="BoilerShelfShelf2" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, -1.5833, -6.0)
+use_collision = true
+size = Vector3(0.4, 0.04, 1.64)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="BoilerCrateA" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.8, -2.7, -5.4)
+use_collision = true
+size = Vector3(0.6, 0.6, 0.6)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="BoilerCrateB" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2, -2.78, -5.5)
+use_collision = true
+size = Vector3(0.44, 0.44, 0.44)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="BoilerBarrel" type="CSGCylinder3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.8, -2.55, -6.4)
+use_collision = true
+radius = 0.3
+height = 0.9
+radial_segments = 20
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="OldChairSeat" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2, -2.5, -10.3)
+use_collision = true
+size = Vector3(0.45, 0.07, 0.45)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="OldChairBack" type="CSGBox3D" parent="BoilerRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2, -2.15, -10.52)
+use_collision = true
+size = Vector3(0.45, 0.6, 0.06)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="LaundryRoom" type="Node3D" parent="."]
+
+[node name="Washer" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, -2.55, 0.3)
+use_collision = true
+size = Vector3(0.78, 0.9, 0.72)
+material = SubResource("Mat_metal")
+
+[node name="WasherDrum" type="CSGCylinder3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, -4.6, -2.45, 0.67)
+radius = 0.22
+height = 0.04
+radial_segments = 16
+material = SubResource("Mat_coal")
+
+[node name="LaundrySink" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.9, -2.62, -1.8)
+use_collision = true
+size = Vector3(0.9, 0.3, 0.7)
+material = SubResource("Mat_metal")
+
+[node name="LaundrySinkBase" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.9, -2.9, -1.8)
+use_collision = true
+size = Vector3(0.75, 0.35, 0.55)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="LaundryFaucet" type="CSGCylinder3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.05, -2.27, -1.8)
+radius = 0.025
+height = 0.4
+radial_segments = 20
+material = SubResource("Mat_metal")
+
+[node name="WaterHeater" type="CSGCylinder3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.9, -2.2, -2.3)
+use_collision = true
+radius = 0.36
+height = 1.6
+radial_segments = 20
+material = SubResource("Mat_metal")
+
+[node name="LaundryShelfBody" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -2.15, -0.2)
+use_collision = true
+size = Vector3(0.5, 1.7, 2.2)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="LaundryShelfShelf0" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -2.7875, -0.2)
+use_collision = true
+size = Vector3(0.4, 0.04, 2.24)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="LaundryShelfShelf1" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -2.3625, -0.2)
+use_collision = true
+size = Vector3(0.4, 0.04, 2.24)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="LaundryShelfShelf2" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -1.9375, -0.2)
+use_collision = true
+size = Vector3(0.4, 0.04, 2.24)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="LaundryShelfShelf3" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -1.5125, -0.2)
+use_collision = true
+size = Vector3(0.4, 0.04, 2.24)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="ClothesLine" type="CSGCylinder3D" parent="LaundryRoom"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -5.4, -1.15, -0.6)
+radius = 0.008
+height = 6.2
+radial_segments = 6
+material = SubResource("Mat_linen")
+
+[node name="LaundryCloth0" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.2, -1.45, -0.6)
+size = Vector3(0.6, 0.6, 0.02)
+material = SubResource("Mat_linen")
+
+[node name="LaundryCloth1" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.8, -1.45, -0.6)
+size = Vector3(0.6, 0.6, 0.02)
+material = SubResource("Mat_linen")
+
+[node name="LaundryCloth2" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, -1.45, -0.6)
+size = Vector3(0.6, 0.6, 0.02)
+material = SubResource("Mat_linen")
+
+[node name="LaundryBucket" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, -2.80, -1.6)
+use_collision = true
+size = Vector3(0.36, 0.4, 0.36)
+material = SubResource("Mat_metal")
+
+[node name="LaundryCrate" type="CSGBox3D" parent="LaundryRoom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, -2.725, 0.2)
+use_collision = true
+size = Vector3(0.55, 0.55, 0.55)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootCellar" type="Node3D" parent="."]
+
+[node name="RootRackWestABody" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -2.1, 3)
+use_collision = true
+size = Vector3(0.5, 1.8, 1.6)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackWestAShelf0" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -2.775, 3)
+use_collision = true
+size = Vector3(0.4, 0.04, 1.64)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackWestAShelf1" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -2.325, 3)
+use_collision = true
+size = Vector3(0.4, 0.04, 1.64)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackWestAShelf2" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -1.875, 3)
+use_collision = true
+size = Vector3(0.4, 0.04, 1.64)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackWestAShelf3" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -1.425, 3)
+use_collision = true
+size = Vector3(0.4, 0.04, 1.64)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackWestBBody" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -2.1, 4.8)
+use_collision = true
+size = Vector3(0.5, 1.8, 1.4)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackWestBShelf0" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -2.775, 4.8)
+use_collision = true
+size = Vector3(0.4, 0.04, 1.44)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackWestBShelf1" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -2.325, 4.8)
+use_collision = true
+size = Vector3(0.4, 0.04, 1.44)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackWestBShelf2" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -1.875, 4.8)
+use_collision = true
+size = Vector3(0.4, 0.04, 1.44)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackWestBShelf3" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, -1.425, 4.8)
+use_collision = true
+size = Vector3(0.4, 0.04, 1.44)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackSouthBack" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.0, -2.1, 5.77)
+use_collision = true
+size = Vector3(2.4, 1.8, 0.06)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackSouthSideL" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.16, -2.1, 5.55)
+use_collision = true
+size = Vector3(0.08, 1.8, 0.5)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackSouthSideR" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.84, -2.1, 5.55)
+use_collision = true
+size = Vector3(0.08, 1.8, 0.5)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackSouthShelf0" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.0, -2.8, 5.55)
+use_collision = true
+size = Vector3(2.32, 0.04, 0.5)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackSouthShelf1" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.0, -2.05, 5.55)
+use_collision = true
+size = Vector3(2.32, 0.04, 0.5)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootRackSouthTop" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.0, -1.22, 5.55)
+use_collision = true
+size = Vector3(2.4, 0.04, 0.5)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootJar0" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -2.65, 5.5)
+radius = 0.1
+height = 0.26
+radial_segments = 10
+material = SubResource("Mat_glass")
+
+[node name="RootJar1" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, -2.65, 5.5)
+radius = 0.1
+height = 0.26
+radial_segments = 10
+material = SubResource("Mat_glass")
+
+[node name="RootJar2" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, -2.65, 5.5)
+radius = 0.1
+height = 0.26
+radial_segments = 10
+material = SubResource("Mat_glass")
+
+[node name="RootJar3" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, -2.65, 5.5)
+radius = 0.1
+height = 0.26
+radial_segments = 10
+material = SubResource("Mat_glass")
+
+[node name="RootJar4" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2.65, 5.5)
+radius = 0.1
+height = 0.26
+radial_segments = 10
+material = SubResource("Mat_glass")
+
+[node name="RootJar5" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -1.9, 5.5)
+radius = 0.1
+height = 0.26
+radial_segments = 10
+material = SubResource("Mat_glass")
+
+[node name="RootJar6" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, -1.9, 5.5)
+radius = 0.1
+height = 0.26
+radial_segments = 10
+material = SubResource("Mat_glass")
+
+[node name="RootJar7" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, -1.9, 5.5)
+radius = 0.1
+height = 0.26
+radial_segments = 10
+material = SubResource("Mat_glass")
+
+[node name="RootJar8" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, -1.9, 5.5)
+radius = 0.1
+height = 0.26
+radial_segments = 10
+material = SubResource("Mat_glass")
+
+[node name="RootJar9" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1.9, 5.5)
+radius = 0.1
+height = 0.26
+radial_segments = 10
+material = SubResource("Mat_glass")
+
+[node name="RootBarrelA" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2.55, 3.6)
+use_collision = true
+radius = 0.34
+height = 0.9
+radial_segments = 20
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootBarrelB" type="CSGCylinder3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, -2.6, 4.4)
+use_collision = true
+radius = 0.3
+height = 0.8
+radial_segments = 20
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RootSackA" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, -2.72, 2.2)
+use_collision = true
+size = Vector3(0.7, 0.55, 0.5)
+material = SubResource("Mat_linen")
+
+[node name="RootSackB" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -2.78, 2.3)
+use_collision = true
+size = Vector3(0.55, 0.45, 0.45)
+material = SubResource("Mat_linen")
+
+[node name="RootDirtPatch" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, -2.98, 2)
+size = Vector3(2.6, 0.03, 1.4)
+material = SubResource("Mat_coal")
+
+[node name="RockingSeat" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, -2.5, 2.4)
+use_collision = true
+size = Vector3(0.5, 0.08, 0.5)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RockingBack" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, -2.1, 2.66)
+use_collision = true
+size = Vector3(0.5, 0.7, 0.06)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RockingRunnerA" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, -2.97, 2.4)
+size = Vector3(0.5, 0.06, 0.9)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RockingLegA" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.22, -2.74, 2.2)
+use_collision = true
+size = Vector3(0.05, 0.4, 0.05)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RockingLegB" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.78, -2.74, 2.2)
+use_collision = true
+size = Vector3(0.05, 0.4, 0.05)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RockingLegC" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.22, -2.74, 2.6)
+use_collision = true
+size = Vector3(0.05, 0.4, 0.05)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="RockingLegD" type="CSGBox3D" parent="RootCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.78, -2.74, 2.6)
+use_collision = true
+size = Vector3(0.05, 0.4, 0.05)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="Workshop" type="Node3D" parent="."]
+
+[node name="WorkbenchTop" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.35, -2.1, -8.2)
+use_collision = true
+size = Vector3(0.75, 0.08, 2.6)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="WorkbenchBase" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.45, -2.57, -8.2)
+use_collision = true
+size = Vector3(0.55, 0.86, 2.4)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="Vice" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.05, -1.95, -7.6)
+use_collision = true
+size = Vector3(0.28, 0.2, 0.22)
+material = SubResource("Mat_metal")
+
+[node name="Tool0" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.3, -2.03, -8.9)
+size = Vector3(0.35, 0.06, 0.08)
+material = SubResource("Mat_metal")
+
+[node name="Tool1" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.3, -2.03, -8.6)
+size = Vector3(0.35, 0.06, 0.08)
+material = SubResource("Mat_metal")
+
+[node name="Tool2" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.3, -2.03, -8.3)
+size = Vector3(0.35, 0.06, 0.08)
+material = SubResource("Mat_metal")
+
+[node name="Tool3" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.3, -2.03, -8)
+size = Vector3(0.35, 0.06, 0.08)
+material = SubResource("Mat_metal")
+
+[node name="WorkshopPipe0" type="CSGCylinder3D" parent="Workshop"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 3, -2.7, -11.3)
+radius = 0.055
+height = 2.2
+radial_segments = 10
+material = SubResource("Mat_rust")
+
+[node name="WorkshopPipe1" type="CSGCylinder3D" parent="Workshop"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 3.7, -2.7, -11.3)
+radius = 0.055
+height = 2.2
+radial_segments = 10
+material = SubResource("Mat_rust")
+
+[node name="WorkshopPipe2" type="CSGCylinder3D" parent="Workshop"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 4.4, -2.7, -11.3)
+radius = 0.055
+height = 2.2
+radial_segments = 10
+material = SubResource("Mat_rust")
+
+[node name="WorkshopCabinet" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.8, -2.35, -11.3)
+use_collision = true
+size = Vector3(1.2, 1.3, 0.55)
+material = SubResource("Mat_metal")
+
+[node name="WorkshopCrateA" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, -2.7, -5.4)
+use_collision = true
+size = Vector3(0.6, 0.6, 0.6)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="WorkshopCrateB" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9, -2.75, -5.5)
+use_collision = true
+size = Vector3(0.5, 0.5, 0.5)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="WorkshopStool" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.6, -2.75, -7.4)
+use_collision = true
+size = Vector3(0.36, 0.5, 0.36)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="WorkshopGrease" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, -2.97, -9.6)
+size = Vector3(0.35, 0.06, 0.35)
+material = SubResource("Mat_coal")
+
+[node name="WorkshopSawhorse" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, -2.5, -8.6)
+use_collision = true
+size = Vector3(0.9, 0.1, 0.3)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="WorkshopSawhorseLegA" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, -2.775, -8.71)
+use_collision = true
+size = Vector3(0.06, 0.45, 0.06)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="WorkshopSawhorseLegB" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, -2.775, -8.71)
+use_collision = true
+size = Vector3(0.06, 0.45, 0.06)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="WorkshopSawhorseLegC" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, -2.775, -8.49)
+use_collision = true
+size = Vector3(0.06, 0.45, 0.06)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="WorkshopSawhorseLegD" type="CSGBox3D" parent="Workshop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, -2.775, -8.49)
+use_collision = true
+size = Vector3(0.06, 0.45, 0.06)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CoalCellar" type="Node3D" parent="."]
+
+[node name="CoalBunkerBase" type="CSGBox3D" parent="CoalCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.4, -2.72, -0.8)
+use_collision = true
+size = Vector3(2.96, 0.5, 2.56)
+material = SubResource("Mat_coal")
+
+[node name="CoalBunkerFront" type="CSGBox3D" parent="CoalCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.4, -2.42, -0.8)
+use_collision = true
+size = Vector3(3, 0.85, 0.12)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CoalBunkerSide" type="CSGBox3D" parent="CoalCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.9, -2.42, -0.8)
+use_collision = true
+size = Vector3(0.12, 0.85, 2.6)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CoalChute" type="CSGBox3D" parent="CoalCellar"]
+transform = Transform3D(0.8988, -0.4384, 0, 0.4384, 0.8988, 0, 0, 0, 1, 7.5, -1.55, -0.4)
+use_collision = true
+size = Vector3(2.4, 0.14, 1)
+material = SubResource("Mat_metal")
+
+[node name="CoalShovelHandle" type="CSGBox3D" parent="CoalCellar"]
+transform = Transform3D(0.9397, 0.342, 0, -0.342, 0.9397, 0, 0, 0, 1, 4.1, -2.6, -1.3)
+size = Vector3(1.1, 0.04, 0.08)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CoalShovelBlade" type="CSGBox3D" parent="CoalCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, -2.82, -1.3)
+size = Vector3(0.3, 0.03, 0.25)
+material = SubResource("Mat_metal")
+
+[node name="CoalSack" type="CSGBox3D" parent="CoalCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, -2.75, 0.4)
+use_collision = true
+size = Vector3(0.5, 0.5, 0.4)
+material = SubResource("Mat_linen")
+
+[node name="WineCellar" type="Node3D" parent="."]
+
+[node name="WineRackA" type="CSGBox3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.45, -2.1, 3.4)
+use_collision = true
+size = Vector3(0.55, 1.8, 2.2)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="WineRackB" type="CSGBox3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -2.1, 5.45)
+use_collision = true
+size = Vector3(2.2, 1.8, 0.55)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="WineBottleA0" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -2.65, 2.55)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleA1" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -2.65, 3.05)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleA2" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -2.65, 3.55)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleA3" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -2.65, 4.05)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleA4" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -2.15, 2.55)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleA5" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -2.15, 3.05)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleA6" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -2.15, 3.55)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleA7" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -2.15, 4.05)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleA8" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -1.65, 2.55)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleA9" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -1.65, 3.05)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleA10" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -1.65, 3.55)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleA11" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.42, -1.65, 4.05)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleB0" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.25, -2.65, 5.42)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleB1" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.75, -2.65, 5.42)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleB2" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.25, -2.65, 5.42)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleB3" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, -2.65, 5.42)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleB4" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.25, -2.15, 5.42)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleB5" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.75, -2.15, 5.42)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleB6" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.25, -2.15, 5.42)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBottleB7" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, -2.15, 5.42)
+radius = 0.045
+height = 0.32
+radial_segments = 8
+material = SubResource("Mat_glass")
+
+[node name="WineBarrel" type="CSGCylinder3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -2.5, 3.7)
+use_collision = true
+radius = 0.38
+height = 1
+radial_segments = 20
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="TastingTableTop" type="CSGBox3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, -2.25, 3.3)
+use_collision = true
+size = Vector3(1.1, 0.08, 0.75)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="TastingTableLegA" type="CSGBox3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.14, -2.645, 3.015)
+use_collision = true
+size = Vector3(0.07, 0.71, 0.07)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="TastingTableLegB" type="CSGBox3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.06, -2.645, 3.015)
+use_collision = true
+size = Vector3(0.07, 0.71, 0.07)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="TastingTableLegC" type="CSGBox3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.14, -2.645, 3.585)
+use_collision = true
+size = Vector3(0.07, 0.71, 0.07)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="TastingTableLegD" type="CSGBox3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.06, -2.645, 3.585)
+use_collision = true
+size = Vector3(0.07, 0.71, 0.07)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="TastingChairSeat" type="CSGBox3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, -2.5, 4.3)
+use_collision = true
+size = Vector3(0.45, 0.07, 0.45)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="TastingChairBack" type="CSGBox3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, -2.15, 4.52)
+use_collision = true
+size = Vector3(0.45, 0.6, 0.06)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="WineCrate" type="CSGBox3D" parent="WineCellar"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, -2.72, 5)
+use_collision = true
+size = Vector3(0.55, 0.55, 0.55)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CorridorDetails" type="Node3D" parent="."]
+
+[node name="CorridorPuddle" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, -2.985, -4.4)
+size = Vector3(1.3, 0.02, 1.8)
+material = SubResource("Mat_wet")
+
+[node name="CorridorDrain" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, -2.98, -10.5)
+size = Vector3(0.7, 0.02, 0.7)
+material = SubResource("Mat_coal")
+
+[node name="CorridorBoxA0" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.15, -2.72, -9.2)
+use_collision = true
+size = Vector3(0.5, 0.55, 0.5)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CorridorBoxB0" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.15, -2.24, -9.2)
+use_collision = true
+size = Vector3(0.4, 0.4, 0.4)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CorridorBoxA1" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.15, -2.72, 1.4)
+use_collision = true
+size = Vector3(0.5, 0.55, 0.5)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CorridorBoxB1" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.15, -2.24, 1.4)
+use_collision = true
+size = Vector3(0.4, 0.4, 0.4)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CorridorBoxA2" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.15, -2.72, 4.8)
+use_collision = true
+size = Vector3(0.5, 0.55, 0.5)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="CorridorBoxB2" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.15, -2.24, 4.8)
+use_collision = true
+size = Vector3(0.4, 0.4, 0.4)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="HallShelf" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, -2.15, -5.4)
+use_collision = true
+size = Vector3(0.4, 1.7, 0.9)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="HallShelfBoard0" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, -2.9, -5.4)
+use_collision = true
+size = Vector3(0.45, 0.04, 0.95)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="HallShelfBoard1" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, -2.35, -5.4)
+use_collision = true
+size = Vector3(0.45, 0.04, 0.95)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="HallShelfBoard2" type="CSGBox3D" parent="CorridorDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, -1.8, -5.4)
+use_collision = true
+size = Vector3(0.45, 0.04, 0.95)
+material = ExtResource("mat_wood_dark_furn")
+
+[node name="Windows" type="Node3D" parent="."]
+
+[node name="RootWestWindowGlass" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.838, -1, 4)
+size = Vector3(0.02, 0.6, 1)
+material = SubResource("Mat_glass")
+
+[node name="RootWestWindowFrameTop" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.838, -0.66, 4)
+size = Vector3(0.06, 0.08, 1.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="RootWestWindowFrameBottom" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.838, -1.34, 4)
+size = Vector3(0.06, 0.08, 1.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="RootWestWindowBar0" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.813, -1, 3.67)
+size = Vector3(0.035, 0.7, 0.04)
+material = SubResource("Mat_metal")
+
+[node name="RootWestWindowBar1" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.813, -1, 4)
+size = Vector3(0.035, 0.7, 0.04)
+material = SubResource("Mat_metal")
+
+[node name="RootWestWindowBar2" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.813, -1, 4.33)
+size = Vector3(0.035, 0.7, 0.04)
+material = SubResource("Mat_metal")
+
+[node name="RootSouthWindowGlass" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, -1, 5.838)
+size = Vector3(1, 0.6, 0.02)
+material = SubResource("Mat_glass")
+
+[node name="RootSouthWindowFrameTop" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, -0.66, 5.838)
+size = Vector3(1.16, 0.08, 0.06)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="RootSouthWindowFrameBottom" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, -1.34, 5.838)
+size = Vector3(1.16, 0.08, 0.06)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="RootSouthWindowBar0" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.33, -1, 5.813)
+size = Vector3(0.04, 0.7, 0.035)
+material = SubResource("Mat_metal")
+
+[node name="RootSouthWindowBar1" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, -1, 5.813)
+size = Vector3(0.04, 0.7, 0.035)
+material = SubResource("Mat_metal")
+
+[node name="RootSouthWindowBar2" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.67, -1, 5.813)
+size = Vector3(0.04, 0.7, 0.035)
+material = SubResource("Mat_metal")
+
+[node name="CoalEastWindowGlass" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.838, -0.8, -0.6)
+size = Vector3(0.02, 0.6, 1)
+material = SubResource("Mat_glass")
+
+[node name="CoalEastWindowFrameTop" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.838, -0.46, -0.6)
+size = Vector3(0.06, 0.08, 1.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CoalEastWindowFrameBottom" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.838, -1.14, -0.6)
+size = Vector3(0.06, 0.08, 1.16)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="CoalEastWindowBar0" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.813, -0.8, -0.93)
+size = Vector3(0.035, 0.7, 0.04)
+material = SubResource("Mat_metal")
+
+[node name="CoalEastWindowBar1" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.813, -0.8, -0.6)
+size = Vector3(0.035, 0.7, 0.04)
+material = SubResource("Mat_metal")
+
+[node name="CoalEastWindowBar2" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.813, -0.8, -0.27)
+size = Vector3(0.035, 0.7, 0.04)
+material = SubResource("Mat_metal")
+
+[node name="WorkshopNorthWindowGlass" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, -0.9, -11.838)
+size = Vector3(1, 0.6, 0.02)
+material = SubResource("Mat_glass")
+
+[node name="WorkshopNorthWindowFrameTop" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, -0.56, -11.838)
+size = Vector3(1.16, 0.08, 0.06)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="WorkshopNorthWindowFrameBottom" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, -1.24, -11.838)
+size = Vector3(1.16, 0.08, 0.06)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="WorkshopNorthWindowBar0" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.67, -0.9, -11.813)
+size = Vector3(0.04, 0.7, 0.035)
+material = SubResource("Mat_metal")
+
+[node name="WorkshopNorthWindowBar1" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, -0.9, -11.813)
+size = Vector3(0.04, 0.7, 0.035)
+material = SubResource("Mat_metal")
+
+[node name="WorkshopNorthWindowBar2" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.33, -0.9, -11.813)
+size = Vector3(0.04, 0.7, 0.035)
+material = SubResource("Mat_metal")
+
+[node name="LaundryWestWindowGlass" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.838, -0.9, -0.6)
+size = Vector3(0.02, 0.5, 0.9)
+material = SubResource("Mat_glass")
+
+[node name="LaundryWestWindowFrameTop" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.838, -0.61, -0.6)
+size = Vector3(0.06, 0.08, 1.06)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="LaundryWestWindowFrameBottom" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.838, -1.19, -0.6)
+size = Vector3(0.06, 0.08, 1.06)
+material = ExtResource("mat_wood_dark_ext")
+
+[node name="LaundryWestWindowBar0" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.813, -0.9, -0.897)
+size = Vector3(0.035, 0.6, 0.04)
+material = SubResource("Mat_metal")
+
+[node name="LaundryWestWindowBar1" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.813, -0.9, -0.6)
+size = Vector3(0.035, 0.6, 0.04)
+material = SubResource("Mat_metal")
+
+[node name="LaundryWestWindowBar2" type="CSGBox3D" parent="Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.813, -0.9, -0.303)
+size = Vector3(0.035, 0.6, 0.04)
+material = SubResource("Mat_metal")
+
+[node name="Lights" type="Node3D" parent="."]
+
+[node name="StairBottomLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.05, -0.75, -10.9)
+light_color = Color(0.92, 0.7, 0.44, 1)
+light_energy = 0.45
+light_indirect_energy = 0.08
+light_volumetric_fog_energy = 0.75
+light_size = 0.1
+shadow_enabled = true
+shadow_bias = 0.03
+shadow_normal_bias = 1.3
+shadow_blur = 1.5
+omni_range = 3.2
+omni_attenuation = 1.7
+script = ExtResource("1_flicker")
+base_energy = 0.45
+min_on_level = 0.18
+min_steady_time = 0.8
+max_steady_time = 3.5
+min_blackout_time = 0.15
+max_blackout_time = 1.1
+min_burst_time = 0.15
+max_burst_time = 0.6
+
+[node name="Bulb" type="MeshInstance3D" parent="Lights/StairBottomLight"]
+mesh = SubResource("Mesh_bulb")
+surface_material_override/0 = SubResource("Mat_bulb")
+
+[node name="Cord" type="CSGCylinder3D" parent="Lights/StairBottomLight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.24, 0)
+radius = 0.006
+height = 0.44
+material = SubResource("Mat_rust")
+
+[node name="CorridorNorthLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.85, -8.6)
+light_color = Color(0.9, 0.68, 0.42, 1)
+light_energy = 0.5
+light_indirect_energy = 0.08
+light_volumetric_fog_energy = 0.75
+light_size = 0.1
+shadow_enabled = true
+shadow_bias = 0.03
+shadow_normal_bias = 1.3
+shadow_blur = 1.5
+omni_range = 3.6
+omni_attenuation = 1.7
+script = ExtResource("1_flicker")
+base_energy = 0.5
+min_on_level = 0.18
+min_steady_time = 0.8
+max_steady_time = 3.5
+min_blackout_time = 0.15
+max_blackout_time = 1.1
+min_burst_time = 0.15
+max_burst_time = 0.6
+
+[node name="Bulb" type="MeshInstance3D" parent="Lights/CorridorNorthLight"]
+mesh = SubResource("Mesh_bulb")
+surface_material_override/0 = SubResource("Mat_bulb")
+
+[node name="Cord" type="CSGCylinder3D" parent="Lights/CorridorNorthLight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0)
+radius = 0.006
+height = 0.54
+material = SubResource("Mat_rust")
+
+[node name="CorridorSouthLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.85, 2.4)
+light_color = Color(0.86, 0.64, 0.4, 1)
+light_energy = 0.42
+light_indirect_energy = 0.08
+light_volumetric_fog_energy = 0.75
+light_size = 0.1
+shadow_enabled = false
+shadow_bias = 0.03
+shadow_normal_bias = 1.3
+shadow_blur = 1.5
+omni_range = 3.4
+omni_attenuation = 1.7
+script = ExtResource("1_flicker")
+base_energy = 0.42
+min_on_level = 0.18
+min_steady_time = 0.8
+max_steady_time = 3.5
+min_blackout_time = 0.15
+max_blackout_time = 1.1
+min_burst_time = 0.15
+max_burst_time = 0.6
+
+[node name="Bulb" type="MeshInstance3D" parent="Lights/CorridorSouthLight"]
+mesh = SubResource("Mesh_bulb")
+surface_material_override/0 = SubResource("Mat_bulb")
+
+[node name="Cord" type="CSGCylinder3D" parent="Lights/CorridorSouthLight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0)
+radius = 0.006
+height = 0.54
+material = SubResource("Mat_rust")
+
+[node name="BoilerLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2, -0.85, -8.2)
+light_color = Color(0.92, 0.66, 0.38, 1)
+light_energy = 0.35
+light_indirect_energy = 0.08
+light_volumetric_fog_energy = 0.75
+light_size = 0.1
+shadow_enabled = true
+shadow_bias = 0.03
+shadow_normal_bias = 1.3
+shadow_blur = 1.5
+omni_range = 3
+omni_attenuation = 1.7
+script = ExtResource("1_flicker")
+base_energy = 0.35
+min_on_level = 0.18
+min_steady_time = 0.8
+max_steady_time = 3.5
+min_blackout_time = 0.15
+max_blackout_time = 1.1
+min_burst_time = 0.15
+max_burst_time = 0.6
+
+[node name="Bulb" type="MeshInstance3D" parent="Lights/BoilerLight"]
+mesh = SubResource("Mesh_bulb")
+surface_material_override/0 = SubResource("Mat_bulb")
+
+[node name="Cord" type="CSGCylinder3D" parent="Lights/BoilerLight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0)
+radius = 0.006
+height = 0.54
+material = SubResource("Mat_rust")
+
+[node name="WorkshopLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, -0.85, -8.2)
+light_color = Color(0.88, 0.72, 0.5, 1)
+light_energy = 0.45
+light_indirect_energy = 0.08
+light_volumetric_fog_energy = 0.75
+light_size = 0.1
+shadow_enabled = true
+shadow_bias = 0.03
+shadow_normal_bias = 1.3
+shadow_blur = 1.5
+omni_range = 3.4
+omni_attenuation = 1.7
+script = ExtResource("1_flicker")
+base_energy = 0.45
+min_on_level = 0.18
+min_steady_time = 0.8
+max_steady_time = 3.5
+min_blackout_time = 0.15
+max_blackout_time = 1.1
+min_burst_time = 0.15
+max_burst_time = 0.6
+
+[node name="Bulb" type="MeshInstance3D" parent="Lights/WorkshopLight"]
+mesh = SubResource("Mesh_bulb")
+surface_material_override/0 = SubResource("Mat_bulb")
+
+[node name="Cord" type="CSGCylinder3D" parent="Lights/WorkshopLight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0)
+radius = 0.006
+height = 0.54
+material = SubResource("Mat_rust")
+
+[node name="WineLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, -0.85, 3.4)
+light_color = Color(0.8, 0.62, 0.38, 1)
+light_energy = 0.3
+light_indirect_energy = 0.08
+light_volumetric_fog_energy = 0.75
+light_size = 0.1
+shadow_enabled = false
+shadow_bias = 0.03
+shadow_normal_bias = 1.3
+shadow_blur = 1.5
+omni_range = 2.8
+omni_attenuation = 1.7
+script = ExtResource("1_flicker")
+base_energy = 0.3
+min_on_level = 0.18
+min_steady_time = 0.8
+max_steady_time = 3.5
+min_blackout_time = 0.15
+max_blackout_time = 1.1
+min_burst_time = 0.15
+max_burst_time = 0.6
+
+[node name="Bulb" type="MeshInstance3D" parent="Lights/WineLight"]
+mesh = SubResource("Mesh_bulb")
+surface_material_override/0 = SubResource("Mat_bulb")
+
+[node name="Cord" type="CSGCylinder3D" parent="Lights/WineLight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0)
+radius = 0.006
+height = 0.54
+material = SubResource("Mat_rust")
+
+[node name="RootLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, -0.85, 3.6)
+light_color = Color(0.78, 0.6, 0.36, 1)
+light_energy = 0.22
+light_indirect_energy = 0.08
+light_volumetric_fog_energy = 0.75
+light_size = 0.1
+shadow_enabled = false
+shadow_bias = 0.03
+shadow_normal_bias = 1.3
+shadow_blur = 1.5
+omni_range = 2.6
+omni_attenuation = 1.7
+
+[node name="Bulb" type="MeshInstance3D" parent="Lights/RootLight"]
+mesh = SubResource("Mesh_bulb")
+surface_material_override/0 = SubResource("Mat_bulb")
+
+[node name="Cord" type="CSGCylinder3D" parent="Lights/RootLight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0)
+radius = 0.006
+height = 0.54
+material = SubResource("Mat_rust")
+
+[node name="LaundryLight" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, -0.85, -0.4)
+light_color = Color(0.84, 0.66, 0.44, 1)
+light_energy = 0.3
+light_indirect_energy = 0.08
+light_volumetric_fog_energy = 0.75
+light_size = 0.1
+shadow_enabled = false
+shadow_bias = 0.03
+shadow_normal_bias = 1.3
+shadow_blur = 1.5
+omni_range = 2.8
+omni_attenuation = 1.7
+
+[node name="Bulb" type="MeshInstance3D" parent="Lights/LaundryLight"]
+mesh = SubResource("Mesh_bulb")
+surface_material_override/0 = SubResource("Mat_bulb")
+
+[node name="Cord" type="CSGCylinder3D" parent="Lights/LaundryLight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.29, 0)
+radius = 0.006
+height = 0.54
+material = SubResource("Mat_rust")
+
+[node name="DeadBulb" type="Node3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, -1.25, -1.6)
+
+[node name="Bulb" type="MeshInstance3D" parent="Lights/DeadBulb"]
+mesh = SubResource("Mesh_bulb")
+surface_material_override/0 = SubResource("Mat_deadbulb")
+
+[node name="Cord" type="CSGCylinder3D" parent="Lights/DeadBulb"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49, 0)
+radius = 0.006
+height = 0.94
+material = SubResource("Mat_rust")
+
+[node name="FurnaceGlow" type="OmniLight3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1, -2.4, -10.2)
+light_color = Color(1, 0.32, 0.09, 1)
+light_energy = 0.22
+light_indirect_energy = 0.08
+light_volumetric_fog_energy = 0.75
+light_size = 0.1
+shadow_enabled = false
+shadow_bias = 0.03
+shadow_normal_bias = 1.3
+shadow_blur = 1.5
+omni_range = 2
+omni_attenuation = 1.7
+
+[node name="Damp" type="Node3D" parent="."]
+
+[node name="MistWest" type="FogVolume" parent="Damp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, -1.7, 0)
+size = Vector3(7.8, 2.4, 16.8)
+material = SubResource("Fog_damp")
+
+[node name="MistEast" type="FogVolume" parent="Damp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -1.7, 0)
+size = Vector3(7.8, 2.4, 16.8)
+material = SubResource("Fog_damp")
+
+[node name="MistNorth" type="FogVolume" parent="Damp"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7, -8)
+size = Vector3(13.5, 2.4, 7.6)
+material = SubResource("Fog_damp")
+
+[node name="SteelShelvesModel" parent="Workshop" instance=ExtResource("prop_steel_shelves")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 2.228, -3, -6.2)

@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" uid="uid://cd3atjhtf4mfu" path="res://assets/models/vintage_cabinet.gltf/vintage_cabinet_01_4k.gltf" id="1_model"]
+[ext_resource type="Script" path="res://assets/props/prop_matte.gd" id="9_matte"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cabinet"]
+size = Vector3(2.0218, 2.2351, 0.6698)
+
+[node name="VintageCabinet" type="StaticBody3D"]
+script = ExtResource("9_matte")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1175, 0)
+shape = SubResource("BoxShape3D_cabinet")
+
+[node name="Model" parent="." instance=ExtResource("1_model")]

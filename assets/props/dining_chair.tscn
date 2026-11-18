@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" uid="uid://bspl76y8jbrxc" path="res://assets/models/dining_chair.gltf/dining_chair_02_4k.gltf" id="1_model"]
+[ext_resource type="Script" path="res://assets/props/prop_matte.gd" id="9_matte"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_chair"]
+size = Vector3(0.4336, 0.9734, 0.5764)
+
+[node name="DiningChair" type="StaticBody3D"]
+script = ExtResource("9_matte")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4867, 0)
+shape = SubResource("BoxShape3D_chair")
+
+[node name="Model" parent="." instance=ExtResource("1_model")]

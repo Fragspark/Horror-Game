@@ -1,0 +1,83 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/events/haunted_mirror.gd" id="1_script"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_frame"]
+albedo_color = Color(0.13, 0.085, 0.055, 1)
+roughness = 0.75
+
+[sub_resource type="BoxMesh" id="Mesh_frame_h"]
+size = Vector3(1.06, 0.08, 0.06)
+
+[sub_resource type="BoxMesh" id="Mesh_frame_v"]
+size = Vector3(0.08, 1.66, 0.06)
+
+[sub_resource type="BoxMesh" id="Mesh_back"]
+size = Vector3(1.04, 1.64, 0.02)
+
+[sub_resource type="QuadMesh" id="Mesh_mirror"]
+size = Vector2(0.9, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="Mat_preview"]
+albedo_color = Color(0.45, 0.5, 0.5, 1)
+metallic = 1.0
+roughness = 0.1
+
+[sub_resource type="BoxShape3D" id="Shape_trigger"]
+size = Vector3(3, 2.4, 4.5)
+
+[node name="HauntedMirror" type="Node3D"]
+script = ExtResource("1_script")
+required_phase = 2
+chance = 0.35
+
+[node name="MirrorSurface" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+mesh = SubResource("Mesh_mirror")
+surface_material_override/0 = SubResource("Mat_preview")
+
+[node name="FrameTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.29, -0.02)
+mesh = SubResource("Mesh_frame_h")
+surface_material_override/0 = SubResource("Mat_frame")
+
+[node name="FrameBottom" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.71, -0.02)
+mesh = SubResource("Mesh_frame_h")
+surface_material_override/0 = SubResource("Mat_frame")
+
+[node name="FrameLeft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.49, 1.5, -0.02)
+mesh = SubResource("Mesh_frame_v")
+surface_material_override/0 = SubResource("Mat_frame")
+
+[node name="FrameRight" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.49, 1.5, -0.02)
+mesh = SubResource("Mesh_frame_v")
+surface_material_override/0 = SubResource("Mat_frame")
+
+[node name="BackPanel" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -0.045)
+mesh = SubResource("Mesh_back")
+surface_material_override/0 = SubResource("Mat_frame")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+size = Vector2i(384, 640)
+msaa_3d = 0
+positional_shadow_atlas_size = 0
+
+[node name="MirrorCamera" type="Camera3D" parent="SubViewport"]
+cull_mask = 3
+
+[node name="ApparitionAnchor" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 2.4)
+gizmo_extents = 0.5
+
+[node name="TriggerZone" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TriggerZone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 2.4)
+shape = SubResource("Shape_trigger")

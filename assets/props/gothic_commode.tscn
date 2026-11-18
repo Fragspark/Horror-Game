@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/GothicCommode_01_4k.gltf/GothicCommode_01_4k.gltf" id="1_model"]
+[ext_resource type="Script" path="res://assets/props/prop_matte.gd" id="9_matte"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_main"]
+size = Vector3(1.2, 1.21, 0.58)
+
+[node name="GothicCommode" type="StaticBody3D"]
+script = ExtResource("9_matte")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.605, 0)
+shape = SubResource("BoxShape3D_main")
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
