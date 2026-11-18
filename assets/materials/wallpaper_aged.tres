@@ -27,7 +27,7 @@ seamless = true
 
 [resource]
 resource_name = "Wallpaper_Aged"
-albedo_color = Color(0.2200, 0.2006, 0.1704, 1)
+albedo_color = Color(0.22, 0.2006, 0.1704, 1)
 roughness = 0.9
 roughness_texture = SubResource("NoiseTex_rough")
 normal_enabled = true

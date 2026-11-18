@@ -7,6 +7,8 @@ extends Node3D
 @export var roughness_boost: float = 1.0
 ## Spiegelungsstaerke der Oberflaeche (Godot-Standard 0.5).
 @export var specular: float = 0.12
+## Faktor auf die Albedo (<1 dunkelt ab, z. B. fuer zu helles Porzellan).
+@export var albedo_tint: Color = Color(1, 1, 1)
 ## Obergrenze fuer Metallic (Holz/Stoff sollen nie metallisch wirken).
 @export var max_metallic: float = 0.35
 
@@ -29,6 +31,7 @@ func _apply(node: Node) -> void:
 				copy.roughness = clampf(copy.roughness * roughness_boost, 0.0, 1.0)
 				copy.metallic_specular = specular
 				copy.metallic = minf(copy.metallic, max_metallic)
+				copy.albedo_color = copy.albedo_color * albedo_tint
 				mi.set_surface_override_material(i, copy)
 	for child in node.get_children():
 		_apply(child)

@@ -14,9 +14,6 @@ const WINDOW := preload("res://scenes/environment/window_dark.tscn")
 const FLICKER := preload("res://scenes/scripts/flickering_light.gd")
 
 @export var seed_value: int = 20261117
-@export var grass_tufts: int = 9000
-@export var weed_count: int = 600
-@export var leaf_count: int = 2200
 ## Faktor fuer die Baumzahl im Waldring (1.0 = Standard, 0.5 = halb so dicht).
 @export var forest_density: float = 1.0
 
@@ -80,8 +77,7 @@ func _ready() -> void:
 	_build_poles()
 	_build_houses()
 	_build_sheds()
-	_build_window_vegetation()
-	_build_ground_cover()
+	_build_garden_models()
 	_build_forest()
 	_build_anchors()
 
@@ -161,18 +157,20 @@ func _make_materials() -> void:
 	dash.roughness = 0.9
 	_m["dash"] = dash
 
-	# Bodenmaterial: seamless Noise-Textur x Vertex-Farben, world-triplanar
-	var img := _noise.get_seamless_image(256, 256)
-	img.generate_mipmaps()
-	var tex := ImageTexture.create_from_image(img)
+	# Bodenmaterial: Ground037 (PBR-Gras) x Vertex-Farben, world-triplanar
+	const GRASS_DIR := "res://assets/textures/outside_gras/Ground037_2K-JPG_"
 	var ground := StandardMaterial3D.new()
 	ground.vertex_color_use_as_albedo = true
-	ground.albedo_texture = tex
-	ground.roughness = 0.95
+	ground.albedo_texture = load(GRASS_DIR + "Color.jpg")
+	ground.roughness_texture = load(GRASS_DIR + "Roughness.jpg")
+	ground.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_RED
+	ground.normal_enabled = true
+	ground.normal_texture = load(GRASS_DIR + "NormalGL.jpg")
+	ground.normal_scale = 0.8
 	ground.metallic_specular = 0.1
 	ground.uv1_triplanar = true
 	ground.uv1_world_triplanar = true
-	ground.uv1_scale = Vector3(0.22, 0.22, 0.22)
+	ground.uv1_scale = Vector3(0.3, 0.3, 0.3)
 	ground.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 	_m["ground"] = ground
 
@@ -199,14 +197,14 @@ func _box(parent: Node, nm: String, pos: Vector3, size: Vector3, mat: Material,
 		sb.add_child(cs)
 		mi.add_child(sb)
 	return mi
+
+
 ## Markiert die Kollisionsbox eines mit solid=true erzeugten _box() als
 ## Untergrund fuer die Spieler-Schritte (Gruppe "surface_*", siehe horror_player.gd).
 func _mark_surface(mi: MeshInstance3D, group: String) -> void:
 	for c in mi.get_children():
 		if c is StaticBody3D:
 			c.add_to_group(group)
-
-
 
 
 func _cyl(parent: Node, nm: String, pos: Vector3, r_top: float, r_bot: float, h: float,
@@ -309,7 +307,7 @@ func _ground_color(x: float, z: float) -> Color:
 	c = c.lerp(Color(0.12, 0.14, 0.11), 1.0 - smoothstep(-0.7, -0.15, p))
 	if absf(x) > 26.0 or z < -18.0 or z > 34.0:
 		c *= 0.7
-	return c * 2.6
+	return c * 1.5
 
 
 func _build_terrain() -> void:
@@ -340,9 +338,9 @@ func _build_terrain() -> void:
 			NB._tri(st, v[0], v[1], v[2], n[0], n[1], n[2], c[0], c[1], c[2])
 			NB._tri(st, v[0], v[2], v[3], n[0], n[2], n[3], c[0], c[2], c[3])
 			faces.append_array([v[0], v[1], v[2], v[0], v[2], v[3]])
-	body.add_to_group("surface_grass")
 	var body := StaticBody3D.new()
 	body.name = "Terrain"
+	body.add_to_group("surface_grass")
 	var mi := MeshInstance3D.new()
 	mi.name = "TerrainMesh"
 	mi.mesh = st.commit()
@@ -781,116 +779,131 @@ func _build_sheds() -> void:
 
 # ---------------------------------------------------------------- Vegetation
 
-func _build_window_vegetation() -> void:
-	var root := Node3D.new()
-	root.name = "WindowVegetation"
-	add_child(root)
-	var bark: Material = _m["bark"]
-	# kahle Baeume mit Aesten zu den Fenstern (Mondschatten): Mond kommt aus SW
-	var trees := [
-		["TreeS1", Vector3(-6.4, 0.0, 8.6), 5.8, Vector3(0.6, 0, -0.7), 101],
-		["TreeW0", Vector3(-11.9, 0.0, -6.2), 6.2, Vector3(0.8, 0, -0.1), 102],
-		["TreeN", Vector3(-4.8, 0.0, -15.0), 6.6, Vector3(0, 0, 0.5), 103],
-		["TreeE", Vector3(12.0, 0.0, -1.0), 6.0, Vector3(-0.6, 0, 0.1), 104],
-	]
-	for t in trees:
-		var p: Vector3 = t[1]
-		p.y = ground_h(p.x, p.z)
-		_mesh(root, t[0], NB.bare_tree(t[4], t[2], 4, t[3]), bark, p, _rng.randf() * 360.0)
-	# Struecher direkt vor Fenstern: [Name, Position, Radius]
-	var shrubs := [
-		["ShrubS0", Vector3(-7.4, 0, 7.3), 1.15], ["ShrubS3", Vector3(3.4, 0, 7.0), 1.0],
-		["ShrubFoyerL", Vector3(-2.5, 0, 6.7), 0.8],
-		["ShrubN1", Vector3(-5.6, 0, -12.5), 1.0], ["ShrubN4", Vector3(3.6, 0, -12.3), 0.9],
-		["ShrubE1", Vector3(8.8, 0, -1.4), 1.1], ["ShrubBedE", Vector3(6.4, 0, 1.6), 0.8],
-		["ShrubUtilE", Vector3(7.2, 0, -8.2), 0.9], ["ShrubW1", Vector3(-9.9, 0, -0.9), 0.9],
-	]
-	var i := 0
-	for s in shrubs:
-		var p: Vector3 = s[1]
-		p.y = ground_h(p.x, p.z)
-		var r: float = s[2]
-		_mesh(root, s[0], NB.shrub(200 + i, r, 0.6), bark, p, _rng.randf() * 360.0)
-		i += 1
-	# verwilderte Hecke zwischen Haus und Westnachbar
-	var z := -3.0
-	while z <= 6.6:
-		var p := Vector3(-12.4 + _rng.randf_range(-0.3, 0.3), 0, z)
-		p.y = ground_h(p.x, p.z)
-		_mesh(root, "Hedge", NB.shrub(300 + int(z * 10.0), 1.25, 0.9), bark, p, _rng.randf() * 360.0,
-				Vector3(1.0, _rng.randf_range(0.9, 1.15), 1.0))
-		z += 1.9
+## Liefert [{mesh, xf, mat}] je MeshInstance3D der glTF-Szene, normiert auf Hoehe 1.0,
+## Fusspunkt (Mitte unten) im Ursprung. Placement-Scale = gewuenschte Hoehe in Metern.
+func _model_parts(path: String) -> Array:
+	var out: Array = []
+	var inst := (load(path) as PackedScene).instantiate()
+	_collect_parts(inst, Transform3D.IDENTITY, out)
+	inst.free()
+	return out
 
 
-func _build_ground_cover() -> void:
+func _collect_parts(n: Node, t: Transform3D, out: Array) -> void:
+	if n is Node3D:
+		t = t * (n as Node3D).transform
+	if n is MeshInstance3D and (n as MeshInstance3D).mesh:
+		var mi := n as MeshInstance3D
+		# get_aabb() ist bei diesen glTFs ungenau -> Grenzen aus den echten Vertices
+		var a := AABB()
+		var first := true
+		for sf in mi.mesh.get_surface_count():
+			for v in (mi.mesh.surface_get_arrays(sf)[Mesh.ARRAY_VERTEX] as PackedVector3Array):
+				var tv := t * v
+				if first:
+					a = AABB(tv, Vector3.ZERO)
+					first = false
+				else:
+					a = a.expand(tv)
+		var s := 1.0 / maxf(a.size.y, 0.001)
+		var c := a.position + a.size * 0.5
+		var xf := Transform3D(Basis.from_scale(Vector3(s, s, s)), Vector3.ZERO) 				* Transform3D(Basis.IDENTITY, Vector3(-c.x, -a.position.y, -c.z)) * t
+		out.append({"mesh": mi.mesh, "xf": xf, "mat": mi.mesh.surface_get_material(0)})
+	for ch in n.get_children():
+		_collect_parts(ch, t, out)
+
+
+const PINE_SINK := -0.1
+
+
+func _pine_material(src: Material) -> StandardMaterial3D:
+	var mat := (src as StandardMaterial3D).duplicate() as StandardMaterial3D
+	mat.albedo_color = Color(0.42, 0.5, 0.45)
+	mat.roughness = 1.0
+	mat.metallic_specular = 0.0
+	return mat
+
+
+func _build_garden_models() -> void:
 	var root := Node3D.new()
-	root.name = "GroundCover"
+	root.name = "GardenModels"
 	add_child(root)
-	var gm := NB.grass_tuft(1, 0.42, 0.045, 6)
-	var wm := NB.grass_tuft(2, 0.85, 0.07, 5)
-	var gx: Array = []
+	# --- Kiefern (Nachtton, Alpha-Maske aus dem Modell)
+	var pine_parts := _model_parts("res://assets/models/pine_tree/scene.gltf")
+	var pine_pos: Array = [Vector3(9.8, 0, 8.0), Vector3(-10.8, 0, 8.3),
+			Vector3(-10.2, 0, -10.5), Vector3(9.8, 0, -10.8)]
+	var pine_h: Array = [8.5, 7.2, 9.0, 7.8]
+	for part in pine_parts:
+		var mat := _pine_material(part["mat"])
+		var xs: Array = []
+		for i in pine_pos.size():
+			var p: Vector3 = pine_pos[i]
+			p.y = ground_h(p.x, p.z) + PINE_SINK
+			var h: float = pine_h[i]
+			var b := Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(h, h, h))
+			xs.append(Transform3D(b, p) * (part["xf"] as Transform3D))
+		_mm(root, "Pines", part["mesh"], mat, xs, true)
+	for i in pine_pos.size():
+		var p: Vector3 = pine_pos[i]
+		var body := StaticBody3D.new()
+		body.name = "PineCol%d" % i
+		body.position = Vector3(p.x, ground_h(p.x, p.z) + 1.2, p.z)
+		var cs := CollisionShape3D.new()
+		var cyl := CylinderShape3D.new()
+		cyl.radius = 0.3
+		cyl.height = 2.4
+		cs.shape = cyl
+		body.add_child(cs)
+		root.add_child(body)
+	# --- Gras-Buschel (4 Varianten), dicht im Garten, locker auf dem Rest
+	var grass_parts := _model_parts("res://assets/models/grass_variations/scene.gltf")
+	var gbuckets: Array = []
+	for i in grass_parts.size():
+		gbuckets.append([])
+	var target := 1100
 	var tries := 0
-	while gx.size() < grass_tufts and tries < grass_tufts * 4:
+	var count := 0
+	while count < target and tries < target * 6:
 		tries += 1
-		var x := _rng.randf_range(-31.0, 31.0)
-		var z := _rng.randf_range(-23.0, 40.0)
+		var in_garden := _rng.randf() < 0.75
+		var x := _rng.randf_range(-13.0, 11.0) if in_garden else _rng.randf_range(-30.0, 30.0)
+		var z := _rng.randf_range(-14.0, 9.8) if in_garden else _rng.randf_range(-22.0, 38.0)
 		if _in_rects(x, z, NO_GRASS):
 			continue
-		# fleckig: in "kahlen" Bereichen weniger Gras
-		if _patch.get_noise_2d(x * 1.3, z * 1.3) < -0.25 and _rng.randf() < 0.7:
+		if _patch.get_noise_2d(x * 1.3, z * 1.3) < -0.2 and _rng.randf() < 0.7:
 			continue
-		var sc := _rng.randf_range(0.7, 1.3)
-		var b := Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(sc, sc * _rng.randf_range(0.8, 1.2), sc))
-		gx.append(Transform3D(b, Vector3(x, ground_h(x, z), z)))
-	_mm(root, "Grass", gm, _m["grass"], gx, false)
-	# Unkraut: dichter an Hauswaenden, Zaun, Schuppen
-	var wx: Array = []
-	tries = 0
-	while wx.size() < weed_count and tries < weed_count * 40:
-		tries += 1
-		var x := _rng.randf_range(-12.0, 11.0)
-		var z := _rng.randf_range(-13.5, 10.0)
-		if _in_rects(x, z, NO_GRASS):
+		var v := _rng.randi() % grass_parts.size()
+		var h := _rng.randf_range(0.3, 0.6)
+		var w := h * _rng.randf_range(0.8, 1.3)
+		var b := Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(w, h, w))
+		gbuckets[v].append(Transform3D(b, Vector3(x, ground_h(x, z) - 0.02, z)) * (grass_parts[v]["xf"] as Transform3D))
+		count += 1
+	for v in grass_parts.size():
+		if gbuckets[v].is_empty():
 			continue
-		var near_house := x > -11.2 and x < 9.7 and z > -13.0 and z < 8.2
-		var near_fence := absf(z - 10.0) < 0.7
-		if not (near_house or near_fence):
-			continue
-		var sc := _rng.randf_range(0.7, 1.3)
-		var b := Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(sc, sc, sc))
-		wx.append(Transform3D(b, Vector3(x, ground_h(x, z), z)))
-	_mm(root, "Weeds", wm, _m["grass"], wx, false)
-	# Laub
-	var lx: Array = []
-	tries = 0
-	while lx.size() < leaf_count and tries < leaf_count * 3:
-		tries += 1
-		var x := _rng.randf_range(-14.0, 14.0)
-		var z := _rng.randf_range(-15.0, 10.0)
-		if _in_rects(x, z, NO_GRASS):
-			continue
-		var b := Basis.from_euler(Vector3(_rng.randf_range(-0.25, 0.25), _rng.randf() * TAU, _rng.randf_range(-0.25, 0.25)))
-		lx.append(Transform3D(b, Vector3(x, ground_h(x, z) + 0.02, z)))
-	_mm(root, "Leaves", NB.leaf_quad(0.12), _m["bark"], lx, false)
+		var gmat := (grass_parts[v]["mat"] as StandardMaterial3D).duplicate() as StandardMaterial3D
+		gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+		gmat.alpha_scissor_threshold = 0.5
+		gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		gmat.albedo_color = Color(0.4, 0.46, 0.38)
+		gmat.roughness = 1.0
+		gmat.metallic_specular = 0.0
+		_mm(root, "GrassModel%d" % v, grass_parts[v]["mesh"], gmat, gbuckets[v], false)
 
 
 func _build_forest() -> void:
 	var root := Node3D.new()
 	root.name = "Forest"
 	add_child(root)
-	var bark: Material = _m["bark"]
-	var variants: Array[Mesh] = [
-		NB.bare_tree(11, 10.0, 3), NB.bare_tree(12, 12.0, 3), NB.bare_tree(13, 9.0, 3),
-		NB.spruce(21, 11.0), NB.spruce(22, 9.5),
-	]
-	var buckets: Array = [[], [], [], [], []]
-	var step := 3.0 / maxf(forest_density, 0.1)
+	var parts := _model_parts("res://assets/models/pine_tree/scene.gltf")
+	var xs: Array = []
+	var step := 3.4 / maxf(forest_density, 0.1)
 	var x := -50.0
 	while x <= 50.0:
 		var z := -50.0
 		while z <= 53.0:
-			var px := x + _rng.randf_range(-1.2, 1.2)
-			var pz := z + _rng.randf_range(-1.2, 1.2)
+			var px := x + _rng.randf_range(-1.4, 1.4)
+			var pz := z + _rng.randf_range(-1.4, 1.4)
 			z += step
 			# innerhalb der Spielkarte (+ Rand) und auf der Strasse: keine Baeume
 			if absf(px) < 27.5 and pz > -19.5 and pz < 35.5:
@@ -900,14 +913,16 @@ func _build_forest() -> void:
 			var out := maxf(maxf(absf(px) - 26.0, -18.0 - pz), pz - 34.0)
 			if out > 13.0 and _rng.randf() > 0.4:
 				continue
-			var v := _rng.randi() % 5
-			var sc := _rng.randf_range(0.8, 1.35)
-			var b := Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(sc, sc, sc))
-			buckets[v].append(Transform3D(b, Vector3(px, ground_h(px, pz), pz)))
+			var h := _rng.randf_range(8.0, 13.0)
+			var b := Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3(h, h, h))
+			xs.append(Transform3D(b, Vector3(px, ground_h(px, pz) - 0.35, pz)))
 		x += step
-	for v in 5:
-		if buckets[v].size() > 0:
-			_mm(root, "Trees%d" % v, variants[v], bark, buckets[v], false)
+	for part in parts:
+		var mat := _pine_material(part["mat"])
+		var arr: Array = []
+		for t in xs:
+			arr.append((t as Transform3D) * (part["xf"] as Transform3D))
+		_mm(root, "Trees", part["mesh"], mat, arr, false)
 
 
 func _build_anchors() -> void:
