@@ -357,7 +357,22 @@ size = Vector3(8, 0.14, 18.2)
 size = Vector3(0.4, 0.2, 18.3)
 
 [sub_resource type="BoxMesh" id="Box_roof_east"]
-size = Vector3(5.2, 0.14, 8.34)
+size = Vector3(5.2, 0.14, 6.25)
+
+[sub_resource type="BoxMesh" id="Box_roof_alcove"]
+size = Vector3(2.7, 0.14, 2.4)
+
+[sub_resource type="PrismMesh" id="Prism_fill_east"]
+left_to_right = 0.0
+size = Vector3(4.45, 1.7, 0.3)
+
+[sub_resource type="PrismMesh" id="Prism_fill_alcove"]
+left_to_right = 0.0
+size = Vector3(2.1, 0.8, 0.3)
+
+[sub_resource type="PrismMesh" id="Prism_fill_util"]
+left_to_right = 0.0
+size = Vector3(2.4, 0.95, 0.3)
 
 [sub_resource type="BoxMesh" id="Box_roof_util"]
 size = Vector3(3.05, 0.14, 6.2)
@@ -5571,7 +5586,7 @@ mesh = SubResource("Box_roof_ridge")
 surface_material_override/0 = ExtResource("mat_roof_tiles")
 
 [node name="RoofLeanEast" type="MeshInstance3D" parent="Outdoor" unique_id=558103660]
-transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 5.55, 4.25, -1.37)
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 5.55, 4.25, -2.425)
 mesh = SubResource("Box_roof_east")
 surface_material_override/0 = ExtResource("mat_roof_tiles")
 
@@ -5579,6 +5594,56 @@ surface_material_override/0 = ExtResource("mat_roof_tiles")
 transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 4.575, 3.85, -8.4)
 mesh = SubResource("Box_roof_util")
 surface_material_override/0 = ExtResource("mat_roof_tiles")
+
+[node name="RoofLeanAlcove" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 4.34, 3.78, 1.9)
+mesh = SubResource("Box_roof_alcove")
+surface_material_override/0 = ExtResource("mat_roof_tiles")
+
+[node name="RoofFillEastS" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.32, 4.25, 0.35)
+mesh = SubResource("Prism_fill_east")
+surface_material_override/0 = ExtResource("mat_wood_trim_ext")
+
+[node name="RoofFillEastN" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.32, 4.25, -5.3)
+mesh = SubResource("Prism_fill_east")
+surface_material_override/0 = ExtResource("mat_wood_trim_ext")
+
+[node name="RoofFillAlcoveS" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.15, 3.8, 2.56)
+mesh = SubResource("Prism_fill_alcove")
+surface_material_override/0 = ExtResource("mat_wood_trim_ext")
+
+[node name="GutterLeanAlcove" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.72, 3.22, 1.9)
+size = Vector3(0.12, 0.1, 2.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="RoofFillUtilN" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3, 3.875, -11.06)
+mesh = SubResource("Prism_fill_util")
+surface_material_override/0 = ExtResource("mat_wood_trim_ext")
+
+[node name="FasciaEastN" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 5.55, 4.25, -5.57)
+size = Vector3(5.22, 0.2, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="FasciaEastS" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 5.55, 4.25, 0.72)
+size = Vector3(5.22, 0.2, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="FasciaAlcoveS" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 4.34, 3.78, 3.12)
+size = Vector3(2.72, 0.2, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="FasciaUtilN" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 4.575, 3.85, -11.52)
+size = Vector3(3.07, 0.2, 0.04)
+material = ExtResource("mat_wood_trim_ext")
 
 [node name="GableN" type="MeshInstance3D" parent="Outdoor" unique_id=1245340238]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 8.125, -11)
@@ -5601,8 +5666,8 @@ size = Vector3(0.12, 0.1, 18.2)
 material = ExtResource("mat_wood_trim_ext")
 
 [node name="GutterLeanEast" type="CSGBox3D" parent="Outdoor" unique_id=561285625]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.05, 3.22, -1.37)
-size = Vector3(0.12, 0.1, 8.34)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.05, 3.22, -2.425)
+size = Vector3(0.12, 0.1, 6.25)
 material = ExtResource("mat_wood_trim_ext")
 
 [node name="GutterLeanUtil" type="CSGBox3D" parent="Outdoor" unique_id=582601294]
