@@ -1,20 +1,27 @@
 extends CanvasLayer
-## Bewusst einfaches, provisorisches Einstellungsmenue (F1).
+## Pause- und Einstellungsmenue im duesteren Ermittler-Stil (ESC).
 ##
-## Buendelt die wichtigsten Steuerungs-Optionen an einer Stelle, statt sie
-## ueber Cogitos verschachteltes Options-Menue zu verteilen:
-##   - Maus-Empfindlichkeit
-##   - Y-Achse invertieren
-##   - Ducken umschalten (Toggle statt Halten)
-##   - Headbob
-##   - Tastenbelegung der wichtigsten Aktionen (Klick -> Taste druecken)
+## Kategorien:
+##   - Audio:               Gesamt-, Umgebungs- und Effektlautstaerke
+##   - Steuerung & Kamera:  Maus-Empfindlichkeit, FOV (75-95), Y-Invert, Ducken,
+##                          Headbob, Tastenbelegung
+##   - Grafik:              Helligkeit (Exposure), Vollbild/Fenster, V-Sync
 ##
-## Aenderungen werden sofort auf den Player angewandt und beim Schliessen in
-## user://options.cfg gespeichert.
+## Im Spiel (menu_mode == false) ist es zugleich das Pausemenue: Es pausiert den
+## SceneTree und bietet "Fortsetzen", "Zurueck zur Level-Auswahl" und "Spiel
+## beenden". Geoeffnet wird es ueber horror_player.gd (ESC -> open_pause_menu()).
+## Aus dem Startmenue (menu_mode == true) oeffnet nur der Knopf dort das Menue.
+##
+## Aenderungen gelten sofort. Cogito-Werte landen in user://options.cfg, die
+## neuen Werte (Lautstaerken, FOV, Helligkeit) in user://horror_settings.cfg.
+
+const UIStyle = preload("res://scenes/scripts/ui_style.gd")
 
 ## Wird nach dem Schliessen des Menues (und dem Speichern) gesendet.
 signal closed
 
+const MAIN_MENU_SCENE := "res://scenes/main_menu.tscn"
+const SETTINGS_FILE := "user://horror_settings.cfg"
 const MIGRATION_KEY := "simplified_controls_v2"
 
 ## Index von "1600x900 (16:9)" in CogitoGameConfig.RESOLUTION_DICTIONARY.
@@ -54,56 +61,91 @@ const HEADBOB_VALUES := [0, 1, 3, 7]
 const HEADBOB_LABELS := ["Aus", "Minimal", "Normal", "Stark"]
 
 const DEFAULT_SENSITIVITY := 0.25
+const DEFAULT_FOV := 85.0
+const DEFAULT_EXPOSURE := 0.85
+const FOV_MIN := 75.0
+const FOV_MAX := 95.0
+const EXPOSURE_MIN := 0.5
+const EXPOSURE_MAX := 1.5
+
+## Kategorie -> Anzeigename (Reihenfolge = Tab-Reihenfolge).
+const CATEGORIES := ["AUDIO", "STEUERUNG & KAMERA", "GRAFIK"]
+
+## Audio-Zeilen: Schluessel, Anzeigename, Bus.
+const AUDIO_ROWS := [
+	["master", "Gesamtlautstärke", "Master"],
+	["ambient", "Umgebung", "Music"],
+	["sfx", "Effekte", "SFX"],
+]
 
 var _root: Control
+var _title_label: Label
+var _subtitle_label: Label
+var _scroll: ScrollContainer
+var _pages: Array[Control] = []
+var _tab_buttons: Array[Button] = []
+
 var _sensitivity_slider: HSlider
-var _sensitivity_label: Label
+var _fov_slider: HSlider
+var _exposure_slider: HSlider
 var _invert_check: CheckBox
 var _toggle_crouch_check: CheckBox
+var _fullscreen_check: CheckBox
+var _vsync_check: CheckBox
 var _headbob_option: OptionButton
+var _audio_sliders: Dictionary = {}
+var _value_labels: Dictionary = {}
 var _bind_buttons: Dictionary = {}
-var _scroll: ScrollContainer
-var _hint_label: Label
+
+var _pause_footer: HBoxContainer
+var _menu_footer: HBoxContainer
+
 var _awaiting_action: String = ""
-var _awaiting_button: Button = null
 var _player: Node = null
 var _has_been_opened: bool = false
+var _opened_frame: int = -1
+var _file := ConfigFile.new()
 
-## Aus dem Startmenue heraus geoeffnet: Beim Schliessen bleibt der Mauszeiger
-## sichtbar und der Spieler eingefroren, und der F1-Hinweis bleibt versteckt.
-## Solange menu_mode aktiv ist, oeffnet F1 das Menue nicht (nur der Knopf im
-## Startmenue).
+## Aus dem Startmenue heraus geoeffnet: kein Pausieren, die Maus bleibt sichtbar
+## und ESC oeffnet das Menue nicht (nur der Knopf im Startmenue).
 var menu_mode: bool = false:
 	set(value):
 		menu_mode = value
-		_update_hint_visibility()
+		_update_footer()
 
-## Von Game-Over- und Sieg-Screen gesetzt: F1 oeffnet das Menue nicht mehr.
+## Von Game-Over- und Sieg-Screen gesetzt: ESC oeffnet das Menue nicht mehr.
 var hotkey_blocked: bool = false
 
 
 func _ready() -> void:
-	# Befehls-Prioritaet: laeuft auch, wenn das Spiel pausiert ist.
+	# Laeuft auch, wenn das Spiel pausiert ist.
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 90
 	add_to_group("simple_settings")
 	_player = get_tree().get_first_node_in_group("Player")
+	_file.load(SETTINGS_FILE)
 
 	_migrate_controls_once()
 	_build_ui()
 	_update_panel_height()
+	_select_category(0)
+	_update_footer()
 	_sync_from_config()
 	_set_open(false)
 
-	# Nach dem kompletten Szenenstart erneut anwenden: der Player liest seine
-	# Optionen in _ready() selbst aus der Config und wuerde unsere Werte sonst
-	# je nach Node-Reihenfolge ueberschreiben.
-	_apply_to_player.call_deferred()
+	# Nach dem kompletten Szenenstart anwenden: Player und Environment lesen ihre
+	# Werte in _ready() selbst und wuerden unsere sonst ueberschreiben.
+	_apply_all.call_deferred()
+
+
+## Sicherheitsnetz: Ein Szenenwechsel aus dem Pausemenue darf nie ein
+## pausiertes Spiel zuruecklassen.
+func _exit_tree() -> void:
+	if is_inside_tree():
+		get_tree().paused = false
 
 
 ## Einmalige Korrektur unsinniger Alt-Defaults (Y invertiert, Crouch-Toggle).
-## Laeuft nur beim ersten Start dieses Panels und ist ueber "Standardwerte"
-## jederzeit rueckgaengig zu machen.
 func _migrate_controls_once() -> void:
 	var cfg := CogitoGameConfig
 	if cfg == null or cfg.config == null:
@@ -115,8 +157,7 @@ func _migrate_controls_once() -> void:
 	cfg.toggle_crouching = false
 	cfg.headbob_strength = 1
 
-	# Alt-Configs starten auf 800x600 (Index 0). Auf eine zeitgemaesse
-	# Fenstergroesse anheben, sofern noch die winzige Aufloesung aktiv ist.
+	# Alt-Configs starten auf 800x600 (Index 0): auf zeitgemaesse Groesse anheben.
 	if cfg.current_resolution_index == 0:
 		cfg.current_resolution_index = DEFAULT_RESOLUTION_INDEX
 		cfg.fullscreen_mode = false
@@ -139,169 +180,263 @@ func _build_ui() -> void:
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_root)
 
+	# Dimmer mit Unschaerfe ueber dem Spielbild; faellt auf reines Schwarz zurueck,
+	# falls der Shader nicht greift.
 	var dim := ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.78)
+	dim.color = Color(0, 0, 0, 0.82)
+	var shader := Shader.new()
+	shader.code = UIStyle.BLUR_SHADER
+	var mat := ShaderMaterial.new()
+	mat.shader = shader
+	dim.material = mat
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	dim.mouse_filter = Control.MOUSE_FILTER_STOP
 	_root.add_child(dim)
 
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(center)
 
 	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(720, 0)
+	panel.custom_minimum_size = Vector2(1040, 0)
+	panel.add_theme_stylebox_override("panel", UIStyle.box(UIStyle.C_PANEL, UIStyle.C_LINE, [1, 1, 1, 1], [32, 26, 32, 26]))
 	center.add_child(panel)
 
-	var margin := MarginContainer.new()
-	for side in ["left", "top", "right", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 22)
-	panel.add_child(margin)
-
-	# Aussen: Scrollbereich (flexibel) + fester Footer. So bleiben die
-	# Schaltflaechen auch bei kleiner Aufloesung immer erreichbar.
 	var outer := VBoxContainer.new()
-	outer.add_theme_constant_override("separation", 12)
-	margin.add_child(outer)
+	outer.add_theme_constant_override("separation", 14)
+	panel.add_child(outer)
+
+	_subtitle_label = UIStyle.label("", 13, UIStyle.C_ACCENT)
+	outer.add_child(_subtitle_label)
+	_title_label = UIStyle.label("", 38, UIStyle.C_TEXT)
+	outer.add_child(_title_label)
+	outer.add_child(_rule())
+
+	var body := HBoxContainer.new()
+	body.add_theme_constant_override("separation", 28)
+	outer.add_child(body)
+
+	var tabs := VBoxContainer.new()
+	tabs.custom_minimum_size = Vector2(250, 0)
+	tabs.add_theme_constant_override("separation", 8)
+	body.add_child(tabs)
 
 	_scroll = ScrollContainer.new()
-	_scroll.custom_minimum_size = Vector2(680, 420)
+	_scroll.custom_minimum_size = Vector2(700, 420)
 	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	outer.add_child(_scroll)
+	_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body.add_child(_scroll)
 	get_viewport().size_changed.connect(_update_panel_height)
 
-	var vbox := VBoxContainer.new()
-	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	vbox.add_theme_constant_override("separation", 14)
-	_scroll.add_child(vbox)
+	var stack := VBoxContainer.new()
+	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_scroll.add_child(stack)
 
-	var title := Label.new()
-	title.text = "EINSTELLUNGEN"
-	title.add_theme_font_size_override("font_size", 30)
-	vbox.add_child(title)
+	var group := ButtonGroup.new()
+	for i in CATEGORIES.size():
+		var b := Button.new()
+		b.text = CATEGORIES[i]
+		b.toggle_mode = true
+		b.button_group = group
+		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		b.focus_mode = Control.FOCUS_NONE
+		b.custom_minimum_size = Vector2(0, 56)
+		b.add_theme_font_size_override("font_size", 18)
+		b.add_theme_color_override("font_color", UIStyle.C_DIM)
+		b.add_theme_color_override("font_hover_color", UIStyle.C_TEXT)
+		b.add_theme_color_override("font_pressed_color", Color.WHITE)
+		b.add_theme_color_override("font_hover_pressed_color", Color.WHITE)
+		var pad := [18, 0, 12, 0]
+		b.add_theme_stylebox_override("normal", UIStyle.box(UIStyle.C_CARD, UIStyle.C_LINE, [3, 0, 0, 0], pad))
+		b.add_theme_stylebox_override("hover", UIStyle.box(UIStyle.C_CARD_HOVER, UIStyle.C_DIM, [3, 0, 0, 0], pad))
+		b.add_theme_stylebox_override("pressed", UIStyle.box(UIStyle.C_CARD_ACTIVE, UIStyle.C_ACCENT, [3, 0, 0, 0], pad))
+		b.add_theme_stylebox_override("hover_pressed", UIStyle.box(UIStyle.C_CARD_ACTIVE, UIStyle.C_ACCENT_BRIGHT, [3, 0, 0, 0], pad))
+		b.pressed.connect(_select_category.bind(i))
+		tabs.add_child(b)
+		_tab_buttons.append(b)
 
-	var subtitle := Label.new()
-	subtitle.text = "F1 oder Esc zum Schließen – Änderungen gelten sofort."
-	subtitle.add_theme_font_size_override("font_size", 14)
-	subtitle.modulate = Color(1, 1, 1, 0.6)
-	vbox.add_child(subtitle)
+		var page := VBoxContainer.new()
+		page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		page.add_theme_constant_override("separation", 16)
+		stack.add_child(page)
+		_pages.append(page)
 
-	vbox.add_child(HSeparator.new())
-	_add_sensitivity_row(vbox)
-	_add_checkbox_row(vbox, "Y-Achse invertieren", func(pressed: bool): _on_invert_toggled(pressed))
-	_add_checkbox_row(vbox, "Ducken umschalten (statt halten)", func(pressed: bool): _on_toggle_crouch(pressed))
-	_add_headbob_row(vbox)
+	_build_audio_page(_pages[0])
+	_build_controls_page(_pages[1])
+	_build_graphics_page(_pages[2])
 
-	vbox.add_child(HSeparator.new())
-	var bind_title := Label.new()
-	bind_title.text = "TASTENBELEGUNG"
-	bind_title.add_theme_font_size_override("font_size", 20)
-	vbox.add_child(bind_title)
+	outer.add_child(_rule())
+	_build_footer(outer)
 
-	var bind_hint := Label.new()
-	bind_hint.text = "Knopf anklicken, dann die neue Taste drücken. Esc bricht ab."
-	bind_hint.add_theme_font_size_override("font_size", 13)
-	bind_hint.modulate = Color(1, 1, 1, 0.6)
-	vbox.add_child(bind_hint)
 
-	# Zwei Spaltenpaare nebeneinander, damit die Liste kompakt bleibt.
+func _rule() -> ColorRect:
+	var r := ColorRect.new()
+	r.color = UIStyle.C_LINE
+	r.custom_minimum_size = Vector2(0, 1)
+	return r
+
+
+func _section(parent: Control, text: String) -> void:
+	parent.add_child(UIStyle.label(text, 13, UIStyle.C_ACCENT))
+
+
+func _build_audio_page(page: Control) -> void:
+	_section(page, "LAUTSTÄRKE")
+	for row in AUDIO_ROWS:
+		var key: String = row[0]
+		_audio_sliders[key] = _add_slider_row(page, row[1], 0.0, 1.0, 0.01, key,
+			func(v: float): _on_audio_changed(key, v),
+			func(v: float) -> String: return "%d %%" % roundi(v * 100.0))
+
+
+func _build_controls_page(page: Control) -> void:
+	_section(page, "MAUS & KAMERA")
+	_sensitivity_slider = _add_slider_row(page, "Maus-Empfindlichkeit", 0.03, 1.5, 0.01, "sens",
+		_on_sensitivity_changed, func(v: float) -> String: return "%.2f" % v)
+	_fov_slider = _add_slider_row(page, "Sichtfeld (FOV)", FOV_MIN, FOV_MAX, 1.0, "fov",
+		_on_fov_changed, func(v: float) -> String: return "%d°" % roundi(v))
+	_invert_check = _add_toggle_row(page, "Y-Achse invertieren", _on_invert_toggled)
+	_toggle_crouch_check = _add_toggle_row(page, "Ducken umschalten (statt halten)", _on_toggle_crouch)
+	_add_headbob_row(page)
+
+	page.add_child(_rule())
+	_section(page, "TASTENBELEGUNG")
+	var hint := UIStyle.label("Knopf anklicken, dann die neue Taste drücken. Esc bricht ab.", 13, UIStyle.C_DIM)
+	page.add_child(hint)
+
 	var grid := GridContainer.new()
 	grid.columns = 4
 	grid.add_theme_constant_override("h_separation", 14)
-	grid.add_theme_constant_override("v_separation", 6)
-	vbox.add_child(grid)
+	grid.add_theme_constant_override("v_separation", 8)
+	page.add_child(grid)
 	for entry in BINDABLE_ACTIONS:
 		_add_bind_row(grid, entry[0], entry[1])
 
-	outer.add_child(HSeparator.new())
-	var buttons := HBoxContainer.new()
-	buttons.add_theme_constant_override("separation", 12)
-	buttons.alignment = BoxContainer.ALIGNMENT_END
-	outer.add_child(buttons)
+
+func _build_graphics_page(page: Control) -> void:
+	_section(page, "DARSTELLUNG")
+	_exposure_slider = _add_slider_row(page, "Helligkeit (Exposure)", EXPOSURE_MIN, EXPOSURE_MAX, 0.01, "exposure",
+		_on_exposure_changed, func(v: float) -> String: return "%.2f" % v)
+	_fullscreen_check = _add_toggle_row(page, "Vollbild", _on_fullscreen_toggled)
+	_vsync_check = _add_toggle_row(page, "V-Sync", _on_vsync_toggled)
+
+
+func _build_footer(parent: Control) -> void:
+	var footer := HBoxContainer.new()
+	footer.add_theme_constant_override("separation", 14)
+	parent.add_child(footer)
 
 	var reset_button := Button.new()
-	reset_button.text = "Standardwerte"
-	reset_button.custom_minimum_size = Vector2(150, 40)
+	reset_button.text = "STANDARDWERTE"
+	reset_button.custom_minimum_size = Vector2(210, 52)
+	UIStyle.style_button(reset_button, false, 17)
 	reset_button.pressed.connect(_on_reset_pressed)
-	buttons.add_child(reset_button)
+	footer.add_child(reset_button)
 
-	var close_button := Button.new()
-	close_button.text = "Speichern & Schließen"
-	close_button.custom_minimum_size = Vector2(190, 40)
-	close_button.pressed.connect(func(): _set_open(false))
-	buttons.add_child(close_button)
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	footer.add_child(spacer)
 
-	# Dezenter Dauer-Hinweis, damit das Menue auffindbar ist.
-	# Achtung: haengt absichtlich NICHT an _root, sonst verschwindet er mit dem Menue.
-	var hint_root := Control.new()
-	hint_root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	hint_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(hint_root)
+	# Pausemodus: Fortsetzen / Level-Auswahl / Beenden.
+	_pause_footer = HBoxContainer.new()
+	_pause_footer.add_theme_constant_override("separation", 12)
+	footer.add_child(_pause_footer)
+	_footer_button(_pause_footer, "FORTSETZEN", 190, true, func(): _set_open(false))
+	_footer_button(_pause_footer, "ZURÜCK ZUR LEVEL-AUSWAHL", 300, false, _on_level_select_pressed)
+	_footer_button(_pause_footer, "SPIEL BEENDEN", 190, false, _on_quit_pressed)
 
-	_hint_label = Label.new()
-	_hint_label.text = "F1 – Einstellungen"
-	_hint_label.add_theme_font_size_override("font_size", 14)
-	_hint_label.modulate = Color(1, 1, 1, 0.35)
-	_hint_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_hint_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	_hint_label.offset_left = -190
-	_hint_label.offset_top = -38
-	_hint_label.offset_right = -18
-	_hint_label.offset_bottom = -14
-	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	hint_root.add_child(_hint_label)
+	# Startmenue: nur Zurueck.
+	_menu_footer = HBoxContainer.new()
+	footer.add_child(_menu_footer)
+	_footer_button(_menu_footer, "SPEICHERN & SCHLIESSEN", 290, true, func(): _set_open(false))
 
 
-func _add_sensitivity_row(parent: Control) -> void:
+func _footer_button(parent: Control, text: String, width: float, primary: bool, callback: Callable) -> void:
+	var b := Button.new()
+	b.text = text
+	b.custom_minimum_size = Vector2(width, 52)
+	UIStyle.style_button(b, primary, 17)
+	b.pressed.connect(callback)
+	parent.add_child(b)
+
+
+## Zeile mit Beschriftung, Slider und Wertanzeige. Gibt den Slider zurueck.
+func _add_slider_row(parent: Control, text: String, min_v: float, max_v: float, step: float,
+		key: String, on_changed: Callable, formatter: Callable) -> HSlider:
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
+	row.add_theme_constant_override("separation", 14)
 	parent.add_child(row)
 
-	var label := Label.new()
-	label.text = "Maus-Empfindlichkeit"
-	label.custom_minimum_size = Vector2(240, 0)
+	var label := UIStyle.label(text, 17, UIStyle.C_TEXT)
+	label.custom_minimum_size = Vector2(230, 0)
 	row.add_child(label)
 
-	_sensitivity_slider = HSlider.new()
-	_sensitivity_slider.min_value = 0.03
-	_sensitivity_slider.max_value = 1.5
-	_sensitivity_slider.step = 0.01
-	_sensitivity_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_sensitivity_slider.custom_minimum_size = Vector2(180, 34)
-	_sensitivity_slider.value_changed.connect(_on_sensitivity_changed)
-	row.add_child(_sensitivity_slider)
+	var slider := HSlider.new()
+	slider.min_value = min_v
+	slider.max_value = max_v
+	slider.step = step
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	slider.custom_minimum_size = Vector2(200, 30)
+	UIStyle.style_slider(slider)
+	row.add_child(slider)
 
-	_sensitivity_label = Label.new()
-	_sensitivity_label.custom_minimum_size = Vector2(46, 0)
-	_sensitivity_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	row.add_child(_sensitivity_label)
+	var value_label := UIStyle.label("", 16, UIStyle.C_DIM)
+	value_label.custom_minimum_size = Vector2(64, 0)
+	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	row.add_child(value_label)
+	_value_labels[slider] = [value_label, formatter]
+
+	slider.value_changed.connect(func(v: float):
+		_refresh_value_label(slider)
+		on_changed.call(v))
+	return slider
 
 
-func _add_checkbox_row(parent: Control, text: String, on_toggled: Callable) -> CheckBox:
+func _refresh_value_label(slider: HSlider) -> void:
+	var entry: Array = _value_labels.get(slider, [])
+	if entry.is_empty():
+		return
+	var label: Label = entry[0]
+	var formatter: Callable = entry[1]
+	label.text = formatter.call(slider.value)
+
+
+func _set_slider(slider: HSlider, value: float) -> void:
+	if slider == null:
+		return
+	slider.set_value_no_signal(value)
+	_refresh_value_label(slider)
+
+
+func _add_toggle_row(parent: Control, text: String, on_toggled: Callable) -> CheckBox:
 	var check := CheckBox.new()
 	check.text = text
+	check.focus_mode = Control.FOCUS_NONE
+	check.add_theme_font_size_override("font_size", 17)
+	check.add_theme_color_override("font_color", UIStyle.C_TEXT)
+	check.add_theme_color_override("font_hover_color", Color.WHITE)
+	check.add_theme_color_override("font_pressed_color", Color.WHITE)
+	check.add_theme_color_override("font_hover_pressed_color", Color.WHITE)
 	check.toggled.connect(on_toggled)
 	parent.add_child(check)
-	if text.begins_with("Y-Achse"):
-		_invert_check = check
-	else:
-		_toggle_crouch_check = check
 	return check
 
 
 func _add_headbob_row(parent: Control) -> void:
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
+	row.add_theme_constant_override("separation", 14)
 	parent.add_child(row)
 
-	var label := Label.new()
-	label.text = "Headbob (Kopfwippen)"
-	label.custom_minimum_size = Vector2(240, 0)
+	var label := UIStyle.label("Headbob (Kopfwippen)", 17, UIStyle.C_TEXT)
+	label.custom_minimum_size = Vector2(230, 0)
 	row.add_child(label)
 
 	_headbob_option = OptionButton.new()
 	_headbob_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_headbob_option.custom_minimum_size = Vector2(0, 40)
+	UIStyle.style_button(_headbob_option, false, 16)
 	for i in HEADBOB_LABELS.size():
 		_headbob_option.add_item(HEADBOB_LABELS[i], HEADBOB_VALUES[i])
 	_headbob_option.item_selected.connect(_on_headbob_selected)
@@ -309,27 +444,45 @@ func _add_headbob_row(parent: Control) -> void:
 
 
 func _add_bind_row(parent: Control, action: String, display_name: String) -> void:
-	var label := Label.new()
-	label.text = display_name
+	var label := UIStyle.label(display_name, 15, UIStyle.C_TEXT)
 	label.custom_minimum_size = Vector2(130, 0)
 	parent.add_child(label)
 
 	var button := Button.new()
-	button.custom_minimum_size = Vector2(92, 32)
+	button.custom_minimum_size = Vector2(110, 34)
+	UIStyle.style_button(button, false, 15)
 	button.pressed.connect(func(): _start_rebind(action, button))
 	parent.add_child(button)
 	_bind_buttons[action] = button
 	_refresh_bind_button(action)
 
 
-## Begrenzt die Panelhoehe auf die Fensterhoehe, damit der Schliessen-Knopf
-## auch bei kleinen Aufloesungen erreichbar bleibt.
+func _select_category(index: int) -> void:
+	for i in _pages.size():
+		_pages[i].visible = i == index
+		_tab_buttons[i].set_pressed_no_signal(i == index)
+	if _scroll:
+		_scroll.scroll_vertical = 0
+
+
+## Begrenzt die Panelhoehe auf die Fensterhoehe, damit die Fussleiste auch bei
+## kleinen Aufloesungen erreichbar bleibt.
 func _update_panel_height() -> void:
 	if _scroll == null:
 		return
 	var window_height := get_viewport().get_visible_rect().size.y
-	# Platz fuer Titel/Footer/Abstaende freihalten.
-	_scroll.custom_minimum_size.y = clampf(window_height - 210.0, 240.0, 680.0)
+	_scroll.custom_minimum_size.y = clampf(window_height - 300.0, 240.0, 520.0)
+
+
+## Titel und Fussleiste je nach Modus (Pause im Spiel / Overlay im Startmenue).
+func _update_footer() -> void:
+	if _pause_footer == null:
+		return
+	_pause_footer.visible = not menu_mode
+	_menu_footer.visible = menu_mode
+	_subtitle_label.text = "EINSTELLUNGEN" if menu_mode else "EINSATZ UNTERBROCHEN"
+	_title_label.text = "Einstellungen" if menu_mode else "Pause"
+	_subtitle_label.text += "  ·  Esc zum Schließen"
 
 
 func _refresh_bind_button(action: String) -> void:
@@ -346,13 +499,19 @@ func _refresh_bind_button(action: String) -> void:
 
 #region Werte <-> UI
 func _sync_from_config() -> void:
-	if _sensitivity_slider:
-		_sensitivity_slider.set_value_no_signal(CogitoGameConfig.mouse_sens)
-		_update_sensitivity_label(CogitoGameConfig.mouse_sens)
+	_set_slider(_sensitivity_slider, CogitoGameConfig.mouse_sens)
+	_set_slider(_fov_slider, _get_saved("camera", "fov", DEFAULT_FOV))
+	_set_slider(_exposure_slider, _get_saved("graphics", "exposure", DEFAULT_EXPOSURE))
+	for row in AUDIO_ROWS:
+		_set_slider(_audio_sliders.get(row[0]), _get_audio_value(row[0], row[2]))
 	if _invert_check:
 		_invert_check.set_pressed_no_signal(CogitoGameConfig.invert_y)
 	if _toggle_crouch_check:
 		_toggle_crouch_check.set_pressed_no_signal(CogitoGameConfig.toggle_crouching)
+	if _fullscreen_check:
+		_fullscreen_check.set_pressed_no_signal(CogitoGameConfig.is_fullscreen())
+	if _vsync_check:
+		_vsync_check.set_pressed_no_signal(DisplayServer.window_get_vsync_mode() != DisplayServer.VSYNC_DISABLED)
 	if _headbob_option:
 		var idx := HEADBOB_VALUES.find(CogitoGameConfig.headbob_strength)
 		_headbob_option.select(0 if idx == -1 else idx)
@@ -360,16 +519,77 @@ func _sync_from_config() -> void:
 		_refresh_bind_button(action)
 
 
-func _update_sensitivity_label(value: float) -> void:
-	if _sensitivity_label:
-		_sensitivity_label.text = "%.2f" % value
+func _get_saved(section: String, key: String, default: Variant) -> Variant:
+	return _file.get_value(section, key, default)
+
+
+func _put_saved(section: String, key: String, value: Variant) -> void:
+	_file.set_value(section, key, value)
+
+
+## Gespeicherter Wert, sonst der aktuelle Pegel des Busses (Cogito-Optionen).
+func _get_audio_value(key: String, bus_name: String) -> float:
+	var idx := AudioServer.get_bus_index(bus_name)
+	var current := 1.0
+	if idx >= 0:
+		current = db_to_linear(AudioServer.get_bus_volume_db(idx))
+	return clampf(_get_saved("audio", key, current), 0.0, 1.0)
+
+
+func _on_audio_changed(key: String, value: float) -> void:
+	_put_saved("audio", key, value)
+	_apply_audio(key, value)
+
+
+func _apply_audio(key: String, value: float) -> void:
+	for row in AUDIO_ROWS:
+		if row[0] != key:
+			continue
+		var idx := AudioServer.get_bus_index(row[2])
+		if idx < 0:
+			return
+		AudioServer.set_bus_mute(idx, value <= 0.001)
+		# Cogito merkt sich SFX-/Musik-Pegel selbst (options.cfg) - dort mitfuehren.
+		if row[2] != "Master" and CogitoGameConfig:
+			CogitoGameConfig.set_volume(idx, value)
+		else:
+			AudioServer.set_bus_volume_db(idx, linear_to_db(maxf(value, 0.0001)))
+		return
 
 
 func _on_sensitivity_changed(value: float) -> void:
 	CogitoGameConfig.mouse_sens = value
-	_update_sensitivity_label(value)
 	if _player:
 		_player.MOUSE_SENS = value
+
+
+func _on_fov_changed(value: float) -> void:
+	_put_saved("camera", "fov", value)
+	_apply_fov(value)
+
+
+func _apply_fov(value: float) -> void:
+	if _player and _player.has_method("set_base_fov"):
+		_player.set_base_fov(value)
+
+
+func _on_exposure_changed(value: float) -> void:
+	_put_saved("graphics", "exposure", value)
+	_apply_exposure(value)
+
+
+func _apply_exposure(value: float) -> void:
+	var node := get_tree().root.find_child("WorldEnvironment", true, false) as WorldEnvironment
+	if node and node.environment:
+		node.environment.tonemap_exposure = value
+
+
+func _on_fullscreen_toggled(pressed: bool) -> void:
+	CogitoGameConfig.toggle_fullscreen(pressed)
+
+
+func _on_vsync_toggled(pressed: bool) -> void:
+	CogitoGameConfig.set_vsync(pressed)
 
 
 func _on_invert_toggled(pressed: bool) -> void:
@@ -391,6 +611,16 @@ func _on_headbob_selected(index: int) -> void:
 		_player.HEADBOBBLE = value
 
 
+## Wendet alle gespeicherten Werte auf Spieler, Environment und Audio-Busse an.
+func _apply_all() -> void:
+	_apply_to_player()
+	_apply_exposure(_get_saved("graphics", "exposure", DEFAULT_EXPOSURE))
+	# Audio nur anwenden, wenn der Nutzer schon etwas gespeichert hat.
+	for row in AUDIO_ROWS:
+		if _file.has_section_key("audio", row[0]):
+			_apply_audio(row[0], _file.get_value("audio", row[0]))
+
+
 func _apply_to_player() -> void:
 	if _player == null:
 		_player = get_tree().get_first_node_in_group("Player")
@@ -400,16 +630,15 @@ func _apply_to_player() -> void:
 	_player.INVERT_Y_AXIS = CogitoGameConfig.invert_y
 	_player.TOGGLE_CROUCH = CogitoGameConfig.toggle_crouching
 	_player.HEADBOBBLE = CogitoGameConfig.headbob_strength
+	_apply_fov(_get_saved("camera", "fov", DEFAULT_FOV))
 #endregion
 
 
 #region Tastenbelegung
 func _start_rebind(action: String, button: Button) -> void:
-	# Alten "warte auf Taste"-Zustand zuruecksetzen.
 	if _awaiting_action != "":
 		_refresh_bind_button(_awaiting_action)
 	_awaiting_action = action
-	_awaiting_button = button
 	button.text = "Taste drücken …"
 
 
@@ -418,33 +647,34 @@ func _cancel_rebind() -> void:
 		return
 	var action := _awaiting_action
 	_awaiting_action = ""
-	_awaiting_button = null
 	_refresh_bind_button(action)
 
 
 func _finish_rebind(event: InputEventKey) -> void:
 	var action := _awaiting_action
 	_awaiting_action = ""
-	_awaiting_button = null
 
 	var new_event := InputEventKey.new()
 	new_event.physical_keycode = event.physical_keycode
 	InputHelper.set_keyboard_input_for_action(action, new_event)
 
-	# Alle Knöpfe neu beschriften: durch das Tauschen kann sich mehr als eine
-	# Belegung geaendert haben.
+	# Durch das Tauschen kann sich mehr als eine Belegung geaendert haben.
 	for a in _bind_buttons.keys():
 		_refresh_bind_button(a)
 
 
 func _on_reset_pressed() -> void:
-	# Steuerungs-Defaults
 	CogitoGameConfig.mouse_sens = DEFAULT_SENSITIVITY
 	CogitoGameConfig.invert_y = false
 	CogitoGameConfig.toggle_crouching = false
 	CogitoGameConfig.headbob_strength = 1
 
-	# Tastenbelegung
+	_put_saved("camera", "fov", DEFAULT_FOV)
+	_put_saved("graphics", "exposure", DEFAULT_EXPOSURE)
+	for row in AUDIO_ROWS:
+		_put_saved("audio", row[0], 1.0)
+		_apply_audio(row[0], 1.0)
+
 	for action in DEFAULT_BINDINGS.keys():
 		var ev := InputEventKey.new()
 		ev.physical_keycode = DEFAULT_BINDINGS[action]
@@ -452,6 +682,7 @@ func _on_reset_pressed() -> void:
 
 	_sync_from_config()
 	_apply_to_player()
+	_apply_exposure(DEFAULT_EXPOSURE)
 #endregion
 
 
@@ -465,24 +696,34 @@ func _input(event: InputEvent) -> void:
 				_cancel_rebind()
 			else:
 				_finish_rebind(event)
-			return
 		return
 
-	if not _root:
+	if _root == null or not _root.visible:
 		return
 
-	if event.is_action_pressed("settings"):
-		# In Startmenue und Endscreens laesst sich das Menue nicht per F1
-		# oeffnen. Ein bereits offenes Menue darf per F1 geschlossen werden.
-		if not _root.visible and (menu_mode or hotkey_blocked):
-			return
+	# ESC schliesst das offene Menue. Im selben Frame, in dem es durch ESC
+	# geoeffnet wurde, darf dieselbe Taste es nicht sofort wieder schliessen.
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("menu"):
 		get_viewport().set_input_as_handled()
-		_set_open(not _root.visible)
-		return
+		if Engine.get_process_frames() != _opened_frame:
+			_set_open(false)
 
-	if _root.visible and event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		_set_open(false)
+
+## Oeffnet das Pausemenue im Spiel (von horror_player.gd bei ESC aufgerufen).
+func open_pause_menu() -> void:
+	if menu_mode or hotkey_blocked or is_open():
+		return
+	_set_open(true)
+
+
+## Oeffnet das Menue von aussen (Startmenue-Knopf).
+func open_menu() -> void:
+	if not is_open():
+		_set_open(true)
+
+
+func is_open() -> bool:
+	return _root != null and _root.visible
 
 
 func _set_open(open: bool) -> void:
@@ -492,21 +733,20 @@ func _set_open(open: bool) -> void:
 	# Beim allerersten Aufruf (Spielstart) nichts anwenden oder speichern.
 	if not open and not _has_been_opened:
 		_root.visible = false
-		_update_hint_visibility()
 		return
 
 	_root.visible = open
-	_update_hint_visibility()
 
 	if open:
 		_has_been_opened = true
+		_opened_frame = Engine.get_process_frames()
+		_sync_from_config()
+		_select_category(0)
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		if _player and _player.has_method("pause_before_interaction"):
-			_player.pause_before_interaction()
-		if _sensitivity_slider:
-			# Beim Oeffnen den aktuellen Stand anzeigen.
-			_sensitivity_slider.set_value_no_signal(CogitoGameConfig.mouse_sens)
-			_update_sensitivity_label(CogitoGameConfig.mouse_sens)
+		if not menu_mode:
+			if _player and _player.has_method("pause_before_interaction"):
+				_player.pause_before_interaction()
+			get_tree().paused = true
 	else:
 		_cancel_rebind()
 		_save()
@@ -514,39 +754,36 @@ func _set_open(open: bool) -> void:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			closed.emit()
 			return
+		get_tree().paused = false
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-		# Verzoegert: Wird das Menue per Esc geschlossen, laeuft im selben Frame
-		# noch Cogitos InputRouter. Waere die Bewegung schon wieder freigegeben,
-		# wuerde dieselbe Esc-Taste zusaetzlich das Pause-Menue oeffnen.
+		# Verzoegert: Im selben Frame laeuft noch Cogitos InputRouter. Waere die
+		# Bewegung schon freigegeben, wuerde dieselbe ESC-Taste das Menue erneut
+		# oeffnen.
 		_resume_player_deferred.call_deferred()
+		closed.emit()
 
 
-## Der F1-Hinweis ist nur im laufenden Spiel bei geschlossenem Menue sichtbar.
-func _update_hint_visibility() -> void:
-	if _hint_label == null:
-		return
-	var is_menu_open := _root != null and _root.visible
-	_hint_label.visible = not is_menu_open and not menu_mode and not hotkey_blocked
-
-
-## Sperrt F1 dauerhaft (Game-Over- / Sieg-Screen). Ein gerade offenes Menue
-## wird gespeichert und geschlossen, ohne Maus oder Spieler freizugeben.
+## Sperrt das Menue dauerhaft (Game-Over- / Sieg-Screen). Ein gerade offenes
+## Menue wird gespeichert und geschlossen, ohne Maus oder Spieler freizugeben;
+## der Endscreen uebernimmt Pause und Mauszeiger selbst.
 func block_hotkey() -> void:
 	hotkey_blocked = true
 	if _root and _root.visible:
 		_cancel_rebind()
 		_save()
 		_root.visible = false
-	_update_hint_visibility()
 
 
-## Oeffnet das Menue von aussen (Startmenue).
-func open_menu() -> void:
-	_set_open(true)
+func _on_level_select_pressed() -> void:
+	_save()
+	get_tree().paused = false
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 
-func is_open() -> bool:
-	return _root != null and _root.visible
+func _on_quit_pressed() -> void:
+	_save()
+	get_tree().quit()
 
 
 func _resume_player_deferred() -> void:
@@ -555,7 +792,7 @@ func _resume_player_deferred() -> void:
 
 
 func _save() -> void:
-	if CogitoGameConfig == null:
-		return
-	CogitoGameConfig.save_options()
+	_file.save(SETTINGS_FILE)
+	if CogitoGameConfig:
+		CogitoGameConfig.save_options()
 #endregion

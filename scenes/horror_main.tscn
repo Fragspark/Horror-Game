@@ -7097,7 +7097,7 @@ custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 24
-text = "Ortsauswahl"
+text = "Level-Auswahl"
 
 [node name="SimpleSettings" type="CanvasLayer" parent="." unique_id=7679771]
 unique_name_in_owner = true
@@ -7170,7 +7170,7 @@ custom_minimum_size = Vector2(280, 62)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 24
-text = "Ortsauswahl"
+text = "Level-Auswahl"
 
 [editable path="Doors/ExitDoor"]
 [editable path="Doors/FrontDoor"]

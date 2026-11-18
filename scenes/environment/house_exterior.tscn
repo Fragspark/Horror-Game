@@ -1,0 +1,3631 @@
+[gd_scene format=3]
+
+[ext_resource type="Material" uid="uid://cr23dtuaxrcdm" path="res://assets/materials/wood_ceiling.tres" id="mat_ceiling_plaster"]
+[ext_resource type="Material" path="res://assets/materials/roof_tiles.tres" id="mat_roof_tiles"]
+[ext_resource type="Material" path="res://assets/materials/wood_wainscoting.tres" id="mat_wall_plaster"]
+[ext_resource type="Material" path="res://assets/materials/wood_light.tres" id="mat_wood_light_ext"]
+[ext_resource type="Material" uid="uid://bxpfc54gusaxp" path="res://assets/materials/wood_beams_trim.tres" id="mat_wood_trim_ext"]
+[ext_resource type="Shader" uid="uid://def3whg52y17k" path="res://assets/materials/window_grime.gdshader" id="shader_window_grime"]
+
+[sub_resource type="ShaderMaterial" id="Material_milky_glass"]
+resource_name = "Milky_Window_Glass"
+render_priority = 0
+shader = ExtResource("shader_window_grime")
+shader_parameter/glass_color = Color(0.72, 0.8, 0.9, 1)
+shader_parameter/dirt_color = Color(0.035, 0.045, 0.055, 1)
+shader_parameter/base_alpha = 0.07
+shader_parameter/grime_alpha = 0.12
+shader_parameter/edge_width = 0.11
+shader_parameter/noise_scale = 3.2
+
+[sub_resource type="Gradient" id="Gradient_rough_wall"]
+offsets = PackedFloat32Array(0, 0.35, 0.7, 1)
+colors = PackedColorArray(0.58, 0.58, 0.58, 1, 0.78, 0.78, 0.78, 1, 0.93, 0.93, 0.93, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="Noise_wall_normal"]
+seed = 31
+frequency = 0.045
+fractal_lacunarity = 2.15
+fractal_gain = 0.58
+
+[sub_resource type="NoiseTexture2D" id="Tex_rough_wall"]
+width = 256
+height = 256
+noise = SubResource("Noise_wall_normal")
+color_ramp = SubResource("Gradient_rough_wall")
+seamless = true
+
+[sub_resource type="FastNoiseLite" id="Noise_stone_normal"]
+noise_type = 2
+seed = 73
+frequency = 0.055
+fractal_octaves = 4
+fractal_lacunarity = 2.1
+fractal_gain = 0.6
+
+[sub_resource type="NoiseTexture2D" id="Tex_normal_stone"]
+noise = SubResource("Noise_stone_normal")
+seamless = true
+as_normal_map = true
+bump_strength = 11.0
+
+[sub_resource type="Gradient" id="Gradient_rough_stone"]
+offsets = PackedFloat32Array(0, 0.3, 0.65, 1)
+colors = PackedColorArray(0.52, 0.52, 0.52, 1, 0.74, 0.74, 0.74, 1, 0.9, 0.9, 0.9, 1, 1, 1, 1, 1)
+
+[sub_resource type="NoiseTexture2D" id="Tex_rough_stone"]
+width = 256
+height = 256
+noise = SubResource("Noise_stone_normal")
+color_ramp = SubResource("Gradient_rough_stone")
+seamless = true
+
+[sub_resource type="StandardMaterial3D" id="Material_bulb"]
+resource_name = "Warm_Bulb"
+shading_mode = 0
+albedo_color = Color(1, 0.85, 0.62, 1)
+
+[sub_resource type="BoxMesh" id="Box_roof_main"]
+size = Vector3(8, 0.14, 18.2)
+
+[sub_resource type="BoxMesh" id="Box_roof_ridge"]
+size = Vector3(0.4, 0.2, 18.3)
+
+[sub_resource type="BoxMesh" id="Box_roof_east"]
+size = Vector3(5.2, 0.14, 8.34)
+
+[sub_resource type="BoxMesh" id="Box_roof_util"]
+size = Vector3(3.05, 0.14, 6.2)
+
+[sub_resource type="PrismMesh" id="Prism_gable"]
+size = Vector3(12.3, 3.85, 0.3)
+
+[sub_resource type="Gradient" id="Gradient_plaster"]
+offsets = PackedFloat32Array(0, 0.45, 0.75, 1)
+colors = PackedColorArray(0.145, 0.135, 0.115, 1, 0.225, 0.21, 0.18, 1, 0.17, 0.155, 0.125, 1, 0.11, 0.1, 0.085, 1)
+
+[sub_resource type="FastNoiseLite" id="Noise_plaster"]
+frequency = 0.02
+fractal_octaves = 4
+
+[sub_resource type="NoiseTexture2D" id="Tex_plaster"]
+width = 256
+height = 256
+noise = SubResource("Noise_plaster")
+color_ramp = SubResource("Gradient_plaster")
+seamless = true
+
+[sub_resource type="NoiseTexture2D" id="Tex_normal_wall"]
+noise = SubResource("Noise_wall_normal")
+seamless = true
+as_normal_map = true
+bump_strength = 9.0
+
+[sub_resource type="StandardMaterial3D" id="Material_neighbour_wall"]
+resource_name = "Neighbour_House_Dark"
+albedo_color = Color(0.35, 0.38, 0.42, 1)
+albedo_texture = SubResource("Tex_plaster")
+roughness = 0.95
+roughness_texture = SubResource("Tex_rough_wall")
+normal_enabled = true
+normal_scale = 0.9
+normal_texture = SubResource("Tex_normal_wall")
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+texture_filter = 5
+
+[sub_resource type="StandardMaterial3D" id="Material_neighbour_roof"]
+resource_name = "Neighbour_Roof"
+albedo_color = Color(0.12, 0.13, 0.15, 1)
+albedo_texture = SubResource("Tex_plaster")
+metallic_specular = 0.2
+roughness = 0.88
+roughness_texture = SubResource("Tex_rough_stone")
+normal_enabled = true
+normal_scale = 0.8
+normal_texture = SubResource("Tex_normal_stone")
+uv1_scale = Vector3(0.7, 0.7, 0.7)
+uv1_triplanar = true
+texture_filter = 5
+
+[sub_resource type="StandardMaterial3D" id="Material_porch"]
+resource_name = "Cracked_Porch_Stone"
+albedo_color = Color(0.7, 0.68, 0.65, 1)
+albedo_texture = SubResource("Tex_plaster")
+roughness = 0.94
+roughness_texture = SubResource("Tex_rough_stone")
+normal_enabled = true
+normal_texture = SubResource("Tex_normal_stone")
+uv1_scale = Vector3(0.8, 0.8, 0.8)
+uv1_triplanar = true
+texture_filter = 5
+
+[node name="HouseExterior" type="Node3D"]
+
+[node name="House" type="Node3D" parent="." groups=["nav_source"]]
+
+[node name="Walls" type="Node3D" parent="House"]
+
+[node name="ExtNorthSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.625, 1.7, -11)
+use_collision = true
+size = Vector3(0.85, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.7, 1.7, -11)
+use_collision = true
+size = Vector3(0.6, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthSeg2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 1.7, -11)
+use_collision = true
+size = Vector3(1.4, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthSeg3" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.075, 1.7, -11)
+use_collision = true
+size = Vector3(1.05, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthSeg4" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.35, 1.7, -11)
+use_collision = true
+size = Vector3(3.8, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthSeg5" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.85, 1.7, -11)
+use_collision = true
+size = Vector3(1.8, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthSill0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 0.525, -11)
+use_collision = true
+size = Vector3(1.2, 1.05, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 2.725, -11)
+use_collision = true
+size = Vector3(1.2, 1.35, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthSill1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 0.525, -11)
+use_collision = true
+size = Vector3(1.6, 1.05, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthLintel1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.725, -11)
+use_collision = true
+size = Vector3(1.6, 1.35, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthSill2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.525, -11)
+use_collision = true
+size = Vector3(0.8, 1.05, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthLintel2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.725, -11)
+use_collision = true
+size = Vector3(0.8, 1.35, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthLintel3" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.05, 2.75, -11)
+use_collision = true
+size = Vector3(1, 1.3, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthSill4" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 0.75, -11)
+use_collision = true
+size = Vector3(0.7, 1.5, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtNorthLintel4" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 2.75, -11)
+use_collision = true
+size = Vector3(0.7, 1.3, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtUtilEastSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 1.7, -9.775)
+use_collision = true
+size = Vector3(0.3, 3.4, 2.45)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtUtilEastSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 1.7, -6.545)
+use_collision = true
+size = Vector3(0.3, 3.4, 2.61)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtUtilEastSill0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 0.75, -8.2)
+use_collision = true
+size = Vector3(0.3, 1.5, 0.7)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtUtilEastLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 2.75, -8.2)
+use_collision = true
+size = Vector3(0.3, 1.3, 0.7)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtHallNorthSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1.7, -5.24)
+use_collision = true
+size = Vector3(0.6, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtHallNorthSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.25, 1.7, -5.24)
+use_collision = true
+size = Vector3(0.6, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtHallNorthSill0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0.5, -5.24)
+use_collision = true
+size = Vector3(0.9, 1, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtHallNorthLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.8, -5.24)
+use_collision = true
+size = Vector3(0.9, 1.2, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtEastSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.7, -4.94)
+use_collision = true
+size = Vector3(0.3, 3.4, 0.6)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtEastSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.7, -2.595)
+use_collision = true
+size = Vector3(0.3, 3.4, 1.69)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtEastSeg2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.7, -0.375)
+use_collision = true
+size = Vector3(0.3, 3.4, 1.35)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtEastSill0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 0.45, -4.04)
+use_collision = true
+size = Vector3(0.3, 0.9, 1.2)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtEastLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 2.8, -4.04)
+use_collision = true
+size = Vector3(0.3, 1.2, 1.2)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtEastSill1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 0.65, -1.4)
+use_collision = true
+size = Vector3(0.3, 1.3, 0.7)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtEastLintel1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 2.65, -1.4)
+use_collision = true
+size = Vector3(0.3, 1.5, 0.7)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtBathSouthSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 1.7, 0.3)
+use_collision = true
+size = Vector3(2.7, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtBedEastSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.7, 0.65)
+use_collision = true
+size = Vector3(0.3, 3.4, 0.7)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtBedEastSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.7, 2.2)
+use_collision = true
+size = Vector3(0.3, 3.4, 0.6)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtBedEastSill0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.675, 1.45)
+use_collision = true
+size = Vector3(0.3, 1.35, 0.9)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtBedEastLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2.875, 1.45)
+use_collision = true
+size = Vector3(0.3, 1.05, 0.9)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtBedSouthSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 1.7, 2.5)
+use_collision = true
+size = Vector3(0.5, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtBedSouthSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9, 1.7, 2.5)
+use_collision = true
+size = Vector3(0.5, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtBedSouthSill0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.45, 2.5)
+use_collision = true
+size = Vector3(1.2, 0.9, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtBedSouthLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 2.7, 2.5)
+use_collision = true
+size = Vector3(1.2, 1.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtFoyerEastSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1, 1.7, 4.25)
+use_collision = true
+size = Vector3(0.3, 3.4, 3.5)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.675, 1.7, 6)
+use_collision = true
+size = Vector3(0.75, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.85, 1.7, 6)
+use_collision = true
+size = Vector3(1.3, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthSeg2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.05, 1.7, 6)
+use_collision = true
+size = Vector3(3.1, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthSeg3" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.075, 1.7, 6)
+use_collision = true
+size = Vector3(1.15, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthSeg4" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 1.7, 6)
+use_collision = true
+size = Vector3(0.9, 3.4, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthSill0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 0.4, 6)
+use_collision = true
+size = Vector3(1.8, 0.8, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 2.9, 6)
+use_collision = true
+size = Vector3(1.8, 1, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthSill1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 0.4, 6)
+use_collision = true
+size = Vector3(1.6, 0.8, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthLintel1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 2.9, 6)
+use_collision = true
+size = Vector3(1.6, 1, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthLintel2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.75, 6)
+use_collision = true
+size = Vector3(1, 1.3, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthSill3" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.6, 6)
+use_collision = true
+size = Vector3(0.7, 1.2, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtSouthLintel3" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.6, 6)
+use_collision = true
+size = Vector3(0.7, 1.6, 0.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtWestSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.7, -9.6)
+use_collision = true
+size = Vector3(0.3, 3.4, 2.8)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtWestSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.7, -4.2)
+use_collision = true
+size = Vector3(0.3, 3.4, 5.2)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtWestSeg2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.7, 0.85)
+use_collision = true
+size = Vector3(0.3, 3.4, 2.1)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtWestSeg3" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.7, 5.05)
+use_collision = true
+size = Vector3(0.3, 3.4, 1.9)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtWestSill0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 0.5, -7.5)
+use_collision = true
+size = Vector3(0.3, 1, 1.4)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtWestLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 2.8, -7.5)
+use_collision = true
+size = Vector3(0.3, 1.2, 1.4)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtWestSill1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 0.425, -0.9)
+use_collision = true
+size = Vector3(0.3, 0.85, 1.4)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtWestLintel1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 2.775, -0.9)
+use_collision = true
+size = Vector3(0.3, 1.25, 1.4)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtWestSill2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 0.4, 3)
+use_collision = true
+size = Vector3(0.3, 0.8, 2.2)
+material = ExtResource("mat_wall_plaster")
+
+[node name="ExtWestLintel2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 2.85, 3)
+use_collision = true
+size = Vector3(0.3, 1.1, 2.2)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntSpineSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 1.55, -10.3)
+use_collision = true
+size = Vector3(0.14, 3.1, 1.4)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntSpineSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 1.55, -4.85)
+use_collision = true
+size = Vector3(0.14, 3.1, 2.5)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntSpineSeg2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 1.55, 0.35)
+use_collision = true
+size = Vector3(0.14, 3.1, 1.7)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntSpineSeg3" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 1.55, 5.35)
+use_collision = true
+size = Vector3(0.14, 3.1, 1.3)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntSpineLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 2.8, -7.85)
+use_collision = true
+size = Vector3(0.14, 0.6, 3.5)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntSpineLintel1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 2.8, -2.05)
+use_collision = true
+size = Vector3(0.14, 0.6, 3.1)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntSpineLintel2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 2.8, 2.95)
+use_collision = true
+size = Vector3(0.14, 0.6, 3.5)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntDiningLivingSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.125, 1.55, 0)
+use_collision = true
+size = Vector3(1.55, 3.1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntDiningLivingSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.075, 1.55, 0)
+use_collision = true
+size = Vector3(1.55, 3.1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntDiningLivingLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.8, 0)
+use_collision = true
+size = Vector3(3.5, 0.6, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntStairWSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14, 1.55, -8.085)
+use_collision = true
+size = Vector3(0.14, 3.1, 5.83)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntBedWSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14, 1.55, -0.17)
+use_collision = true
+size = Vector3(0.14, 3.1, 5.48)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntBedFoyerSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.585, 1.55, 2.5)
+use_collision = true
+size = Vector3(3.03, 3.1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntStairHallSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14, 1.55, -5.24)
+use_collision = true
+size = Vector3(0.14, 3.1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntStairHallSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.855, 1.55, -5.24)
+use_collision = true
+size = Vector3(1.29, 3.1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntStairHallSeg2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.55, 1.55, -5.24)
+use_collision = true
+size = Vector3(2.1, 3.1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntStairHallLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.71, 2.6, -5.24)
+use_collision = true
+size = Vector3(1, 1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntStairHallLintel1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.6, -5.24)
+use_collision = true
+size = Vector3(1, 1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntStairUtilSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7, 1.55, -8.12)
+use_collision = true
+size = Vector3(0.14, 3.1, 5.76)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntHallBSouthSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.285, 1.55, -2.84)
+use_collision = true
+size = Vector3(0.43, 3.1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntHallBSouthSeg1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.55, 1.55, -2.84)
+use_collision = true
+size = Vector3(4.1, 3.1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntHallBSouthSeg2" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1.55, -2.84)
+use_collision = true
+size = Vector3(0.8, 3.1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntHallBSouthLintel0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2.6, -2.84)
+use_collision = true
+size = Vector3(1, 1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntHallBSouthLintel1" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.1, 2.6, -2.84)
+use_collision = true
+size = Vector3(1, 1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntBedBathSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 1.55, -1.275)
+use_collision = true
+size = Vector3(0.14, 3.1, 3.13)
+material = ExtResource("mat_wall_plaster")
+
+[node name="IntBathSouthExtSeg0" type="CSGBox3D" parent="House/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.29, 1.55, 0.22)
+use_collision = true
+size = Vector3(1.12, 3.1, 0.14)
+material = ExtResource("mat_wall_plaster")
+
+[node name="Trim" type="Node3D" parent="House"]
+
+[node name="ExtNorth3PL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.59, 1.09, -10.839)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth3PR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.51, 1.09, -10.839)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth3PTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.05, 2.14, -10.839)
+size = Vector3(1, 0.08, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth3NL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.59, 1.09, -11.18)
+size = Vector3(0.08, 2.18, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth3NR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.51, 1.09, -11.18)
+size = Vector3(0.08, 2.18, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth3NTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.05, 2.14, -11.18)
+size = Vector3(1, 0.08, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth3Sill" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.05, 0.01, -11)
+size = Vector3(1, 0.02, 0.25)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth3Head" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.05, 2.08, -11)
+size = Vector3(1, 0.04, 0.25)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.3, 0.06, -10.84)
+size = Vector3(7.5, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthBaseP1" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 0.06, -10.84)
+size = Vector3(6.3, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtUtilEastBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.44, 0.06, -8.12)
+size = Vector3(0.02, 0.12, 5.76)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtHallNorthBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0.06, -5.08)
+size = Vector3(2.1, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEastBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.24, 0.06, -2.47)
+size = Vector3(0.02, 0.12, 5.54)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBathSouthBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0.06, 0.14)
+size = Vector3(2.7, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedEastBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.84, 0.06, 1.4)
+size = Vector3(0.02, 0.12, 2.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedSouthBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.06, 2.34)
+size = Vector3(2.2, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtFoyerEastBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.94, 0.06, 4.25)
+size = Vector3(0.02, 0.12, 3.5)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth2NL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.54, 1.09, 5.839)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth2NR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.54, 1.09, 5.839)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth2NTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.14, 5.839)
+size = Vector3(1, 0.08, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth2PL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.54, 1.09, 6.18)
+size = Vector3(0.08, 2.18, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth2PR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.54, 1.09, 6.18)
+size = Vector3(0.08, 2.18, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth2PTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.14, 6.18)
+size = Vector3(1, 0.08, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth2Sill" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 6)
+size = Vector3(1, 0.02, 0.25)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth2Head" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.08, 6)
+size = Vector3(1, 0.04, 0.25)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.775, 0.06, 5.84)
+size = Vector3(8.55, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthBaseN1" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.875, 0.06, 5.84)
+size = Vector3(2.75, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWestBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.74, 0.06, -2.5)
+size = Vector3(0.02, 0.12, 17)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine0PL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.219, 1.295, -9.645)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine0PR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.219, 1.295, -6.055)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine0PTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.219, 2.545, -7.85)
+size = Vector3(0.022, 0.09, 3.5)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine0NL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.381, 1.295, -9.645)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine0NR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.381, 1.295, -6.055)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine0NTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.381, 2.545, -7.85)
+size = Vector3(0.022, 0.09, 3.5)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine1PL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.219, 1.295, -3.645)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine1PR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.219, 1.295, -0.455)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine1PTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.219, 2.545, -2.05)
+size = Vector3(0.022, 0.09, 3.1)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine1NL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.381, 1.295, -3.645)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine1NR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.381, 1.295, -0.455)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine1NTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.381, 2.545, -2.05)
+size = Vector3(0.022, 0.09, 3.1)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine2PL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.219, 1.295, 1.155)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine2PR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.219, 1.295, 4.745)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine2PTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.219, 2.545, 2.95)
+size = Vector3(0.022, 0.09, 3.5)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine2NL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.381, 1.295, 1.155)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine2NR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.381, 1.295, 4.745)
+size = Vector3(0.022, 2.59, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpine2NTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.381, 2.545, 2.95)
+size = Vector3(0.022, 0.09, 3.5)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpineBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.22, 0.06, -10.3)
+size = Vector3(0.02, 0.12, 1.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpineBaseP1" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.22, 0.06, -4.85)
+size = Vector3(0.02, 0.12, 2.5)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpineBaseP2" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.22, 0.06, 0.35)
+size = Vector3(0.02, 0.12, 1.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpineBaseP3" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.22, 0.06, 5.35)
+size = Vector3(0.02, 0.12, 1.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpineBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.38, 0.06, -10.3)
+size = Vector3(0.02, 0.12, 1.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpineBaseN1" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.38, 0.06, -4.85)
+size = Vector3(0.02, 0.12, 2.5)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpineBaseN2" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.38, 0.06, 0.35)
+size = Vector3(0.02, 0.12, 1.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntSpineBaseN3" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.38, 0.06, 5.35)
+size = Vector3(0.02, 0.12, 1.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntDiningLiving0PL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.395, 1.295, 0.081)
+size = Vector3(0.09, 2.59, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntDiningLiving0PR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.805, 1.295, 0.081)
+size = Vector3(0.09, 2.59, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntDiningLiving0PTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.545, 0.081)
+size = Vector3(3.5, 0.09, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntDiningLiving0NL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.395, 1.295, -0.081)
+size = Vector3(0.09, 2.59, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntDiningLiving0NR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.805, 1.295, -0.081)
+size = Vector3(0.09, 2.59, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntDiningLiving0NTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.545, -0.081)
+size = Vector3(3.5, 0.09, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntDiningLivingBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.125, 0.06, 0.08)
+size = Vector3(1.55, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntDiningLivingBaseP1" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.075, 0.06, 0.08)
+size = Vector3(1.55, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntDiningLivingBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.125, 0.06, -0.08)
+size = Vector3(1.55, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntDiningLivingBaseN1" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.075, 0.06, -0.08)
+size = Vector3(1.55, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairWBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, 0.06, -8.085)
+size = Vector3(0.02, 0.12, 5.83)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairWBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06, 0.06, -8.085)
+size = Vector3(0.02, 0.12, 5.83)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntBedWBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22, 0.06, -0.17)
+size = Vector3(0.02, 0.12, 5.48)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntBedWBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06, 0.06, -0.17)
+size = Vector3(0.02, 0.12, 5.48)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntBedFoyerBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.585, 0.06, 2.58)
+size = Vector3(3.03, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntBedFoyerBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.585, 0.06, 2.42)
+size = Vector3(3.03, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall0PL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17, 1.09, -5.159)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall0PR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 1.09, -5.159)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall0PTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.71, 2.14, -5.159)
+size = Vector3(1, 0.08, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall0NL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.17, 1.09, -5.321)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall0NR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.25, 1.09, -5.321)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall0NTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.71, 2.14, -5.321)
+size = Vector3(1, 0.08, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall0Sill" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.71, 0.01, -5.24)
+size = Vector3(1, 0.02, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall0Head" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.71, 2.08, -5.24)
+size = Vector3(1, 0.04, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall1PL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.46, 1.09, -5.159)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall1PR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.54, 1.09, -5.159)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall1PTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.14, -5.159)
+size = Vector3(1, 0.08, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall1NL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.46, 1.09, -5.321)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall1NR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.54, 1.09, -5.321)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall1NTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.14, -5.321)
+size = Vector3(1, 0.08, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall1Sill" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.01, -5.24)
+size = Vector3(1, 0.02, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHall1Head" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.08, -5.24)
+size = Vector3(1, 0.04, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHallBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14, 0.06, -5.16)
+size = Vector3(0.14, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHallBaseP1" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.855, 0.06, -5.16)
+size = Vector3(1.29, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHallBaseP2" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.55, 0.06, -5.16)
+size = Vector3(2.1, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHallBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14, 0.06, -5.32)
+size = Vector3(0.14, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHallBaseN1" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.855, 0.06, -5.32)
+size = Vector3(1.29, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairHallBaseN2" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.55, 0.06, -5.32)
+size = Vector3(2.1, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairUtilBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.78, 0.06, -8.12)
+size = Vector3(0.02, 0.12, 5.76)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntStairUtilBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.62, 0.06, -8.12)
+size = Vector3(0.02, 0.12, 5.76)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth0PL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.46, 1.09, -2.759)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth0PR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.54, 1.09, -2.759)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth0PTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2.14, -2.759)
+size = Vector3(1, 0.08, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth0NL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.46, 1.09, -2.921)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth0NR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.54, 1.09, -2.921)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth0NTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2.14, -2.921)
+size = Vector3(1, 0.08, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth0Sill" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.01, -2.84)
+size = Vector3(1, 0.02, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth0Head" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2.08, -2.84)
+size = Vector3(1, 0.04, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth1PL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.56, 1.09, -2.759)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth1PR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.64, 1.09, -2.759)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth1PTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.1, 2.14, -2.759)
+size = Vector3(1, 0.08, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth1NL" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.56, 1.09, -2.921)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth1NR" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.64, 1.09, -2.921)
+size = Vector3(0.08, 2.18, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth1NTop" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.1, 2.14, -2.921)
+size = Vector3(1, 0.08, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth1Sill" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.1, 0.01, -2.84)
+size = Vector3(1, 0.02, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouth1Head" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.1, 2.08, -2.84)
+size = Vector3(1, 0.04, 0.09)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouthBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.285, 0.06, -2.76)
+size = Vector3(0.43, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouthBaseP1" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.55, 0.06, -2.76)
+size = Vector3(4.1, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouthBaseP2" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.06, -2.76)
+size = Vector3(0.8, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouthBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.285, 0.06, -2.92)
+size = Vector3(0.43, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouthBaseN1" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.55, 0.06, -2.92)
+size = Vector3(4.1, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntHallBSouthBaseN2" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0.06, -2.92)
+size = Vector3(0.8, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntBedBathBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.88, 0.06, -1.275)
+size = Vector3(0.02, 0.12, 3.13)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntBedBathBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.72, 0.06, -1.275)
+size = Vector3(0.02, 0.12, 3.13)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntBathSouthExtBaseP0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.29, 0.06, 0.3)
+size = Vector3(1.12, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="IntBathSouthExtBaseN0" type="CSGBox3D" parent="House/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.29, 0.06, 0.14)
+size = Vector3(1.12, 0.12, 0.02)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="Windows" type="Node3D" parent="House"]
+
+[node name="ExtNorth0FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.1725, 1.55, -11)
+size = Vector3(0.055, 1, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth0FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.0275, 1.55, -11)
+size = Vector3(0.055, 1, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth0FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 2.0225, -11)
+size = Vector3(1.09, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth0FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 1.0775, -11)
+size = Vector3(1.09, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth0MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 1.55, -11)
+size = Vector3(0.02, 0.89, 0.045)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth0Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 1.55, -11)
+cast_shadow = 0
+size = Vector3(1.09, 0.89, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtNorth0CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.235, 1.585, -10.839)
+size = Vector3(0.07, 1.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth0CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.965, 1.585, -10.839)
+size = Vector3(0.07, 1.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth0CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 2.085, -10.839)
+size = Vector3(1.2, 0.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth0CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.235, 1.585, -11.18)
+size = Vector3(0.07, 1.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth0CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.965, 1.585, -11.18)
+size = Vector3(0.07, 1.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth0CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 2.085, -11.18)
+size = Vector3(1.2, 0.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth0BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 1.035, -10.81)
+size = Vector3(1.36, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth0BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 1.035, -11.175)
+size = Vector3(1.36, 0.03, 0.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth1FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.3725, 1.55, -11)
+size = Vector3(0.055, 1, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth1FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8275, 1.55, -11)
+size = Vector3(0.055, 1, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth1FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.0225, -11)
+size = Vector3(1.49, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth1FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 1.0775, -11)
+size = Vector3(1.49, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth1MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 1.55, -11)
+size = Vector3(0.02, 0.89, 0.045)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth1Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 1.55, -11)
+cast_shadow = 0
+size = Vector3(1.49, 0.89, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtNorth1CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.435, 1.585, -10.839)
+size = Vector3(0.07, 1.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth1CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.765, 1.585, -10.839)
+size = Vector3(0.07, 1.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth1CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.085, -10.839)
+size = Vector3(1.6, 0.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth1CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.435, 1.585, -11.18)
+size = Vector3(0.07, 1.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth1CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.765, 1.585, -11.18)
+size = Vector3(0.07, 1.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth1CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.085, -11.18)
+size = Vector3(1.6, 0.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth1BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 1.035, -10.81)
+size = Vector3(1.76, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth1BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 1.035, -11.175)
+size = Vector3(1.76, 0.03, 0.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth2FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3725, 1.55, -11)
+size = Vector3(0.055, 1, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth2FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6275, 1.55, -11)
+size = Vector3(0.055, 1, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth2FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.0225, -11)
+size = Vector3(0.69, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth2FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.0775, -11)
+size = Vector3(0.69, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth2MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.55, -11)
+size = Vector3(0.02, 0.89, 0.045)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth2Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.55, -11)
+cast_shadow = 0
+size = Vector3(0.69, 0.89, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtNorth2CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.435, 1.585, -10.839)
+size = Vector3(0.07, 1.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth2CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.565, 1.585, -10.839)
+size = Vector3(0.07, 1.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth2CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.085, -10.839)
+size = Vector3(0.8, 0.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth2CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.435, 1.585, -11.18)
+size = Vector3(0.07, 1.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth2CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.565, 1.585, -11.18)
+size = Vector3(0.07, 1.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth2CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.085, -11.18)
+size = Vector3(0.8, 0.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth2BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.035, -10.81)
+size = Vector3(0.96, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth2BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.035, -11.175)
+size = Vector3(0.96, 0.03, 0.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth4FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2775, 1.8, -11)
+size = Vector3(0.055, 0.6, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth4FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9225, 1.8, -11)
+size = Vector3(0.055, 0.6, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth4FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 2.0725, -11)
+size = Vector3(0.59, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth4FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 1.5275, -11)
+size = Vector3(0.59, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth4MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 1.8, -11)
+size = Vector3(0.02, 0.49, 0.045)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth4Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 1.8, -11)
+cast_shadow = 0
+size = Vector3(0.59, 0.49, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtNorth4CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.215, 1.835, -10.839)
+size = Vector3(0.07, 0.67, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth4CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.985, 1.835, -10.839)
+size = Vector3(0.07, 0.67, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth4CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 2.135, -10.839)
+size = Vector3(0.7, 0.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth4CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.215, 1.835, -11.18)
+size = Vector3(0.07, 0.67, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth4CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.985, 1.835, -11.18)
+size = Vector3(0.07, 0.67, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth4CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 2.135, -11.18)
+size = Vector3(0.7, 0.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorth4BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 1.485, -10.81)
+size = Vector3(0.86, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtNorth4BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 1.485, -11.175)
+size = Vector3(0.86, 0.03, 0.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtUtilEast0FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 1.8, -8.5225)
+size = Vector3(0.25, 0.6, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtUtilEast0FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 1.8, -7.8775)
+size = Vector3(0.25, 0.6, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtUtilEast0FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 2.0725, -8.2)
+size = Vector3(0.25, 0.055, 0.59)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtUtilEast0FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 1.5275, -8.2)
+size = Vector3(0.25, 0.055, 0.59)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtUtilEast0MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 1.8, -8.2)
+size = Vector3(0.045, 0.49, 0.034)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtUtilEast0Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 1.8, -8.2)
+cast_shadow = 0
+size = Vector3(0.012, 0.49, 0.59)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtUtilEast0CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.439, 1.835, -8.585)
+size = Vector3(0.022, 0.67, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtUtilEast0CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.439, 1.835, -7.815)
+size = Vector3(0.022, 0.67, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtUtilEast0CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.439, 2.135, -8.2)
+size = Vector3(0.022, 0.07, 0.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtUtilEast0CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.78, 1.835, -8.585)
+size = Vector3(0.06, 0.67, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtUtilEast0CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.78, 1.835, -7.815)
+size = Vector3(0.06, 0.67, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtUtilEast0CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.78, 2.135, -8.2)
+size = Vector3(0.06, 0.07, 0.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtUtilEast0BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.41, 1.485, -8.2)
+size = Vector3(0.12, 0.03, 0.86)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtUtilEast0BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.775, 1.485, -8.2)
+size = Vector3(0.09, 0.03, 0.86)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtHallNorth0FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.0775, 1.6, -5.24)
+size = Vector3(0.055, 1.2, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtHallNorth0FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9225, 1.6, -5.24)
+size = Vector3(0.055, 1.2, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtHallNorth0FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.1725, -5.24)
+size = Vector3(0.79, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtHallNorth0FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 1.0275, -5.24)
+size = Vector3(0.79, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtHallNorth0MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 1.6, -5.24)
+size = Vector3(0.02, 1.09, 0.045)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtHallNorth0Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 1.6, -5.24)
+cast_shadow = 0
+size = Vector3(0.79, 1.09, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtHallNorth0CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.015, 1.635, -5.079)
+size = Vector3(0.07, 1.27, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtHallNorth0CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.985, 1.635, -5.079)
+size = Vector3(0.07, 1.27, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtHallNorth0CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.235, -5.079)
+size = Vector3(0.9, 0.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtHallNorth0CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.015, 1.635, -5.42)
+size = Vector3(0.07, 1.27, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtHallNorth0CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.985, 1.635, -5.42)
+size = Vector3(0.07, 1.27, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtHallNorth0CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.235, -5.42)
+size = Vector3(0.9, 0.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtHallNorth0BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0.985, -5.05)
+size = Vector3(1.06, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtHallNorth0BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0.985, -5.415)
+size = Vector3(1.06, 0.03, 0.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast0FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.55, -4.6125)
+size = Vector3(0.25, 1.3, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast0FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.55, -3.4675)
+size = Vector3(0.25, 1.3, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast0FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 2.1725, -4.04)
+size = Vector3(0.25, 0.055, 1.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast0FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 0.9275, -4.04)
+size = Vector3(0.25, 0.055, 1.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast0MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.55, -4.04)
+size = Vector3(0.045, 1.19, 0.034)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast0Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.55, -4.04)
+cast_shadow = 0
+size = Vector3(0.012, 1.19, 1.09)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtEast0CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.239, 1.585, -4.675)
+size = Vector3(0.022, 1.37, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast0CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.239, 1.585, -3.405)
+size = Vector3(0.022, 1.37, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast0CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.239, 2.235, -4.04)
+size = Vector3(0.022, 0.07, 1.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast0CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.58, 1.585, -4.675)
+size = Vector3(0.06, 1.37, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast0CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.58, 1.585, -3.405)
+size = Vector3(0.06, 1.37, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast0CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.58, 2.235, -4.04)
+size = Vector3(0.06, 0.07, 1.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast0BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.21, 0.885, -4.04)
+size = Vector3(0.12, 0.03, 1.36)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast0BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.575, 0.885, -4.04)
+size = Vector3(0.09, 0.03, 1.36)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast1FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.6, -1.7225)
+size = Vector3(0.25, 0.6, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast1FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.6, -1.0775)
+size = Vector3(0.25, 0.6, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast1FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.8725, -1.4)
+size = Vector3(0.25, 0.055, 0.59)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast1FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.3275, -1.4)
+size = Vector3(0.25, 0.055, 0.59)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast1MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.6, -1.4)
+size = Vector3(0.045, 0.49, 0.034)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast1Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4, 1.6, -1.4)
+cast_shadow = 0
+size = Vector3(0.012, 0.49, 0.59)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtEast1CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.239, 1.635, -1.785)
+size = Vector3(0.022, 0.67, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast1CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.239, 1.635, -1.015)
+size = Vector3(0.022, 0.67, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast1CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.239, 1.935, -1.4)
+size = Vector3(0.022, 0.07, 0.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast1CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.58, 1.635, -1.785)
+size = Vector3(0.06, 0.67, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast1CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.58, 1.635, -1.015)
+size = Vector3(0.06, 0.67, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast1CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.58, 1.935, -1.4)
+size = Vector3(0.06, 0.07, 0.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEast1BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.21, 1.285, -1.4)
+size = Vector3(0.12, 0.03, 0.86)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtEast1BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.575, 1.285, -1.4)
+size = Vector3(0.09, 0.03, 0.86)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedEast0FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.85, 1.0275)
+size = Vector3(0.25, 1, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedEast0FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.85, 1.8725)
+size = Vector3(0.25, 1, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedEast0FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2.3225, 1.45)
+size = Vector3(0.25, 0.055, 0.79)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedEast0FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.3775, 1.45)
+size = Vector3(0.25, 0.055, 0.79)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedEast0MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.85, 1.45)
+size = Vector3(0.045, 0.89, 0.034)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedEast0Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 1.85, 1.45)
+cast_shadow = 0
+size = Vector3(0.012, 0.89, 0.79)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtBedEast0CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.839, 1.885, 0.965)
+size = Vector3(0.022, 1.07, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedEast0CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.839, 1.885, 1.935)
+size = Vector3(0.022, 1.07, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedEast0CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.839, 2.385, 1.45)
+size = Vector3(0.022, 0.07, 0.9)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedEast0CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.18, 1.885, 0.965)
+size = Vector3(0.06, 1.07, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedEast0CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.18, 1.885, 1.935)
+size = Vector3(0.06, 1.07, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedEast0CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.18, 2.385, 1.45)
+size = Vector3(0.06, 0.07, 0.9)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedEast0BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.81, 1.335, 1.45)
+size = Vector3(0.12, 0.03, 1.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedEast0BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.175, 1.335, 1.45)
+size = Vector3(0.09, 0.03, 1.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedSouth0FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4775, 1.45, 2.5)
+size = Vector3(0.055, 1.1, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedSouth0FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.6225, 1.45, 2.5)
+size = Vector3(0.055, 1.1, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedSouth0FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 1.9725, 2.5)
+size = Vector3(1.09, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedSouth0FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.9275, 2.5)
+size = Vector3(1.09, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedSouth0MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 1.45, 2.5)
+size = Vector3(0.02, 0.99, 0.045)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedSouth0Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 1.45, 2.5)
+cast_shadow = 0
+size = Vector3(1.09, 0.99, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtBedSouth0CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.415, 1.485, 2.339)
+size = Vector3(0.07, 1.17, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedSouth0CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.685, 1.485, 2.339)
+size = Vector3(0.07, 1.17, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedSouth0CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 2.035, 2.339)
+size = Vector3(1.2, 0.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedSouth0CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.415, 1.485, 2.68)
+size = Vector3(0.07, 1.17, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedSouth0CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.685, 1.485, 2.68)
+size = Vector3(0.07, 1.17, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedSouth0CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 2.035, 2.68)
+size = Vector3(1.2, 0.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedSouth0BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.885, 2.31)
+size = Vector3(1.36, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtBedSouth0BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.885, 2.675)
+size = Vector3(1.36, 0.03, 0.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth0FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.2725, 1.6, 6)
+size = Vector3(0.055, 1.6, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth0FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5275, 1.6, 6)
+size = Vector3(0.055, 1.6, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth0FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 2.3725, 6)
+size = Vector3(1.69, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth0FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 0.8275, 6)
+size = Vector3(1.69, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth0MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 1.6, 6)
+size = Vector3(0.02, 1.49, 0.045)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth0Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 1.6, 6)
+cast_shadow = 0
+size = Vector3(1.69, 1.49, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtSouth0CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.335, 1.635, 5.839)
+size = Vector3(0.07, 1.67, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth0CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.465, 1.635, 5.839)
+size = Vector3(0.07, 1.67, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth0CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 2.435, 5.839)
+size = Vector3(1.8, 0.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth0CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.335, 1.635, 6.18)
+size = Vector3(0.07, 1.67, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth0CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.465, 1.635, 6.18)
+size = Vector3(0.07, 1.67, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth0CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 2.435, 6.18)
+size = Vector3(1.8, 0.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth0BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 0.785, 5.81)
+size = Vector3(1.96, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth0BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 0.785, 6.175)
+size = Vector3(1.96, 0.03, 0.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth1FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.1725, 1.6, 6)
+size = Vector3(0.055, 1.6, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth1FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6275, 1.6, 6)
+size = Vector3(0.055, 1.6, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth1FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 2.3725, 6)
+size = Vector3(1.49, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth1FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 0.8275, 6)
+size = Vector3(1.49, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth1MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 1.6, 6)
+size = Vector3(0.02, 1.49, 0.045)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth1Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 1.6, 6)
+cast_shadow = 0
+size = Vector3(1.49, 1.49, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtSouth1CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.235, 1.635, 5.839)
+size = Vector3(0.07, 1.67, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth1CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.565, 1.635, 5.839)
+size = Vector3(0.07, 1.67, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth1CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 2.435, 5.839)
+size = Vector3(1.6, 0.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth1CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.235, 1.635, 6.18)
+size = Vector3(0.07, 1.67, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth1CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.565, 1.635, 6.18)
+size = Vector3(0.07, 1.67, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth1CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 2.435, 6.18)
+size = Vector3(1.6, 0.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth1BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 0.785, 5.81)
+size = Vector3(1.76, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth1BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 0.785, 6.175)
+size = Vector3(1.76, 0.03, 0.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth3FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6775, 1.5, 6)
+size = Vector3(0.055, 0.6, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth3FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3225, 1.5, 6)
+size = Vector3(0.055, 0.6, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth3FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.7725, 6)
+size = Vector3(0.59, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth3FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.2275, 6)
+size = Vector3(0.59, 0.055, 0.25)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth3MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.5, 6)
+size = Vector3(0.02, 0.49, 0.045)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth3Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.5, 6)
+cast_shadow = 0
+size = Vector3(0.59, 0.49, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtSouth3CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.615, 1.535, 5.839)
+size = Vector3(0.07, 0.67, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth3CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.385, 1.535, 5.839)
+size = Vector3(0.07, 0.67, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth3CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.835, 5.839)
+size = Vector3(0.7, 0.07, 0.022)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth3CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.615, 1.535, 6.18)
+size = Vector3(0.07, 0.67, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth3CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.385, 1.535, 6.18)
+size = Vector3(0.07, 0.67, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth3CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.835, 6.18)
+size = Vector3(0.7, 0.07, 0.06)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouth3BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.185, 5.81)
+size = Vector3(0.86, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtSouth3BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.185, 6.175)
+size = Vector3(0.86, 0.03, 0.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest0FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.6, -8.1725)
+size = Vector3(0.25, 1.2, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest0FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.6, -6.8275)
+size = Vector3(0.25, 1.2, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest0FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 2.1725, -7.5)
+size = Vector3(0.25, 0.055, 1.29)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest0FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.0275, -7.5)
+size = Vector3(0.25, 0.055, 1.29)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest0MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.6, -7.5)
+size = Vector3(0.045, 1.09, 0.034)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest0Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.6, -7.5)
+cast_shadow = 0
+size = Vector3(0.012, 1.09, 1.29)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtWest0CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.739, 1.635, -8.235)
+size = Vector3(0.022, 1.27, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest0CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.739, 1.635, -6.765)
+size = Vector3(0.022, 1.27, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest0CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.739, 2.235, -7.5)
+size = Vector3(0.022, 0.07, 1.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest0CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 1.635, -8.235)
+size = Vector3(0.06, 1.27, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest0CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 1.635, -6.765)
+size = Vector3(0.06, 1.27, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest0CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 2.235, -7.5)
+size = Vector3(0.06, 0.07, 1.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest0BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.71, 0.985, -7.5)
+size = Vector3(0.12, 0.03, 1.56)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest0BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.075, 0.985, -7.5)
+size = Vector3(0.09, 0.03, 1.56)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest1FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.5, -1.5725)
+size = Vector3(0.25, 1.3, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest1FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.5, -0.2275)
+size = Vector3(0.25, 1.3, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest1FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 2.1225, -0.9)
+size = Vector3(0.25, 0.055, 1.29)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest1FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 0.8775, -0.9)
+size = Vector3(0.25, 0.055, 1.29)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest1MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.5, -0.9)
+size = Vector3(0.045, 1.19, 0.034)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest1Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.5, -0.9)
+cast_shadow = 0
+size = Vector3(0.012, 1.19, 1.29)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtWest1CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.739, 1.535, -1.635)
+size = Vector3(0.022, 1.37, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest1CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.739, 1.535, -0.165)
+size = Vector3(0.022, 1.37, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest1CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.739, 2.185, -0.9)
+size = Vector3(0.022, 0.07, 1.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest1CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 1.535, -1.635)
+size = Vector3(0.06, 1.37, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest1CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 1.535, -0.165)
+size = Vector3(0.06, 1.37, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest1CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 2.185, -0.9)
+size = Vector3(0.06, 0.07, 1.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest1BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.71, 0.835, -0.9)
+size = Vector3(0.12, 0.03, 1.56)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest1BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.075, 0.835, -0.9)
+size = Vector3(0.09, 0.03, 1.56)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest2FrL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.55, 1.9275)
+size = Vector3(0.25, 1.5, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest2FrR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.55, 4.0725)
+size = Vector3(0.25, 1.5, 0.055)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest2FrT" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 2.2725, 3)
+size = Vector3(0.25, 0.055, 2.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest2FrB" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 0.8275, 3)
+size = Vector3(0.25, 0.055, 2.09)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest2MulV" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.55, 3)
+size = Vector3(0.045, 1.39, 0.034)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest2Glass" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 1.55, 3)
+cast_shadow = 0
+size = Vector3(0.012, 1.39, 2.09)
+material = SubResource("Material_milky_glass")
+
+[node name="ExtWest2CsPL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.739, 1.585, 1.865)
+size = Vector3(0.022, 1.57, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest2CsPR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.739, 1.585, 4.135)
+size = Vector3(0.022, 1.57, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest2CsPTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.739, 2.335, 3)
+size = Vector3(0.022, 0.07, 2.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest2CsNL" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 1.585, 1.865)
+size = Vector3(0.06, 1.57, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest2CsNR" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 1.585, 4.135)
+size = Vector3(0.06, 1.57, 0.07)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest2CsNTop" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 2.335, 3)
+size = Vector3(0.06, 0.07, 2.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWest2BankP" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.71, 0.785, 3)
+size = Vector3(0.12, 0.03, 2.36)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="ExtWest2BankN" type="CSGBox3D" parent="House/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.075, 0.785, 3)
+size = Vector3(0.09, 0.03, 2.36)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpperFloor" type="Node3D" parent="House"]
+
+[node name="Walls" type="Node3D" parent="House/UpperFloor"]
+
+[node name="UpNPier0" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.1, 4.8, -11)
+use_collision = true
+size = Vector3(1.9, 2.8, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpNSill0" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 3.925, -11)
+use_collision = true
+size = Vector3(1.1, 1.05, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpNLintel0" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 5.875, -11)
+use_collision = true
+size = Vector3(1.1, 0.65, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpNPier1" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 4.8, -11)
+use_collision = true
+size = Vector3(3.1, 2.8, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpNSill1" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 3.925, -11)
+use_collision = true
+size = Vector3(1.1, 1.05, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpNLintel1" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 5.875, -11)
+use_collision = true
+size = Vector3(1.1, 0.65, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpNPier2" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7, 4.8, -11)
+use_collision = true
+size = Vector3(5.1, 2.8, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSPier0" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.3, 4.8, 6)
+use_collision = true
+size = Vector3(1.5, 2.8, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSSill0" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 3.925, 6)
+use_collision = true
+size = Vector3(1.1, 1.05, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSLintel0" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5.875, 6)
+use_collision = true
+size = Vector3(1.1, 0.65, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSPier1" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 4.8, 6)
+use_collision = true
+size = Vector3(1.9, 2.8, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSSill1" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 3.925, 6)
+use_collision = true
+size = Vector3(1.1, 1.05, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSLintel1" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 5.875, 6)
+use_collision = true
+size = Vector3(1.1, 0.65, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSPier2" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 4.8, 6)
+use_collision = true
+size = Vector3(1.9, 2.8, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSSill2" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 3.925, 6)
+use_collision = true
+size = Vector3(1.1, 1.05, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSLintel2" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 5.875, 6)
+use_collision = true
+size = Vector3(1.1, 0.65, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSPier3" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.35, 4.8, 6)
+use_collision = true
+size = Vector3(1.6, 2.8, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSSill3" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 3.925, 6)
+use_collision = true
+size = Vector3(0.9, 1.05, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSLintel3" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 5.875, 6)
+use_collision = true
+size = Vector3(0.9, 0.65, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpSPier4" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.65, 4.8, 6)
+use_collision = true
+size = Vector3(1.2, 2.8, 0.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWPier0" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 4.8, -9.7)
+use_collision = true
+size = Vector3(0.3, 2.8, 2.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWSill0" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 3.925, -8)
+use_collision = true
+size = Vector3(0.3, 1.05, 1.1)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWLintel0" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5.875, -8)
+use_collision = true
+size = Vector3(0.3, 0.65, 1.1)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWPier1" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 4.8, -5.5)
+use_collision = true
+size = Vector3(0.3, 2.8, 3.9)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWSill1" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 3.925, -3)
+use_collision = true
+size = Vector3(0.3, 1.05, 1.1)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWLintel1" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5.875, -3)
+use_collision = true
+size = Vector3(0.3, 0.65, 1.1)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWPier2" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 4.8, -0.75)
+use_collision = true
+size = Vector3(0.3, 2.8, 3.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWSill2" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 3.925, 1.5)
+use_collision = true
+size = Vector3(0.3, 1.05, 1.1)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWLintel2" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5.875, 1.5)
+use_collision = true
+size = Vector3(0.3, 0.65, 1.1)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWPier3" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 4.8, 2.75)
+use_collision = true
+size = Vector3(0.3, 2.8, 1.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWSill3" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 3.925, 4)
+use_collision = true
+size = Vector3(0.3, 1.05, 1.1)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWLintel3" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5.875, 4)
+use_collision = true
+size = Vector3(0.3, 0.65, 1.1)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpWPier4" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 4.8, 5.2)
+use_collision = true
+size = Vector3(0.3, 2.8, 1.3)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="UpEPier0" type="CSGBox3D" parent="House/UpperFloor/Walls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1, 4.8, -2.5)
+use_collision = true
+size = Vector3(0.3, 2.8, 16.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="Windows" type="Node3D" parent="House/UpperFloor"]
+
+[node name="UpN0FrL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.125, 5, -11)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN0FrR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.075, 5, -11)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN0FrT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 5.525, -11)
+size = Vector3(1.1, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN0FrB" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 4.475, -11)
+size = Vector3(1.1, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN0MulV" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 5, -11)
+size = Vector3(0.02, 1, 0.04)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN0Glass" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 5, -11)
+cast_shadow = 0
+size = Vector3(1, 1, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="UpN0Sill" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 4.435, -11.15)
+size = Vector3(1.3, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN1FrL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.925, 5, -11)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN1FrR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.875, 5, -11)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN1FrT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 5.525, -11)
+size = Vector3(1.1, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN1FrB" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 4.475, -11)
+size = Vector3(1.1, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN1MulV" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 5, -11)
+size = Vector3(0.02, 1, 0.04)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN1Glass" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 5, -11)
+cast_shadow = 0
+size = Vector3(1, 1, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="UpN1Sill" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 4.435, -11.15)
+size = Vector3(1.3, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS0FrL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.525, 5, 6)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS0FrR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.475, 5, 6)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS0FrT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5.525, 6)
+size = Vector3(1.1, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS0FrB" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 4.475, 6)
+size = Vector3(1.1, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS0MulV" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5, 6)
+size = Vector3(0.02, 1, 0.04)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS0Glass" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5, 6)
+cast_shadow = 0
+size = Vector3(1, 1, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="UpS0Sill" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 4.435, 6.15)
+size = Vector3(1.3, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS1FrL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.525, 5, 6)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS1FrR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.475, 5, 6)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS1FrT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 5.525, 6)
+size = Vector3(1.1, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS1FrB" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 4.475, 6)
+size = Vector3(1.1, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS1MulV" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 5, 6)
+size = Vector3(0.02, 1, 0.04)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS1Glass" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 5, 6)
+cast_shadow = 0
+size = Vector3(1, 1, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="UpS1Sill" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 4.435, 6.15)
+size = Vector3(1.3, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS2FrL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.525, 5, 6)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS2FrR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.475, 5, 6)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS2FrT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 5.525, 6)
+size = Vector3(1.1, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS2FrB" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 4.475, 6)
+size = Vector3(1.1, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS2MulV" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 5, 6)
+size = Vector3(0.02, 1, 0.04)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS2Glass" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 5, 6)
+cast_shadow = 0
+size = Vector3(1, 1, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="UpS2Sill" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 4.435, 6.15)
+size = Vector3(1.3, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS3FrL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.175, 5, 6)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS3FrR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.025, 5, 6)
+size = Vector3(0.05, 1.1, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS3FrT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 5.525, 6)
+size = Vector3(0.9, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS3FrB" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 4.475, 6)
+size = Vector3(0.9, 0.05, 0.2)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS3MulV" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 5, 6)
+size = Vector3(0.02, 1, 0.04)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS3Glass" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 5, 6)
+cast_shadow = 0
+size = Vector3(0.8, 1, 0.012)
+material = SubResource("Material_milky_glass")
+
+[node name="UpS3Sill" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 4.435, 6.15)
+size = Vector3(1.1, 0.03, 0.12)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW0FrL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, -8.525)
+size = Vector3(0.2, 1.1, 0.05)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW0FrR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, -7.475)
+size = Vector3(0.2, 1.1, 0.05)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW0FrT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5.525, -8)
+size = Vector3(0.2, 0.05, 1.1)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW0FrB" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 4.475, -8)
+size = Vector3(0.2, 0.05, 1.1)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW0MulV" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, -8)
+size = Vector3(0.04, 1, 0.02)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW0Glass" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, -8)
+cast_shadow = 0
+size = Vector3(0.012, 1, 1)
+material = SubResource("Material_milky_glass")
+
+[node name="UpW0Sill" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.05, 4.435, -8)
+size = Vector3(0.12, 0.03, 1.3)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW1FrL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, -3.525)
+size = Vector3(0.2, 1.1, 0.05)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW1FrR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, -2.475)
+size = Vector3(0.2, 1.1, 0.05)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW1FrT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5.525, -3)
+size = Vector3(0.2, 0.05, 1.1)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW1FrB" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 4.475, -3)
+size = Vector3(0.2, 0.05, 1.1)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW1MulV" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, -3)
+size = Vector3(0.04, 1, 0.02)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW1Glass" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, -3)
+cast_shadow = 0
+size = Vector3(0.012, 1, 1)
+material = SubResource("Material_milky_glass")
+
+[node name="UpW1Sill" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.05, 4.435, -3)
+size = Vector3(0.12, 0.03, 1.3)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW2FrL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, 0.975)
+size = Vector3(0.2, 1.1, 0.05)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW2FrR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, 2.025)
+size = Vector3(0.2, 1.1, 0.05)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW2FrT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5.525, 1.5)
+size = Vector3(0.2, 0.05, 1.1)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW2FrB" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 4.475, 1.5)
+size = Vector3(0.2, 0.05, 1.1)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW2MulV" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, 1.5)
+size = Vector3(0.04, 1, 0.02)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW2Glass" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, 1.5)
+cast_shadow = 0
+size = Vector3(0.012, 1, 1)
+material = SubResource("Material_milky_glass")
+
+[node name="UpW2Sill" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.05, 4.435, 1.5)
+size = Vector3(0.12, 0.03, 1.3)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW3FrL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, 3.475)
+size = Vector3(0.2, 1.1, 0.05)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW3FrR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, 4.525)
+size = Vector3(0.2, 1.1, 0.05)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW3FrT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5.525, 4)
+size = Vector3(0.2, 0.05, 1.1)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW3FrB" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 4.475, 4)
+size = Vector3(0.2, 0.05, 1.1)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW3MulV" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, 4)
+size = Vector3(0.04, 1, 0.02)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW3Glass" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9, 5, 4)
+cast_shadow = 0
+size = Vector3(0.012, 1, 1)
+material = SubResource("Material_milky_glass")
+
+[node name="UpW3Sill" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.05, 4.435, 4)
+size = Vector3(0.12, 0.03, 1.3)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN0CasL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.19, 5, -11.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN0CasR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.01, 5, -11.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN0CasT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 5.59, -11.18)
+size = Vector3(1.26, 0.08, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN1CasL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.99, 5, -11.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN1CasR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.81, 5, -11.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpN1CasT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 5.59, -11.18)
+size = Vector3(1.26, 0.08, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS0CasL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.59, 5, 6.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS0CasR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.41, 5, 6.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS0CasT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5.59, 6.18)
+size = Vector3(1.26, 0.08, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS1CasL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.59, 5, 6.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS1CasR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.41, 5, 6.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS1CasT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 5.59, 6.18)
+size = Vector3(1.26, 0.08, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS2CasL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.59, 5, 6.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS2CasR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.41, 5, 6.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS2CasT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 5.59, 6.18)
+size = Vector3(1.26, 0.08, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS3CasL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.11, 5, 6.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS3CasR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.09, 5, 6.18)
+size = Vector3(0.08, 1.26, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpS3CasT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 5.59, 6.18)
+size = Vector3(1.06, 0.08, 0.06)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW0CasL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5, -8.59)
+size = Vector3(0.06, 1.26, 0.08)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW0CasR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5, -7.41)
+size = Vector3(0.06, 1.26, 0.08)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW0CasT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5.59, -8)
+size = Vector3(0.06, 0.08, 1.26)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW1CasL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5, -3.59)
+size = Vector3(0.06, 1.26, 0.08)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW1CasR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5, -2.41)
+size = Vector3(0.06, 1.26, 0.08)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW1CasT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5.59, -3)
+size = Vector3(0.06, 0.08, 1.26)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW2CasL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5, 0.91)
+size = Vector3(0.06, 1.26, 0.08)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW2CasR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5, 2.09)
+size = Vector3(0.06, 1.26, 0.08)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW2CasT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5.59, 1.5)
+size = Vector3(0.06, 0.08, 1.26)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW3CasL" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5, 3.41)
+size = Vector3(0.06, 1.26, 0.08)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW3CasR" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5, 4.59)
+size = Vector3(0.06, 1.26, 0.08)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpW3CasT" type="CSGBox3D" parent="House/UpperFloor/Windows"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.08, 5.59, 4)
+size = Vector3(0.06, 0.08, 1.26)
+material = ExtResource("mat_wood_light_ext")
+
+[node name="UpMidWall" type="CSGBox3D" parent="House/UpperFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, 4.8, -2.5)
+use_collision = true
+size = Vector3(0.2, 2.8, 12)
+material = ExtResource("mat_wall_plaster")
+
+[node name="UpCeiling" type="CSGBox3D" parent="House/UpperFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 6.1, -2.5)
+use_collision = true
+size = Vector3(11.7, 0.2, 16.7)
+material = ExtResource("mat_ceiling_plaster")
+
+[node name="UpLight0" type="OmniLight3D" parent="House/UpperFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5.4, -7)
+light_color = Color(1, 0.82, 0.55, 1)
+light_energy = 3.0
+shadow_enabled = true
+distance_fade_enabled = true
+distance_fade_begin = 12.0
+distance_fade_shadow = 10.0
+distance_fade_length = 4.0
+omni_range = 6.5
+
+[node name="UpLight1" type="OmniLight3D" parent="House/UpperFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5.4, 2.5)
+light_color = Color(1, 0.82, 0.55, 1)
+light_energy = 3.0
+shadow_enabled = true
+distance_fade_enabled = true
+distance_fade_begin = 12.0
+distance_fade_shadow = 10.0
+distance_fade_length = 4.0
+omni_range = 6.5
+
+[node name="UpLight2" type="OmniLight3D" parent="House/UpperFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 5.4, -7)
+light_color = Color(1, 0.82, 0.55, 1)
+light_energy = 3.0
+shadow_enabled = true
+distance_fade_enabled = true
+distance_fade_begin = 12.0
+distance_fade_shadow = 10.0
+distance_fade_length = 4.0
+omni_range = 6.5
+
+[node name="UpLight3" type="OmniLight3D" parent="House/UpperFloor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.4, 3)
+light_color = Color(1, 0.82, 0.55, 1)
+light_energy = 3.0
+shadow_enabled = true
+distance_fade_enabled = true
+distance_fade_begin = 12.0
+distance_fade_shadow = 10.0
+distance_fade_length = 4.0
+omni_range = 6.5
+
+[node name="Outdoor" type="Node3D" parent="."]
+
+[node name="HouseExterior" type="Node3D" parent="Outdoor"]
+
+[node name="PorchBeam" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9, 7.2)
+size = Vector3(2.6, 0.18, 0.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="PorchPostL" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.15, 1.45, 7.2)
+size = Vector3(0.16, 2.9, 0.16)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="PorchPostR" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.15, 1.45, 7.2)
+size = Vector3(0.16, 2.9, 0.16)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="PorchLampHousing" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, 2.55, 6.2)
+size = Vector3(0.16, 0.24, 0.12)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="PorchLampGlow" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, 2.53, 6.27)
+size = Vector3(0.1, 0.14, 0.04)
+material = SubResource("Material_bulb")
+
+[node name="BackPorchLampHousing" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 2.6, -11.2)
+size = Vector3(0.16, 0.24, 0.12)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="BackPorchLampGlow" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 2.58, -11.27)
+size = Vector3(0.1, 0.14, 0.04)
+material = SubResource("Material_bulb")
+
+[node name="PorchLight" type="OmniLight3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, 2.4, 6.6)
+light_color = Color(1, 0.78, 0.5, 1)
+light_energy = 0.7
+light_volumetric_fog_energy = 0.8
+light_size = 0.1
+omni_range = 4.5
+omni_attenuation = 1.6
+
+[node name="ExtNorthCladSeg0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.625, 1.65, -11.17)
+size = Vector3(0.85, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladSeg1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.7, 1.65, -11.17)
+size = Vector3(0.6, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladSeg2" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 1.65, -11.17)
+size = Vector3(1.4, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladSeg3" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.075, 1.65, -11.17)
+size = Vector3(1.05, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladSeg4" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.35, 1.65, -11.17)
+size = Vector3(3.8, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladSeg5" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.85, 1.65, -11.17)
+size = Vector3(1.8, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladSill0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 0.475, -11.17)
+size = Vector3(1.2, 1.15, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladLintel0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.6, 2.725, -11.17)
+size = Vector3(1.2, 1.35, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladSill1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 0.475, -11.17)
+size = Vector3(1.6, 1.15, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladLintel1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.725, -11.17)
+size = Vector3(1.6, 1.35, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladSill2" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.475, -11.17)
+size = Vector3(0.8, 1.15, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladLintel2" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.725, -11.17)
+size = Vector3(0.8, 1.35, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladSill3" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.05, -0.05, -11.17)
+size = Vector3(1, 0.1, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladLintel3" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.05, 2.75, -11.17)
+size = Vector3(1, 1.3, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladSill4" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 0.7, -11.17)
+size = Vector3(0.7, 1.6, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtNorthCladLintel4" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6, 2.75, -11.17)
+size = Vector3(0.7, 1.3, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtUtilEastCladSeg0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.77, 1.65, -9.775)
+size = Vector3(0.04, 3.5, 2.45)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtUtilEastCladSeg1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.77, 1.65, -6.545)
+size = Vector3(0.04, 3.5, 2.61)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtUtilEastCladSill0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.77, 0.7, -8.2)
+size = Vector3(0.04, 1.6, 0.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtUtilEastCladLintel0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.77, 2.75, -8.2)
+size = Vector3(0.04, 1.3, 0.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtHallNorthCladSeg0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1.65, -5.41)
+size = Vector3(0.6, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtHallNorthCladSeg1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.25, 1.65, -5.41)
+size = Vector3(0.6, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtHallNorthCladSill0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0.45, -5.41)
+size = Vector3(0.9, 1.1, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtHallNorthCladLintel0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 2.8, -5.41)
+size = Vector3(0.9, 1.2, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEastCladSeg0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.57, 1.65, -4.94)
+size = Vector3(0.04, 3.5, 0.6)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEastCladSeg1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.57, 1.65, -2.595)
+size = Vector3(0.04, 3.5, 1.69)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEastCladSeg2" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.57, 1.65, -0.375)
+size = Vector3(0.04, 3.5, 1.35)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEastCladSill0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.57, 0.4, -4.04)
+size = Vector3(0.04, 1, 1.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEastCladLintel0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.57, 2.8, -4.04)
+size = Vector3(0.04, 1.2, 1.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEastCladSill1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.57, 0.6, -1.4)
+size = Vector3(0.04, 1.4, 0.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtEastCladLintel1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.57, 2.65, -1.4)
+size = Vector3(0.04, 1.5, 0.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBathSouthCladSeg0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 1.65, 0.47)
+size = Vector3(2.7, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedEastCladSeg0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.17, 1.65, 0.65)
+size = Vector3(0.04, 3.5, 0.7)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedEastCladSeg1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.17, 1.65, 2.2)
+size = Vector3(0.04, 3.5, 0.6)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedEastCladSill0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.17, 0.625, 1.45)
+size = Vector3(0.04, 1.45, 0.9)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedEastCladLintel0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.17, 2.875, 1.45)
+size = Vector3(0.04, 1.05, 0.9)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedSouthCladSeg0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 1.65, 2.67)
+size = Vector3(0.5, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedSouthCladSeg1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.9, 1.65, 2.67)
+size = Vector3(0.5, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedSouthCladSill0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 0.4, 2.67)
+size = Vector3(1.2, 1, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtBedSouthCladLintel0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.05, 2.7, 2.67)
+size = Vector3(1.2, 1.4, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtFoyerEastCladSeg0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.27, 1.65, 4.25)
+size = Vector3(0.04, 3.5, 3.5)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladSeg0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.675, 1.65, 6.17)
+size = Vector3(0.75, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladSeg1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.85, 1.65, 6.17)
+size = Vector3(1.3, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladSeg2" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.05, 1.65, 6.17)
+size = Vector3(3.1, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladSeg3" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.075, 1.65, 6.17)
+size = Vector3(1.15, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladSeg4" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 1.65, 6.17)
+size = Vector3(0.9, 3.5, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladSill0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 0.35, 6.17)
+size = Vector3(1.8, 0.9, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladLintel0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4, 2.9, 6.17)
+size = Vector3(1.8, 1, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladSill1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 0.35, 6.17)
+size = Vector3(1.6, 0.9, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladLintel1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 2.9, 6.17)
+size = Vector3(1.6, 1, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladSill2" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 6.17)
+size = Vector3(1, 0.1, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladLintel2" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.75, 6.17)
+size = Vector3(1, 1.3, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladSill3" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.55, 6.17)
+size = Vector3(0.7, 1.3, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtSouthCladLintel3" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.6, 6.17)
+size = Vector3(0.7, 1.6, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWestCladSeg0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.07, 1.65, -9.6)
+size = Vector3(0.04, 3.5, 2.8)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWestCladSeg1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.07, 1.65, -4.2)
+size = Vector3(0.04, 3.5, 5.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWestCladSeg2" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.07, 1.65, 0.85)
+size = Vector3(0.04, 3.5, 2.1)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWestCladSeg3" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.07, 1.65, 5.05)
+size = Vector3(0.04, 3.5, 1.9)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWestCladSill0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.07, 0.45, -7.5)
+size = Vector3(0.04, 1.1, 1.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWestCladLintel0" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.07, 2.8, -7.5)
+size = Vector3(0.04, 1.2, 1.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWestCladSill1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.07, 0.375, -0.9)
+size = Vector3(0.04, 0.95, 1.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWestCladLintel1" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.07, 2.775, -0.9)
+size = Vector3(0.04, 1.25, 1.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWestCladSill2" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.07, 0.35, 3)
+size = Vector3(0.04, 0.9, 2.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="ExtWestCladLintel2" type="CSGBox3D" parent="Outdoor/HouseExterior"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.07, 2.85, 3)
+size = Vector3(0.04, 1.1, 2.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="RoofSlabW" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(0.83867, -0.54464, 0, 0.54464, 0.83867, 0, 0, 0, 1, -6.225, 8.01, -2.5)
+mesh = SubResource("Box_roof_main")
+surface_material_override/0 = ExtResource("mat_roof_tiles")
+
+[node name="RoofSlabE" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(0.83867, 0.54464, 0, -0.54464, 0.83867, 0, 0, 0, 1, 0.425, 8.01, -2.5)
+mesh = SubResource("Box_roof_main")
+surface_material_override/0 = ExtResource("mat_roof_tiles")
+
+[node name="RoofRidge" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 10.2, -2.5)
+mesh = SubResource("Box_roof_ridge")
+surface_material_override/0 = ExtResource("mat_roof_tiles")
+
+[node name="RoofLeanEast" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 5.55, 4.25, -1.37)
+mesh = SubResource("Box_roof_east")
+surface_material_override/0 = ExtResource("mat_roof_tiles")
+
+[node name="RoofLeanUtil" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 4.575, 3.85, -8.4)
+mesh = SubResource("Box_roof_util")
+surface_material_override/0 = ExtResource("mat_roof_tiles")
+
+[node name="GableN" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 8.125, -11)
+mesh = SubResource("Prism_gable")
+surface_material_override/0 = ExtResource("mat_wood_trim_ext")
+
+[node name="GableS" type="MeshInstance3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 8.125, 6)
+mesh = SubResource("Prism_gable")
+surface_material_override/0 = ExtResource("mat_wood_trim_ext")
+
+[node name="GutterW" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.62, 5.78, -2.5)
+size = Vector3(0.12, 0.1, 18.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="GutterE" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.82, 5.78, -2.5)
+size = Vector3(0.12, 0.1, 18.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="GutterLeanEast" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.05, 3.22, -1.37)
+size = Vector3(0.12, 0.1, 8.34)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="GutterLeanUtil" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.95, 3.22, -8.4)
+size = Vector3(0.12, 0.1, 6.2)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="HouseChimney" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 6.75, -8.5)
+size = Vector3(0.9, 6.9, 0.9)
+material = SubResource("Material_neighbour_wall")
+
+[node name="HouseChimneyCap" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 10.27, -8.5)
+size = Vector3(1.1, 0.15, 1.1)
+material = SubResource("Material_neighbour_roof")
+
+[node name="BackStoop" type="CSGBox3D" parent="Outdoor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.05, -0.05, -11.85)
+use_collision = true
+size = Vector3(2.4, 0.15, 1.4)
+material = SubResource("Material_porch")
+

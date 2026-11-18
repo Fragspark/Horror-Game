@@ -45,6 +45,14 @@ const MIRROR_ONLY_LAYER: int = 2
 ## Von Startmenue und Endscreens gesetzt: sperrt saemtliche Spieler-Eingaben.
 var ui_input_locked: bool = false
 
+## Basis-FOV beim Gehen (Einstellungsmenue, 75-95). Sprinten addiert den Unterschied.
+var base_fov: float = FOV_WALK
+
+
+## Setzt das Basis-FOV; das Sprint-FOV bleibt um denselben Betrag groesser.
+func set_base_fov(value: float) -> void:
+	base_fov = clampf(value, 60.0, 110.0)
+
 ## Die Datei footsteps_player.wav hat ~0,5 s leises Vorspiel vor dem eigentlichen
 ## Tritt; die Wiedergabe startet erst hier (s), damit der Schritt nicht hinterherhinkt.
 const STEP_START_OFFSET: float = 0.48
@@ -93,7 +101,7 @@ func _ready() -> void:
 	_apply_minimal_hud()
 	_setup_footsteps()
 	if camera:
-		camera.fov = FOV_WALK
+		camera.fov = base_fov
 		# Erscheinungen auf dem Spiegel-Layer sind fuer den Spieler unsichtbar.
 		camera.cull_mask &= ~(1 << (MIRROR_ONLY_LAYER - 1))
 
@@ -101,7 +109,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	if camera:
-		var target_fov: float = FOV_SPRINT if is_sprinting else FOV_WALK
+		var target_fov: float = base_fov + (FOV_SPRINT - FOV_WALK if is_sprinting else 0.0)
 		camera.fov = lerpf(camera.fov, target_fov, clampf(FOV_BLEND_SPEED * delta, 0.0, 1.0))
 	_update_footsteps(delta)
 
@@ -187,6 +195,13 @@ func _surface_group() -> StringName:
 func on_input(event):
 	if ui_input_locked:
 		return
+	# ESC im Spiel oeffnet das eigene Pause-/Einstellungsmenue statt Cogitos
+	# Pause-Menue. Ist Inventar/Leseansicht offen, schliesst ESC wie gewohnt dort.
+	if event.is_action_pressed("menu") and not is_showing_ui and not is_movement_paused and not is_dead:
+		var settings := get_tree().get_first_node_in_group("simple_settings")
+		if settings and settings.has_method("open_pause_menu"):
+			settings.open_pause_menu()
+			return
 	super.on_input(event)
 
 

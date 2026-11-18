@@ -9,11 +9,14 @@ extends CanvasLayer
 ## Wird ausgeloest, wenn der Spieler erneut versuchen will.
 signal retry_requested
 
+const UIStyle = preload("res://scenes/scripts/ui_style.gd")
+
 @onready var _flash: ColorRect = %FlashOverlay
 @onready var _dim: ColorRect = %Dim
 @onready var _center: VBoxContainer = %Center
 @onready var _retry_button: Button = %RetryButton
-@onready var _location_button: Button = %LocationButton
+# Kein Unique-Name: "LocationButton" existiert in horror_main.tscn auch im Sieg-Screen.
+@onready var _location_button: Button = $Center/LocationButton
 
 var _shown: bool = false
 var _flash_tween: Tween
@@ -25,6 +28,8 @@ func _ready() -> void:
 	_flash.modulate.a = 0.0
 	_dim.visible = false
 	_center.visible = false
+	UIStyle.style_button(_retry_button, true, 22)
+	UIStyle.style_button(_location_button, false, 22)
 	_retry_button.pressed.connect(_on_retry_pressed)
 	_location_button.pressed.connect(_on_location_pressed)
 
