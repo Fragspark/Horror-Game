@@ -58,6 +58,7 @@ func _setup_spark_audio() -> void:
 	_spark_player.name = "SparkPlayer"
 	_spark_player.stream = GameAudio.group("fuse_insert_spark")
 	_spark_player.bus = &"SFX"
+	_spark_player.volume_db = -14.0
 	_spark_player.unit_size = 4.0
 	_spark_player.max_distance = 30.0
 	add_child(_spark_player)

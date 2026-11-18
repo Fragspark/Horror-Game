@@ -830,8 +830,8 @@ func _build_garden_models() -> void:
 	add_child(root)
 	# --- Kiefern (Nachtton, Alpha-Maske aus dem Modell)
 	var pine_parts := _model_parts("res://assets/models/pine_tree/scene.gltf")
-	var pine_pos: Array = [Vector3(9.8, 0, 8.0), Vector3(-10.8, 0, 8.3),
-			Vector3(-10.2, 0, -10.5), Vector3(9.8, 0, -10.8)]
+	var pine_pos: Array = [Vector3(12.8, 0, 9.5), Vector3(-14.0, 0, 9.5),
+			Vector3(-14.5, 0, -14.0), Vector3(12.8, 0, -14.0)]
 	var pine_h: Array = [8.5, 7.2, 9.0, 7.8]
 	for part in pine_parts:
 		var mat := _pine_material(part["mat"])

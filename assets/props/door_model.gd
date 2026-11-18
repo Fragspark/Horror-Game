@@ -14,10 +14,21 @@ const WOOD_MATERIAL := preload("res://assets/materials/door_fbx_wood.tres")
 const METAL_MATERIAL := preload("res://assets/materials/door_knob.tres")
 const WOOD_UV_SCALE: float = 30.0
 
+## Reduzierte Meshes (tools/bake_door_lod.gd). Der Original-Griff hat ~1,5 Mio.
+## Dreiecke, gespiegelt ~3 Mio. pro Tuer - das hat die FPS in jedem Raum mit
+## offener Tuer und schattenwerfenden Lampen eingebrochen.
+const LOWPOLY_MESHES := {
+	"Handle_3_001_Torus": preload("res://assets/models/door_lod/Handle_3_001_Torus.res"),
+	"Bolt": preload("res://assets/models/door_lod/Bolt.res"),
+}
+
 
 func _ready() -> void:
 	var wood := WOOD_MATERIAL.duplicate() as StandardMaterial3D
 	wood.uv1_scale = Vector3.ONE * WOOD_UV_SCALE
+	for child in get_children():
+		if child is MeshInstance3D and LOWPOLY_MESHES.has(String(child.name)):
+			child.mesh = LOWPOLY_MESHES[String(child.name)]
 	for child in get_children():
 		if child is MeshInstance3D:
 			child.material_override = wood if child.name.begins_with("Door") else METAL_MATERIAL

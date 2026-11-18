@@ -1,65 +1,59 @@
-![COGITO_banner](addons/cogito/COGITO_banner.jpg)
-# COGITO
-[![GodotEngine](https://img.shields.io/badge/Godot_4.6.3_stable-blue?logo=godotengine&logoColor=white)](https://godotengine.org/) [![COGITO](https://img.shields.io/badge/version_1.2.0-35A1D7?label=COGITO&labelColor=0E887A)](https://codeberg.org/Phazorknight/Cogito)
+# Horror Game
 
-## What is it?
-Cogito is a First Person Immersive Sim Template Project for Godot 4, providing a framework for creating interactable objects, various items to use and mechanics to influence the player and game environment.
-In short, with COGITO you get a quick start for a fully-featured first person game with a great variety of mechanics and a solid base to create your own.
+Ein First-Person-Horrorspiel, entwickelt mit **Godot 4.7** (Forward Plus). Du erkundest ein düsteres, verwinkeltes Haus mit Keller, Obergeschoss und Garten, während dich ein Monster und zufällige Schreckmomente in Atem halten.
 
-### [Online documentation + Tutorials](https://codeberg.org/Phazorknight/Cogito/wiki)
-### [Cogito Community Space](https://community.thresholdanomaly.com/index.php?r=space%2Fspace&cguid=f29b9340-dc21-4a3c-8883-7e33bb804c27)
-### [Cogito in the Godot Asset Store](https://store.godotengine.org/asset/philip-drobar/cogito/)
+![Godot](https://img.shields.io/badge/Godot-4.7-478CBF?logo=godotengine&logoColor=white)
+![Status](https://img.shields.io/badge/Status-in_Entwicklung-orange)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-### Current Features
-- First person player controller (simple OR state-based):
-  - Sprinting, jumping, crouching, sliding, stairs handling, ladder handling, sitting, swimming
-  - Lots of exposed properties to tweak to your liking (speeds, headbob, fall damage, bunnyhop, etc.)
-  - Easy-to-use dynamic footstep sound system
-- Player Attribute System
-  - Health, Stamina, Visibility for stealth, etc
-  - Customize how attributes get displayed in the HUD (or stay hidden)
-  - Also useable for RPG-like attributes (Strength, Wisdom, etc)
-  - Interactions can check attributes (eg. you can only lift a box if you're strong enough)
-- Interaction System
-  - Component-based interactions makes it easy to turn your own objects interactive quickly and customize existing ones
-  - Examples for interactive objects like doors, drawers, boxes to carry, turn-wheels, elevators, notes, keypads
-- Inventory System
-  - Flexible resource-based inventories
-  - Grid-based (think Resident Evil 4)
-  - Inventory UI separate from inventory logic
-  - Examples for multiple item types (consumables, keys, ammo, weapons, combinable Items)
-  - Base class to easily add your custom item types
-  - Containers with their own inventories
-- Cogito NPC
-  - NavigationAgent based general purpose NPC with state machine + animation states
-  - Player detection system based on line-of-sight + simulated hearing.
-- Main menu, pause menu and Options menu
-- Rebindable controls
-- Basic Quest System
-- Save and Load System as well as scene persistency
-- Full game pad support!
-- Localization!
-- Support for other plugins:
-  - Works with Dialogic
-  - Works with Dialgue Manager
-- Work in progress:
-  - Systemic Properties (wet/dry, flammable/on fire, soft, etc) (very WIP)
+## Features
 
-### Comes with fully featured Demo Scenes
-- Set up like a game level including a variety of objects, weapons and quests
-- Demo scenes contains hints that explain how objects in the scene were set up
+- **Begehbares Haus** mit offenem Erdgeschoss, Obergeschoss, Keller, Dach und Fenstern
+- **Außenwelt** mit Nachbarschaft, Kiefern, Gras und Nebel
+- **Horror-Director** (Autoload): steuert zufällige Events und Spannungsaufbau
+- **Monster-KI** mit Navigation durch das Haus
+- **Interaktion & Inventar** auf Basis von COGITO (Türen, Items, Schlüssel, Notizen)
+- **Atmosphäre**: dynamische Beleuchtung, Hausgeräusche, PBR-Materialien, glTF-Möbel
+- **3D-Startscreen** und **Pausemenü** (ESC) mit Audio-, Kamera- und Grafik-Einstellungen
 
-COGITO is made by [Philip Drobar](https://www.philipdrobar.com) with help from [these contributors](https://codeberg.org/Phazorknight/Cogito/wiki/Credits%2C-Contributors%2C-License).
+## Voraussetzungen
 
-## Principles of this template
-The structure of this template always tries to adhere to the following principles:
-- **Complete**: When you download COGITO and press play, you get a functioning project out of the box. Game menu, save slot select, options and a playable level are all included.
-- **Versatile**: Whether your game is set in the future, the past or the present, use melee, projectile or no weapons at all, have low poly, stylized or realistic graphics, the template will have features for you.
-- **Modular**: Do not want to use a feature? You will be able to hide it, ignore it or strip it out without breaking COGITO. At the same time, COGITO is designed to be extendable with your own custom features or other add-ons.
-- **Approachable**: While there will always be a learning curve, we strive to make COGTIO approachable and intuitive to use, so it doesn't get in your way of making your game.
-- **No Generative AI**: All included code and assets are made by humans and listed in our credits and cotnributors page.
+- [Godot 4.7](https://godotengine.org/) (Standard-Version, nicht .NET)
+- [Git LFS](https://git-lfs.com/) – Modelle, Texturen und Audio (`*.glb`, `*.fbx`, `*.png`, `*.wav`, `*.ogg`) liegen in LFS
 
-> [!IMPORTANT]  
-> COGITO v1.2 is not 100% bug-free. While most features are set, be aware that this open source software is offered "as is". Use at your own risk and check Issues and Discussion pages for more information.
+## Installation & Start
 
-[Credits, Contributors and License](https://codeberg.org/Phazorknight/Cogito/wiki/Credits%2C-Contributors%2C-License)
+```bash
+git lfs install
+git clone <REPO-URL>
+cd horror-game
+```
+
+1. Godot starten und das Projekt über `project.godot` importieren.
+2. Mit **F5** starten (Hauptszene: `scenes/main_menu.tscn`).
+
+## Projektstruktur
+
+| Ordner | Inhalt |
+| --- | --- |
+| `scenes/` | Level, Haus (`horror_main.tscn`), Monster, Events, Items, Props |
+| `scripts/` | Horror-Director, Monster-Logik, Lampen, Hausgeräusche |
+| `assets/` | Materialien, Texturen, Modelle, Audio |
+| `addons/` | COGITO, Godot State Charts, Input Helper, Quick Audio |
+| `tools/` | Editor-Hilfsskripte (z. B. Tür-LOD, Monster-Setup) |
+| `docs/` | Dokumentation und Bilder |
+
+## Entwicklung
+
+- Commits nach [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `refactor:`, `chore:` …)
+- Neue große Dateitypen zuerst in `.gitattributes` (LFS) eintragen, bevor sie committet werden
+- Vor dem Commit prüfen: neue `.uid`-/`.import`-Dateien sind dabei, `.godot/` und Archive nicht
+
+## Credits
+
+- Spielerframework & Interaktionssystem: [COGITO](https://codeberg.org/Phazorknight/Cogito) von Philip Drobar (MIT)
+- Weitere Addons: [Godot State Charts](https://github.com/derkork/godot-statecharts), Input Helper, Quick Audio
+
+## Lizenz
+
+Siehe [LICENSE](LICENSE).

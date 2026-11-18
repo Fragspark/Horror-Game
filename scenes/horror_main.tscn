@@ -27,12 +27,13 @@
 [ext_resource type="Material" path="res://assets/materials/concrete_basement.tres" id="mat_concrete"]
 [ext_resource type="Material" path="res://assets/materials/floor_wood_attic.tres" id="mat_floor_wood_dark"]
 [ext_resource type="Material" path="res://assets/materials/roof_tiles.tres" id="mat_roof_tiles"]
-[ext_resource type="Material" path="res://assets/materials/wood_wainscoting.tres" id="mat_wall_plaster"]
+[ext_resource type="Material" uid="uid://bf4evlve7ndlo" path="res://assets/materials/wood_wainscoting.tres" id="mat_wall_plaster"]
 [ext_resource type="Material" path="res://assets/materials/wood_dark_furniture.tres" id="mat_wood_dark_furn"]
 [ext_resource type="Material" path="res://assets/materials/wood_light.tres" id="mat_wood_light_ext"]
 [ext_resource type="Material" path="res://assets/materials/wood_light_furniture.tres" id="mat_wood_light_furn"]
 [ext_resource type="Material" uid="uid://bxpfc54gusaxp" path="res://assets/materials/wood_beams_trim.tres" id="mat_wood_trim_ext"]
 [ext_resource type="PackedScene" path="res://scenes/environment/neighborhood.tscn" id="nb_scene"]
+[ext_resource type="Script" uid="uid://clyrpl6v2gul2" path="res://scenes/scripts/light_zones.gd" id="perf_light_zones"]
 [ext_resource type="PackedScene" path="res://assets/props/bathtub.tscn" id="prop_bathtub"]
 [ext_resource type="PackedScene" path="res://assets/props/chandelier.tscn" id="prop_chandelier"]
 [ext_resource type="PackedScene" path="res://assets/props/commode.tscn" id="prop_commode"]
@@ -92,6 +93,7 @@ fog_enabled = true
 fog_mode = 1
 fog_light_color = Color(0.04, 0.052, 0.085, 1)
 fog_light_energy = 5.0
+fog_density = 1.0
 fog_sky_affect = 0.0
 fog_depth_curve = 1.6
 fog_depth_begin = 16.0
@@ -357,10 +359,25 @@ size = Vector3(8, 0.14, 18.2)
 size = Vector3(0.4, 0.2, 18.3)
 
 [sub_resource type="BoxMesh" id="Box_roof_east"]
-size = Vector3(5.2, 0.14, 8.34)
+size = Vector3(5.2, 0.14, 6.25)
 
 [sub_resource type="BoxMesh" id="Box_roof_util"]
 size = Vector3(3.05, 0.14, 6.2)
+
+[sub_resource type="BoxMesh" id="Box_roof_alcove"]
+size = Vector3(2.7, 0.14, 2.4)
+
+[sub_resource type="PrismMesh" id="Prism_fill_east"]
+left_to_right = 0.0
+size = Vector3(4.45, 1.7, 0.3)
+
+[sub_resource type="PrismMesh" id="Prism_fill_alcove"]
+left_to_right = 0.0
+size = Vector3(2.1, 0.8, 0.3)
+
+[sub_resource type="PrismMesh" id="Prism_fill_util"]
+left_to_right = 0.0
+size = Vector3(2.4, 0.95, 0.3)
 
 [sub_resource type="PrismMesh" id="Prism_gable"]
 size = Vector3(12.3, 3.85, 0.3)
@@ -466,7 +483,7 @@ rings = 5
 [sub_resource type="BoxShape3D" id="Box_escape_zone"]
 size = Vector3(1.6, 2.2, 1.4)
 
-[sub_resource type="Resource" id="Resource_o24o1"]
+[sub_resource type="Resource" id="Resource_6f3ib"]
 resource_local_to_scene = true
 script = ExtResource("44_o24o1")
 grid = true
@@ -3841,50 +3858,50 @@ size = Vector3(0.03, 0.5, 0.03)
 material = SubResource("Material_metal")
 
 [node name="BarCounter" type="CSGBox3D" parent="House/Furniture/KitchenFurniture" unique_id=196202063]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.825, 0.5, -4.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.825, 0.5, -5.2)
 use_collision = true
 size = Vector3(3.85, 1, 0.55)
 material = ExtResource("mat_wood_light_furn")
 
 [node name="BarCounterTop" type="CSGBox3D" parent="House/Furniture/KitchenFurniture" unique_id=2129724671]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.825, 1.025, -4.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.825, 1.025, -5.2)
 size = Vector3(3.95, 0.05, 0.72)
 material = SubResource("Material_counter")
 
 [node name="StoolLeg0" type="CSGCylinder3D" parent="House/Furniture/KitchenFurniture" unique_id=123682638]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0.34, -3.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0.34, -4.6)
 radius = 0.03
 height = 0.68
 material = SubResource("Material_metal")
 
 [node name="StoolSeat0" type="CSGCylinder3D" parent="House/Furniture/KitchenFurniture" unique_id=391177214]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0.7, -3.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0.7, -4.6)
 use_collision = true
 radius = 0.18
 height = 0.05
 material = ExtResource("mat_wood_dark_furn")
 
 [node name="StoolLeg1" type="CSGCylinder3D" parent="House/Furniture/KitchenFurniture" unique_id=1640025675]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 0.34, -3.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 0.34, -4.6)
 radius = 0.03
 height = 0.68
 material = SubResource("Material_metal")
 
 [node name="StoolSeat1" type="CSGCylinder3D" parent="House/Furniture/KitchenFurniture" unique_id=1112484498]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 0.7, -3.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6, 0.7, -4.6)
 use_collision = true
 radius = 0.18
 height = 0.05
 material = ExtResource("mat_wood_dark_furn")
 
 [node name="StoolLeg2" type="CSGCylinder3D" parent="House/Furniture/KitchenFurniture" unique_id=1304939304]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.34, -3.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.34, -4.6)
 radius = 0.03
 height = 0.68
 material = SubResource("Material_metal")
 
 [node name="StoolSeat2" type="CSGCylinder3D" parent="House/Furniture/KitchenFurniture" unique_id=46836478]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.7, -3.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.7, 0.7, -4.6)
 use_collision = true
 radius = 0.18
 height = 0.05
@@ -3899,15 +3916,15 @@ material = SubResource("Material_rug")
 
 [node name="GothicBedModel" parent="House/Furniture/BedroomFurniture" unique_id=453794575 instance=ExtResource("prop_gothic_bed")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.24, 0, 0)
+roughness_boost = 1.5
+specular = 0.03
+albedo_tint = Color(0.55, 0.53, 0.5, 1)
 
 [node name="BedroomCommode" parent="House/Furniture/BedroomFurniture" unique_id=1208166408 instance=ExtResource("prop_commode")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0.5, 0, 1.3)
 
 [node name="BedroomGothicCommode" parent="House/Furniture/BedroomFurniture" unique_id=2110689654 instance=ExtResource("prop_gothic_commode")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 4.54, 0, 1.4)
-
-[node name="Wardrobe" parent="House/Furniture/BedroomFurniture" unique_id=1784678305 instance=ExtResource("prop_vintage_cabinet")]
-transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 3.375, 0, -1.1)
 
 [node name="BedroomPictureFrame" type="CSGBox3D" parent="House/Furniture/BedroomFurniture" unique_id=40248014]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7, 1.7, -2.75)
@@ -5091,8 +5108,8 @@ light_energy = 3.0
 shadow_enabled = true
 distance_fade_enabled = true
 distance_fade_begin = 12.0
-distance_fade_shadow = 10.0
-distance_fade_length = 4.0
+distance_fade_shadow = 5.5
+distance_fade_length = 2.0
 omni_range = 6.5
 
 [node name="UpLight1" type="OmniLight3D" parent="House/UpperFloor" unique_id=1787400577]
@@ -5102,8 +5119,8 @@ light_energy = 3.0
 shadow_enabled = true
 distance_fade_enabled = true
 distance_fade_begin = 12.0
-distance_fade_shadow = 10.0
-distance_fade_length = 4.0
+distance_fade_shadow = 5.5
+distance_fade_length = 2.0
 omni_range = 6.5
 
 [node name="UpLight2" type="OmniLight3D" parent="House/UpperFloor" unique_id=1119078017]
@@ -5113,8 +5130,8 @@ light_energy = 3.0
 shadow_enabled = true
 distance_fade_enabled = true
 distance_fade_begin = 12.0
-distance_fade_shadow = 10.0
-distance_fade_length = 4.0
+distance_fade_shadow = 5.5
+distance_fade_length = 2.0
 omni_range = 6.5
 
 [node name="UpLight3" type="OmniLight3D" parent="House/UpperFloor" unique_id=1460861390]
@@ -5124,8 +5141,8 @@ light_energy = 3.0
 shadow_enabled = true
 distance_fade_enabled = true
 distance_fade_begin = 12.0
-distance_fade_shadow = 10.0
-distance_fade_length = 4.0
+distance_fade_shadow = 5.5
+distance_fade_length = 2.0
 omni_range = 6.5
 
 [node name="FusePanel" type="StaticBody3D" parent="." unique_id=1812351246]
@@ -5571,7 +5588,7 @@ mesh = SubResource("Box_roof_ridge")
 surface_material_override/0 = ExtResource("mat_roof_tiles")
 
 [node name="RoofLeanEast" type="MeshInstance3D" parent="Outdoor" unique_id=558103660]
-transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 5.55, 4.25, -1.37)
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 5.55, 4.25, -2.425)
 mesh = SubResource("Box_roof_east")
 surface_material_override/0 = ExtResource("mat_roof_tiles")
 
@@ -5579,6 +5596,56 @@ surface_material_override/0 = ExtResource("mat_roof_tiles")
 transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 4.575, 3.85, -8.4)
 mesh = SubResource("Box_roof_util")
 surface_material_override/0 = ExtResource("mat_roof_tiles")
+
+[node name="RoofLeanAlcove" type="MeshInstance3D" parent="Outdoor" unique_id=2096232493]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 4.34, 3.78, 1.9)
+mesh = SubResource("Box_roof_alcove")
+surface_material_override/0 = ExtResource("mat_roof_tiles")
+
+[node name="RoofFillEastS" type="MeshInstance3D" parent="Outdoor" unique_id=565752452]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.32, 4.25, 0.35)
+mesh = SubResource("Prism_fill_east")
+surface_material_override/0 = ExtResource("mat_wood_trim_ext")
+
+[node name="RoofFillEastN" type="MeshInstance3D" parent="Outdoor" unique_id=1467153591]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.32, 4.25, -5.3)
+mesh = SubResource("Prism_fill_east")
+surface_material_override/0 = ExtResource("mat_wood_trim_ext")
+
+[node name="RoofFillAlcoveS" type="MeshInstance3D" parent="Outdoor" unique_id=2030647213]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.15, 3.8, 2.56)
+mesh = SubResource("Prism_fill_alcove")
+surface_material_override/0 = ExtResource("mat_wood_trim_ext")
+
+[node name="GutterLeanAlcove" type="CSGBox3D" parent="Outdoor" unique_id=317147144]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.72, 3.22, 1.9)
+size = Vector3(0.12, 0.1, 2.4)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="RoofFillUtilN" type="MeshInstance3D" parent="Outdoor" unique_id=880855631]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3, 3.875, -11.06)
+mesh = SubResource("Prism_fill_util")
+surface_material_override/0 = ExtResource("mat_wood_trim_ext")
+
+[node name="FasciaEastN" type="CSGBox3D" parent="Outdoor" unique_id=1189906668]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 5.55, 4.25, -5.57)
+size = Vector3(5.22, 0.2, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="FasciaEastS" type="CSGBox3D" parent="Outdoor" unique_id=832517553]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 5.55, 4.25, 0.72)
+size = Vector3(5.22, 0.2, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="FasciaAlcoveS" type="CSGBox3D" parent="Outdoor" unique_id=1983435223]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 4.34, 3.78, 3.12)
+size = Vector3(2.72, 0.2, 0.04)
+material = ExtResource("mat_wood_trim_ext")
+
+[node name="FasciaUtilN" type="CSGBox3D" parent="Outdoor" unique_id=877767417]
+transform = Transform3D(0.93358, 0.35837, 0, -0.35837, 0.93358, 0, 0, 0, 1, 4.575, 3.85, -11.52)
+size = Vector3(3.07, 0.2, 0.04)
+material = ExtResource("mat_wood_trim_ext")
 
 [node name="GableN" type="MeshInstance3D" parent="Outdoor" unique_id=1245340238]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 8.125, -11)
@@ -5601,8 +5668,8 @@ size = Vector3(0.12, 0.1, 18.2)
 material = ExtResource("mat_wood_trim_ext")
 
 [node name="GutterLeanEast" type="CSGBox3D" parent="Outdoor" unique_id=561285625]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.05, 3.22, -1.37)
-size = Vector3(0.12, 0.1, 8.34)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.05, 3.22, -2.425)
+size = Vector3(0.12, 0.1, 6.25)
 material = ExtResource("mat_wood_trim_ext")
 
 [node name="GutterLeanUtil" type="CSGBox3D" parent="Outdoor" unique_id=582601294]
@@ -5702,8 +5769,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 6.0
+distance_fade_length = 2.0
 omni_range = 7.0
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -5760,7 +5827,7 @@ shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
 distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_length = 2.0
 omni_range = 9.0
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -5816,8 +5883,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 7.0
+distance_fade_length = 2.0
 omni_range = 8.0
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -5848,8 +5915,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 7.5
+distance_fade_length = 2.0
 omni_range = 8.5
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -5905,8 +5972,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 5.0
+distance_fade_length = 2.0
 omni_range = 6.0
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -5962,8 +6029,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 5.0
+distance_fade_length = 2.0
 omni_range = 6.0
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -6019,8 +6086,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 4.5
+distance_fade_length = 2.0
 omni_range = 5.5
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -6076,8 +6143,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 4.0
+distance_fade_length = 2.0
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
 base_energy = 1.1
@@ -6132,8 +6199,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 5.5
+distance_fade_length = 2.0
 omni_range = 6.5
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -6189,8 +6256,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 3.5
+distance_fade_length = 2.0
 omni_range = 4.5
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -6246,8 +6313,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 5.5
+distance_fade_length = 2.0
 omni_range = 6.5
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -6303,8 +6370,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 3.5
+distance_fade_length = 2.0
 omni_range = 4.5
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -6419,8 +6486,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 3.5
+distance_fade_length = 2.0
 omni_range = 3.8
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -6474,8 +6541,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 4.0
+distance_fade_length = 2.0
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
 base_energy = 0.8
@@ -6528,8 +6595,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 3.5
+distance_fade_length = 2.0
 omni_range = 4.5
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -6583,8 +6650,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 3.5
+distance_fade_length = 2.0
 omni_range = 3.2
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
@@ -6638,8 +6705,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 4.0
+distance_fade_length = 2.0
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
 base_energy = 0.8
@@ -6692,8 +6759,8 @@ shadow_normal_bias = 1.6
 shadow_blur = 1.5
 distance_fade_enabled = true
 distance_fade_begin = 16.0
-distance_fade_shadow = 8.0
-distance_fade_length = 6.0
+distance_fade_shadow = 4.0
+distance_fade_length = 2.0
 omni_attenuation = 1.6
 script = ExtResource("2_flicker")
 base_energy = 0.8
@@ -6908,6 +6975,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -2.58, -9.6)
 [node name="BasementWorkshop" type="Marker3D" parent="ItemSpawnPoints/Key" unique_id=1509915850]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, -2.58, -4.2)
 
+[node name="DiningTable" type="Marker3D" parent="ItemSpawnPoints/Key" unique_id=1963379648]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 0.81, -2.2)
+
+[node name="LivingSideTable" type="Marker3D" parent="ItemSpawnPoints/Key" unique_id=259879720]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.85, 0.78, 1.45)
+
+[node name="FoyerCommode" type="Marker3D" parent="ItemSpawnPoints/Key" unique_id=203435094]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, 1.23, 2.88)
+
+[node name="BedroomCommode" type="Marker3D" parent="ItemSpawnPoints/Key" unique_id=1402510214]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.54, 1.23, 1.4)
+
 [node name="FuelCan" type="Node3D" parent="ItemSpawnPoints" unique_id=1383125699]
 
 [node name="LivingSouth" type="Marker3D" parent="ItemSpawnPoints/FuelCan" unique_id=1780099202]
@@ -6933,6 +7012,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7, -2.58, -8.5)
 
 [node name="BasementCoal" type="Marker3D" parent="ItemSpawnPoints/FuelCan" unique_id=1391949951]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, -2.58, -5.6)
+
+[node name="LivingCoffeeTable" type="Marker3D" parent="ItemSpawnPoints/FuelCan" unique_id=1669398469]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 0.78, 3.2)
+
+[node name="HallCommode" type="Marker3D" parent="ItemSpawnPoints/FuelCan" unique_id=1868296918]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.97, 0.51, -4.04)
+
+[node name="DiningTableWest" type="Marker3D" parent="ItemSpawnPoints/FuelCan" unique_id=1598789698]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.4, 0.81, -2.2)
 
 [node name="FuseA" type="Node3D" parent="ItemSpawnPoints" unique_id=1093881059]
 
@@ -6963,6 +7051,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.77, -2.58, -10.4)
 [node name="BasementWineNorth" type="Marker3D" parent="ItemSpawnPoints/FuseA" unique_id=514536696]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9, -2.58, -9.8)
 
+[node name="BedroomSmallCommode" type="Marker3D" parent="ItemSpawnPoints/FuseA" unique_id=2020669997]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.51, 1.3)
+
+[node name="FoyerCommodeEast" type="Marker3D" parent="ItemSpawnPoints/FuseA" unique_id=186646380]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.23, 2.88)
+
+[node name="LivingSideTableB" type="Marker3D" parent="ItemSpawnPoints/FuseA" unique_id=2032863097]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.85, 0.78, 1.45)
+
 [node name="FuseB" type="Node3D" parent="ItemSpawnPoints" unique_id=1451059522]
 
 [node name="LivingNorth" type="Marker3D" parent="ItemSpawnPoints/FuseB" unique_id=219788496]
@@ -6989,10 +7086,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -2.58, -6.4)
 [node name="BasementWorkshopNorth" type="Marker3D" parent="ItemSpawnPoints/FuseB" unique_id=2103823680]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, -2.58, -4.5)
 
+[node name="DiningTableEast" type="Marker3D" parent="ItemSpawnPoints/FuseB" unique_id=2103107175]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 0.81, -2)
+
+[node name="BedroomCommodeB" type="Marker3D" parent="ItemSpawnPoints/FuseB" unique_id=225305190]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.54, 1.23, 1.15)
+
+[node name="LivingCoffeeTableB" type="Marker3D" parent="ItemSpawnPoints/FuseB" unique_id=819628653]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 0.78, 3.2)
+
 [node name="Player" parent="." unique_id=1738501955 instance=ExtResource("7_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 11.5)
 script = ExtResource("30_horrorplayer")
-inventory_data = SubResource("Resource_o24o1")
+inventory_data = SubResource("Resource_6f3ib")
 
 [node name="StandingCollisionShape" parent="Player" index="6" unique_id=396330659]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
@@ -7097,7 +7203,7 @@ custom_minimum_size = Vector2(240, 60)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 24
-text = "Ortsauswahl"
+text = "Level-Auswahl"
 
 [node name="SimpleSettings" type="CanvasLayer" parent="." unique_id=7679771]
 unique_name_in_owner = true
@@ -7170,7 +7276,16 @@ custom_minimum_size = Vector2(280, 62)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 24
-text = "Ortsauswahl"
+text = "Level-Auswahl"
+
+[node name="LightZones" type="Node" parent="." unique_id=2025692365 node_paths=PackedStringArray("player", "basement_lights", "ground_lights", "upper_lights", "always_on", "moon")]
+script = ExtResource("perf_light_zones")
+player = NodePath("../Player")
+basement_lights = [NodePath("../Lights/BasementLandingLamp"), NodePath("../Lights/BasementWineLamp"), NodePath("../Lights/BasementCoalLamp"), NodePath("../Lights/BasementTunnelLamp"), NodePath("../Lights/BasementBoilerLamp"), NodePath("../Lights/BasementWorkshopLamp")]
+ground_lights = [NodePath("../Lights/FoyerLamp"), NodePath("../Lights/LivingLamp"), NodePath("../Lights/DiningLamp"), NodePath("../Lights/KitchenLamp"), NodePath("../Lights/SpineNorthLamp"), NodePath("../Lights/SpineSouthLamp"), NodePath("../Lights/HallBLampWest"), NodePath("../Lights/HallBLampEast"), NodePath("../Lights/BedroomLamp"), NodePath("../Lights/BathLamp"), NodePath("../Lights/UtilityLamp")]
+upper_lights = [NodePath("../House/UpperFloor/UpLight0"), NodePath("../House/UpperFloor/UpLight1"), NodePath("../House/UpperFloor/UpLight2"), NodePath("../House/UpperFloor/UpLight3")]
+always_on = [NodePath("../Lights/StairwellLamp")]
+moon = NodePath("../Outdoor/Moonlight")
 
 [editable path="Doors/ExitDoor"]
 [editable path="Doors/FrontDoor"]

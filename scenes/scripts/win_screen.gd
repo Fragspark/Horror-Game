@@ -7,6 +7,8 @@ extends CanvasLayer
 ## Wird ausgeloest, wenn der Spieler "Neu starten" drueckt.
 signal restart_requested
 
+const UIStyle = preload("res://scenes/scripts/ui_style.gd")
+
 @onready var _time_label: Label = %TimeLabel
 @onready var _restart_button: Button = %RestartButton
 @onready var _location_button: Button = %LocationButton
@@ -19,6 +21,8 @@ var _shown: bool = false
 
 func _ready() -> void:
 	visible = false
+	UIStyle.style_button(_restart_button, true, 22)
+	UIStyle.style_button(_location_button, false, 22)
 	_restart_button.pressed.connect(_on_restart_pressed)
 	_location_button.pressed.connect(_on_location_pressed)
 
