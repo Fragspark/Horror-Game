@@ -34,6 +34,9 @@ const LEGACY_FILES := {
 	# Horror-Director-Events (scripts/events/*): Roar und langsame Schritte.
 	"monster_roar": "short_vhilling_jumpscare.wav",
 	"monster_step_slow": "Heavy_slow_steps.wav",
+	# Spieler-Schritte je Untergrund (Holz = footsteps_player.wav ohne Legacy-Eintrag).
+	"footstep_grass": "Single_sneaker_footstep_gras_walking.wav",
+	"footstep_asphalt": "Single_sneaker_footstep_ashphalt_walking.wav",
 }
 
 static var _cache: Dictionary = {}

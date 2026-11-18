@@ -199,6 +199,14 @@ func _box(parent: Node, nm: String, pos: Vector3, size: Vector3, mat: Material,
 		sb.add_child(cs)
 		mi.add_child(sb)
 	return mi
+## Markiert die Kollisionsbox eines mit solid=true erzeugten _box() als
+## Untergrund fuer die Spieler-Schritte (Gruppe "surface_*", siehe horror_player.gd).
+func _mark_surface(mi: MeshInstance3D, group: String) -> void:
+	for c in mi.get_children():
+		if c is StaticBody3D:
+			c.add_to_group(group)
+
+
 
 
 func _cyl(parent: Node, nm: String, pos: Vector3, r_top: float, r_bot: float, h: float,
@@ -332,6 +340,7 @@ func _build_terrain() -> void:
 			NB._tri(st, v[0], v[1], v[2], n[0], n[1], n[2], c[0], c[1], c[2])
 			NB._tri(st, v[0], v[2], v[3], n[0], n[2], n[3], c[0], c[2], c[3])
 			faces.append_array([v[0], v[1], v[2], v[0], v[2], v[3]])
+	body.add_to_group("surface_grass")
 	var body := StaticBody3D.new()
 	body.name = "Terrain"
 	var mi := MeshInstance3D.new()
@@ -354,9 +363,9 @@ func _build_street() -> void:
 	var s := Node3D.new()
 	s.name = "Street"
 	add_child(s)
-	_box(s, "Road", Vector3(0, -0.05, 15.15), Vector3(92, 0.1, 6.1), _m["asphalt"], true)
-	_box(s, "SidewalkNear", Vector3(0, -0.04, 11.1), Vector3(92, 0.14, 2.0), _m["sidewalk"], true)
-	_box(s, "SidewalkFar", Vector3(0, -0.04, 19.2), Vector3(92, 0.14, 2.0), _m["sidewalk"], true)
+	_mark_surface(_box(s, "Road", Vector3(0, -0.05, 15.15), Vector3(92, 0.1, 6.1), _m["asphalt"], true), "surface_asphalt")
+	_mark_surface(_box(s, "SidewalkNear", Vector3(0, -0.04, 11.1), Vector3(92, 0.14, 2.0), _m["sidewalk"], true), "surface_asphalt")
+	_mark_surface(_box(s, "SidewalkFar", Vector3(0, -0.04, 19.2), Vector3(92, 0.14, 2.0), _m["sidewalk"], true), "surface_asphalt")
 	_box(s, "CurbNear", Vector3(0, 0.03, 12.08), Vector3(92, 0.16, 0.18), _m["sidewalk"])
 	_box(s, "CurbFar", Vector3(0, 0.03, 18.22), Vector3(92, 0.16, 0.18), _m["sidewalk"])
 	var xf: Array = []
@@ -405,7 +414,7 @@ func _build_front_yard() -> void:
 			top += 0.012
 		_box(y, "Plank%d" % k, Vector3(0, top - 0.02, zc), Vector3(3.36, 0.04, 0.145), wood, false, rot)
 	_box(y, "Step", Vector3(0, 0.0, 8.15), Vector3(2.4, 0.07, 0.5), wood, true)
-	_box(y, "Path", Vector3(0, -0.01, 9.35), Vector3(1.6, 0.08, 1.7), _m["path"], true)
+	_mark_surface(_box(y, "Path", Vector3(0, -0.01, 9.35), Vector3(1.6, 0.08, 1.7), _m["path"], true), "surface_asphalt")
 	# kaputtes Gelaender links, rechts fehlt es
 	_box(y, "RailL", Vector3(-1.62, 0.55, 7.0), Vector3(0.06, 0.06, 1.7), wood, false, Vector3(0, 0, -6.0))
 	_box(y, "RailPostL0", Vector3(-1.62, 0.3, 6.2), Vector3(0.08, 0.7, 0.08), wood)

@@ -33,9 +33,9 @@ const FOV_BLEND_SPEED: float = 6.0
 const STEP_STRIDE_WALK: float = 1.45
 const STEP_STRIDE_SPRINT: float = 2.0
 const STEP_STRIDE_CROUCH: float = 1.1
-const STEP_VOLUME_WALK_DB: float = -9.0
-const STEP_VOLUME_SPRINT_DB: float = -3.0
-const STEP_VOLUME_CROUCH_DB: float = -20.0
+const STEP_VOLUME_WALK_DB: float = -23.0
+const STEP_VOLUME_SPRINT_DB: float = -17.0
+const STEP_VOLUME_CROUCH_DB: float = -33.0
 ## Unter dieser Horizontalgeschwindigkeit (m/s) gibt es keine Schritte.
 const STEP_MIN_SPEED: float = 0.4
 
@@ -49,8 +49,18 @@ var ui_input_locked: bool = false
 ## Tritt; die Wiedergabe startet erst hier (s), damit der Schritt nicht hinterherhinkt.
 const STEP_START_OFFSET: float = 0.48
 
+## Untergrund-Sounds: Gruppe des Colliders -> {key, offset, gain_db}. Ohne Gruppe
+## (Haus, Keller, Veranda) gilt Holz. Offset = Beginn des Tritts in der Datei,
+## gain_db gleicht die unterschiedlich leisen Dateien an Holz an (Pegel gemessen).
+const SURFACES := {
+	&"surface_grass": {"key": "footstep_grass", "offset": 0.44, "gain_db": 14.0},
+	&"surface_asphalt": {"key": "footstep_asphalt", "offset": 0.49, "gain_db": 9.0},
+}
+
 var _step_player: AudioStreamPlayer
 var _step_distance: float = 0.0
+var _wood_stream: AudioStream
+var _surface_streams: Dictionary = {}
 
 
 func _ready() -> void:
@@ -105,6 +115,11 @@ func _setup_footsteps() -> void:
 	_step_player = AudioStreamPlayer.new()
 	_step_player.name = "HorrorFootsteps"
 	_step_player.stream = stream
+	_wood_stream = stream
+	for group in SURFACES:
+		var s := GameAudio.single(SURFACES[group]["key"])
+		if s != null:
+			_surface_streams[group] = s
 	_step_player.max_polyphony = 3
 	_step_player.bus = &"SFX" if AudioServer.get_bus_index(&"SFX") >= 0 else &"Master"
 	add_child(_step_player)
@@ -136,9 +151,33 @@ func _update_footsteps(delta: float) -> void:
 	_step_distance += horizontal * delta
 	if _step_distance >= stride:
 		_step_distance = 0.0
-		_step_player.volume_db = volume
+		var offset := STEP_START_OFFSET
+		var gain := 0.0
+		var group := _surface_group()
+		if group != &"" and _surface_streams.has(group):
+			_step_player.stream = _surface_streams[group]
+			offset = SURFACES[group]["offset"]
+			gain = SURFACES[group]["gain_db"]
+		else:
+			_step_player.stream = _wood_stream
+		_step_player.volume_db = volume + gain
 		_step_player.pitch_scale = randf_range(0.92, 1.08)
-		_step_player.play(STEP_START_OFFSET)
+		_step_player.play(offset)
+
+
+## Gruppe "surface_*" des Colliders unter den Fuessen; leer = Holz-Standard.
+func _surface_group() -> StringName:
+	var query := PhysicsRayQueryParameters3D.create(
+			global_position, global_position + Vector3.DOWN * 2.0)
+	query.exclude = [get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.is_empty():
+		return &""
+	var collider := hit["collider"] as Node
+	for group in SURFACES:
+		if collider != null and collider.is_in_group(group):
+			return group
+	return &""
 
 
 ## Solange Startmenue, Game-Over- oder Sieg-Screen aktiv sind, werden alle
