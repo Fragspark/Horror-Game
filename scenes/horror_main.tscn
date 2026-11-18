@@ -460,7 +460,7 @@ roughness = 0.85
 roughness_texture = SubResource("Tex_rough_wall")
 emission_enabled = true
 emission = Color(1, 0.72, 0.42, 1)
-emission_energy_multiplier = 0.9
+emission_energy_multiplier = 0.25
 normal_enabled = true
 normal_scale = 0.45
 normal_texture = SubResource("Tex_normal_fabric")
@@ -475,8 +475,8 @@ radial_segments = 16
 rings = 1
 
 [sub_resource type="SphereMesh" id="Mesh_bulb"]
-radius = 0.045
-height = 0.09
+radius = 0.07
+height = 0.14
 radial_segments = 10
 rings = 5
 
@@ -5783,7 +5783,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/FoyerLamp" unique_id=1783260506]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -5840,7 +5840,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/LivingLamp" unique_id=405131727]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -5871,7 +5871,7 @@ height = 0.03
 material = SubResource("Material_white_goods")
 
 [node name="DiningLamp" type="OmniLight3D" parent="Lights" unique_id=111522006 groups=["ground_floor_lights"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.15, -2.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.6, -2.2)
 light_color = Color(1, 0.8, 0.58, 1)
 light_energy = 3.0
 light_indirect_energy = 0.2
@@ -5897,10 +5897,10 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Chandelier" parent="Lights/DiningLamp" unique_id=1542029511 instance=ExtResource("prop_chandelier")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
 [node name="KitchenLamp" type="OmniLight3D" parent="Lights" unique_id=1183091947 groups=["ground_floor_lights"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.7, -7.7)
@@ -5929,7 +5929,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/KitchenLamp" unique_id=1833618692]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -5986,7 +5986,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/SpineNorthLamp" unique_id=431257390]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6043,7 +6043,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/SpineSouthLamp" unique_id=1624033324]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6100,7 +6100,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/HallBLampWest" unique_id=908451484]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6156,7 +6156,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/HallBLampEast" unique_id=1647002799]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6213,7 +6213,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/BedroomLamp" unique_id=1747283068]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6270,7 +6270,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/BathLamp" unique_id=867947547]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6327,7 +6327,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/UtilityLamp" unique_id=1705786644]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6384,7 +6384,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/StairwellLamp" unique_id=1664792847]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6498,7 +6498,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/BasementLandingLamp" unique_id=1067175632]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6552,7 +6552,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/BasementWineLamp" unique_id=1997247674]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6607,7 +6607,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/BasementCoalLamp" unique_id=2071667151]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6662,7 +6662,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/BasementTunnelLamp" unique_id=1310170467]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6716,7 +6716,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/BasementBoilerLamp" unique_id=1137919680]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
@@ -6770,7 +6770,7 @@ max_blackout_time = 0.28
 min_burst_time = 0.15
 max_burst_time = 0.55
 fixture_material = SubResource("Material_lamp_shade")
-fixture_emission_when_on = 1.5
+fixture_emission_when_on = 0.35
 
 [node name="Shade" type="MeshInstance3D" parent="Lights/BasementWorkshopLamp" unique_id=1716937642]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.14, 0)
