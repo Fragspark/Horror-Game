@@ -5,7 +5,8 @@ extends CanvasLayer
 ##   - Audio:               Gesamt-, Umgebungs- und Effektlautstaerke
 ##   - Steuerung & Kamera:  Maus-Empfindlichkeit, FOV (75-95), Y-Invert, Ducken,
 ##                          Headbob, Tastenbelegung
-##   - Grafik:              Helligkeit (Exposure), Vollbild/Fenster, V-Sync
+##   - Grafik:              Helligkeit (Exposure), Vollbild/Fenster, V-Sync,
+##                          Bildqualitaet (AA, MSAA, AF, 3D-Skalierung, Profile)
 ##
 ## Im Spiel (menu_mode == false) ist es zugleich das Pausemenue: Es pausiert den
 ## SceneTree und bietet "Fortsetzen", "Zurueck zur Level-Auswahl" und "Spiel
@@ -93,6 +94,11 @@ var _toggle_crouch_check: CheckBox
 var _fullscreen_check: CheckBox
 var _vsync_check: CheckBox
 var _headbob_option: OptionButton
+var _profile_option: OptionButton
+var _aa_option: OptionButton
+var _msaa_option: OptionButton
+var _af_option: OptionButton
+var _scale_slider: HSlider
 var _audio_sliders: Dictionary = {}
 var _value_labels: Dictionary = {}
 var _bind_buttons: Dictionary = {}
@@ -321,6 +327,25 @@ func _build_graphics_page(page: Control) -> void:
 	_fullscreen_check = _add_toggle_row(page, "Vollbild", _on_fullscreen_toggled)
 	_vsync_check = _add_toggle_row(page, "V-Sync", _on_vsync_toggled)
 
+	page.add_child(_rule())
+	_section(page, "BILDQUALITÄT")
+	# Profil-Eintrag "Benutzerdefiniert" (Index 3) wird nur angezeigt, nie gewaehlt.
+	_profile_option = _add_option_row(page, "Qualitätsprofil",
+		GraphicsSettings.PROFILE_LABELS + ["Benutzerdefiniert"], _on_profile_selected)
+	_profile_option.set_item_disabled(GraphicsSettings.Profile.CUSTOM, true)
+	_aa_option = _add_option_row(page, "Anti-Aliasing",
+		GraphicsSettings.AA_LABELS, _on_aa_selected)
+	_msaa_option = _add_option_row(page, "MSAA 3D",
+		GraphicsSettings.MSAA_LABELS, _on_msaa_selected)
+	_af_option = _add_option_row(page, "Anisotropic Filtering",
+		GraphicsSettings.AF_LABELS, _on_af_selected)
+	_scale_slider = _add_slider_row(page, "3D-Auflösung",
+		GraphicsSettings.SCALE_MIN, GraphicsSettings.SCALE_MAX, 0.05, "scale",
+		_on_scale_changed, func(v: float) -> String: return "%d %%" % roundi(v * 100.0))
+	page.add_child(UIStyle.label(
+		"FSR 2 rechnet immer mit voller Auflösung (100 %). TAA/FSR 2 brauchen Forward+.",
+		13, UIStyle.C_DIM))
+
 
 func _build_footer(parent: Control) -> void:
 	var footer := HBoxContainer.new()
@@ -425,22 +450,30 @@ func _add_toggle_row(parent: Control, text: String, on_toggled: Callable) -> Che
 
 
 func _add_headbob_row(parent: Control) -> void:
+	_headbob_option = _add_option_row(parent, "Headbob (Kopfwippen)", HEADBOB_LABELS, _on_headbob_selected)
+	for i in HEADBOB_VALUES.size():
+		_headbob_option.set_item_id(i, HEADBOB_VALUES[i])
+
+
+## Zeile mit Beschriftung und Auswahlliste. Gibt die OptionButton zurueck.
+func _add_option_row(parent: Control, text: String, labels: Array, on_selected: Callable) -> OptionButton:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 14)
 	parent.add_child(row)
 
-	var label := UIStyle.label("Headbob (Kopfwippen)", 17, UIStyle.C_TEXT)
+	var label := UIStyle.label(text, 17, UIStyle.C_TEXT)
 	label.custom_minimum_size = Vector2(230, 0)
 	row.add_child(label)
 
-	_headbob_option = OptionButton.new()
-	_headbob_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_headbob_option.custom_minimum_size = Vector2(0, 40)
-	UIStyle.style_button(_headbob_option, false, 16)
-	for i in HEADBOB_LABELS.size():
-		_headbob_option.add_item(HEADBOB_LABELS[i], HEADBOB_VALUES[i])
-	_headbob_option.item_selected.connect(_on_headbob_selected)
-	row.add_child(_headbob_option)
+	var option := OptionButton.new()
+	option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	option.custom_minimum_size = Vector2(0, 40)
+	UIStyle.style_button(option, false, 16)
+	for i in labels.size():
+		option.add_item(labels[i], i)
+	option.item_selected.connect(on_selected)
+	row.add_child(option)
+	return option
 
 
 func _add_bind_row(parent: Control, action: String, display_name: String) -> void:
@@ -515,6 +548,7 @@ func _sync_from_config() -> void:
 	if _headbob_option:
 		var idx := HEADBOB_VALUES.find(CogitoGameConfig.headbob_strength)
 		_headbob_option.select(0 if idx == -1 else idx)
+	_sync_quality()
 	for action in _bind_buttons.keys():
 		_refresh_bind_button(action)
 
@@ -582,6 +616,54 @@ func _apply_exposure(value: float) -> void:
 	var node := get_tree().root.find_child("WorldEnvironment", true, false) as WorldEnvironment
 	if node and node.environment:
 		node.environment.tonemap_exposure = value
+
+
+#region Bildqualitaet
+func _sync_quality() -> void:
+	if _aa_option == null:
+		return
+	var gs := GraphicsSettings
+	_profile_option.select(gs.current_profile())
+	_aa_option.select(gs.aa_mode)
+	_msaa_option.select(gs.msaa_index)
+	_af_option.select(gs.af_index)
+	_set_slider(_scale_slider, gs.render_scale)
+	# FSR 2 erzwingt Skalierung 1.0 - Slider dann sperren.
+	var fsr := gs.aa_mode == GraphicsSettings.AAMode.FSR2
+	_scale_slider.editable = not fsr
+	if fsr:
+		_set_slider(_scale_slider, 1.0)
+
+
+func _on_profile_selected(index: int) -> void:
+	GraphicsSettings.apply_profile(index)
+	_sync_quality()
+
+
+func _on_aa_selected(index: int) -> void:
+	GraphicsSettings.aa_mode = index
+	_quality_changed()
+
+
+func _on_msaa_selected(index: int) -> void:
+	GraphicsSettings.msaa_index = index
+	_quality_changed()
+
+
+func _on_af_selected(index: int) -> void:
+	GraphicsSettings.af_index = index
+	_quality_changed()
+
+
+func _on_scale_changed(value: float) -> void:
+	GraphicsSettings.render_scale = value
+	_quality_changed()
+
+
+func _quality_changed() -> void:
+	GraphicsSettings.apply()
+	_sync_quality()
+#endregion
 
 
 func _on_fullscreen_toggled(pressed: bool) -> void:
@@ -671,6 +753,7 @@ func _on_reset_pressed() -> void:
 
 	_put_saved("camera", "fov", DEFAULT_FOV)
 	_put_saved("graphics", "exposure", DEFAULT_EXPOSURE)
+	GraphicsSettings.apply_profile(GraphicsSettings.DEFAULT_PROFILE)
 	for row in AUDIO_ROWS:
 		_put_saved("audio", row[0], 1.0)
 		_apply_audio(row[0], 1.0)
@@ -792,6 +875,7 @@ func _resume_player_deferred() -> void:
 
 
 func _save() -> void:
+	GraphicsSettings.store(_file)
 	_file.save(SETTINGS_FILE)
 	if CogitoGameConfig:
 		CogitoGameConfig.save_options()
