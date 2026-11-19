@@ -1,0 +1,333 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 592,
+      "max": [
+        0.04688247665762901,
+        0.005242596380412579,
+        0.018312841653823853
+      ],
+      "min": [
+        -0.05092428997159004,
+        -0.00594313582405448,
+        -0.018158677965402603
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 7104,
+      "componentType": 5126,
+      "count": 592,
+      "max": [
+        0.9987486004829407,
+        0.9997705817222595,
+        0.9989268183708191
+      ],
+      "min": [
+        -0.9998874664306641,
+        -0.9997686743736267,
+        -0.9941633939743042
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 592,
+      "max": [
+        0.9350454211235046,
+        0.9996017217636108,
+        0.7170393466949463,
+        -1.0
+      ],
+      "min": [
+        -0.9333271980285645,
+        -0.9974870085716248,
+        -0.9999224543571472,
+        -1.0
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 592,
+      "max": [
+        0.998046875,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.008641064167022705
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 4736,
+      "componentType": 5126,
+      "count": 592,
+      "max": [
+        0.998046875,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.008641064167022705
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 9472,
+      "componentType": 5126,
+      "count": 592,
+      "max": [
+        0.998046875,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.008641064167022705
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 14208,
+      "componentType": 5126,
+      "count": 592,
+      "max": [
+        0.998046875,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.008641064167022705
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 18944,
+      "componentType": 5126,
+      "count": 592,
+      "max": [
+        0.998046875,
+        1.0
+      ],
+      "min": [
+        0.0,
+        0.008641064167022705
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 2898,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "ScanWOW.com - Free 3D Scans (https://sketchfab.com/scanwow)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/key-03-photogrammetry-3d-scan-792e863049844c8a934d12a3cf5f0a8e",
+      "title": "Key 03 — Photogrammetry 3D Scan"
+    },
+    "generator": "Sketchfab-0.24.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 11592,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 23680,
+      "byteOffset": 11592,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 14208,
+      "byteOffset": 35272,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 9472,
+      "byteOffset": 49480,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 58952,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/M_Key_04_6A15160F_Mid_baseColor.png"
+    },
+    {
+      "uri": "textures/M_Key_04_6A15160F_Mid_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/M_Key_04_6A15160F_Mid_normal.png"
+    }
+  ],
+  "materials": [
+    {
+      "name": "M_Key_04_6A15160F_Mid",
+      "normalTexture": {
+        "index": 2
+      },
+      "occlusionTexture": {
+        "index": 1
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0.0,
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3,
+            "TEXCOORD_1": 4,
+            "TEXCOORD_2": 5,
+            "TEXCOORD_3": 6,
+            "TEXCOORD_4": 7
+          },
+          "indices": 8,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "root"
+    },
+    {
+      "children": [
+        3
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "GLTF_SceneRootNode"
+    },
+    {
+      "children": [
+        4
+      ],
+      "name": "Key_04_6A15160F_Mid_0"
+    },
+    {
+      "mesh": 0,
+      "name": "Object_4"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
+    }
+  ]
+}

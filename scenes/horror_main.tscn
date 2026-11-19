@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bdyukj85qkut0" path="res://addons/cogito/PackedScenes/door.tscn" id="8_door"]
 [ext_resource type="PackedScene" uid="uid://bbt5twbnrlcfj" path="res://addons/cogito/Components/Interactions/LockInteraction.tscn" id="9_lock"]
 [ext_resource type="PackedScene" uid="uid://l61jtpfxu5x5" path="res://addons/cogito/Components/Interactions/BasicInteraction.tscn" id="10_basic"]
-[ext_resource type="PackedScene" uid="uid://8wkt5k4dl40u" path="res://addons/cogito/PackedScenes/Pickups/pickup_key.tscn" id="11_key"]
+[ext_resource type="PackedScene" path="res://scenes/items/pickup_key.tscn" id="11_key"]
 [ext_resource type="Resource" uid="uid://d4gdqvqsiiqs5" path="res://addons/cogito/InventoryPD/Items/Cogito_Key.tres" id="12_keyitem"]
 [ext_resource type="PackedScene" path="res://scenes/items/pickup_fuel_can.tscn" id="14_fuelcan"]
 [ext_resource type="Script" uid="uid://dummyi6jewl8d" path="res://scenes/scripts/simple_settings.gd" id="16_settings"]

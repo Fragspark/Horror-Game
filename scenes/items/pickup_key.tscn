@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://addons/cogito/CogitoObjects/cogito_object.gd" id="1_object"]
+[ext_resource type="Resource" path="res://addons/cogito/InventoryPD/Items/Cogito_Key.tres" id="2_item"]
+[ext_resource type="PackedScene" path="res://addons/cogito/Components/Interactions/PickupComponent.tscn" id="3_pickup"]
+[ext_resource type="Script" path="res://addons/cogito/InventoryPD/CustomResources/InventorySlotPD.gd" id="4_slot"]
+[ext_resource type="PackedScene" path="res://assets/models/key/scene.gltf" id="5_model"]
+[ext_resource type="Script" path="res://assets/props/prop_matte.gd" id="6_matte"]
+
+[sub_resource type="BoxShape3D" id="Shape_key"]
+size = Vector3(0.27, 0.05, 0.12)
+
+[sub_resource type="Resource" id="Resource_slotdata"]
+resource_local_to_scene = true
+script = ExtResource("4_slot")
+inventory_item = ExtResource("2_item")
+
+[node name="Pickup_Key" type="RigidBody3D"]
+collision_layer = 2
+collision_mask = 0
+freeze = true
+script = ExtResource("1_object")
+cogito_name = ""
+
+[node name="Visual" type="Node3D" parent="."]
+transform = Transform3D(2.5, 0, 0, 0, 2.5, 0, 0, 0, 2.5, 0, 0, 0)
+script = ExtResource("6_matte")
+roughness_boost = 2.5
+specular = 0.1
+albedo_tint = Color(2.2, 2.2, 2.2, 1)
+max_metallic = 0.15
+
+[node name="Model" parent="Visual" instance=ExtResource("5_model")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Shape_key")
+
+[node name="PickupComponent" parent="." instance=ExtResource("3_pickup")]
+slot_data = SubResource("Resource_slotdata")
