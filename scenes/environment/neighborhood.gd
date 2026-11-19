@@ -264,6 +264,31 @@ func _mm(parent: Node, nm: String, mesh: Mesh, mat: Material, xforms: Array,
 	return mmi
 
 
+## Wie _mm, aber in quadratische Chunks (Kantenlaenge cell) aufgeteilt, damit Frustum-Culling
+## und Sichtweite pro Chunk greifen. Die Sichtweite wird um die halbe Chunk-Diagonale
+## erweitert, weil Godot die Distanz zur Chunk-Mitte misst: so verschwindet keine Instanz
+## frueher als range_end, und der Fade (range_margin) blendet sanft aus.
+func _mm_chunked(parent: Node, nm: String, mesh: Mesh, mat: Material, xforms: Array,
+		cell: float, range_end: float, range_margin: float,
+		shadows: bool = false) -> void:
+	var buckets := {}
+	for xf in xforms:
+		var o: Vector3 = (xf as Transform3D).origin
+		var key := Vector2i(floori(o.x / cell), floori(o.z / cell))
+		if not buckets.has(key):
+			buckets[key] = []
+		(buckets[key] as Array).append(xf)
+	var holder := Node3D.new()
+	holder.name = nm
+	parent.add_child(holder)
+	var reach := range_end + cell * 0.7072
+	for key in buckets:
+		var mmi := _mm(holder, "%s_%d_%d" % [nm, key.x, key.y], mesh, mat, buckets[key], shadows)
+		mmi.visibility_range_end = reach
+		mmi.visibility_range_end_margin = range_margin
+		mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+
+
 func _in_rects(x: float, z: float, rects: Array[Rect2]) -> bool:
 	for r in rects:
 		if r.has_point(Vector2(x, z)):
@@ -815,6 +840,12 @@ func _collect_parts(n: Node, t: Transform3D, out: Array) -> void:
 
 const PINE_SINK := -0.1
 
+## Chunk-Kantenlaenge und Sichtweite (m) fuer Gras und Waldring.
+const GRASS_CHUNK := 12.0
+const GRASS_RANGE := 24.0
+const FOREST_CHUNK := 16.0
+const FOREST_RANGE := 60.0
+
 
 func _pine_material(src: Material) -> StandardMaterial3D:
 	var mat := (src as StandardMaterial3D).duplicate() as StandardMaterial3D
@@ -892,7 +923,8 @@ func _build_garden_models() -> void:
 		gmat.albedo_color = Color(0.4, 0.46, 0.38)
 		gmat.roughness = 1.0
 		gmat.metallic_specular = 0.0
-		_mm(root, "GrassModel%d" % v, grass_parts[v]["mesh"], gmat, gbuckets[v], false)
+		_mm_chunked(root, "GrassModel%d" % v, grass_parts[v]["mesh"], gmat, gbuckets[v],
+				GRASS_CHUNK, GRASS_RANGE, 4.0, false)
 
 
 func _build_forest() -> void:
@@ -926,7 +958,7 @@ func _build_forest() -> void:
 		var arr: Array = []
 		for t in xs:
 			arr.append((t as Transform3D) * (part["xf"] as Transform3D))
-		_mm(root, "Trees", part["mesh"], mat, arr, false)
+		_mm_chunked(root, "Trees", part["mesh"], mat, arr, FOREST_CHUNK, FOREST_RANGE, 8.0, false)
 
 
 func _build_anchors() -> void:
