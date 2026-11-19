@@ -44,9 +44,16 @@ extends Node
 @export var basement_below_y: float = -1.2
 ## Pruefintervall in Sekunden.
 @export var interval: float = 0.15
+## Im Keller werfen nur die N naechsten Lampen Schatten, die uebrigen leuchten
+## ohne Schatten weiter. Jede Schatten-Omni rendert ihre Schattenkarte mit allen
+## CSG-Teilen in Reichweite neu, sobald sich der Spieler bewegt (Keller ohne
+## Omni-Schatten: ~10.700 -> ~2.600 Draw-Calls).
+@export var basement_shadow_count: int = 2
 
 var _t: float = 0.0
 var _zone: String = ""
+var _shadow_set: Array = [null]  # != jedes echte Set, erzwingt erste Anwendung
+var _basement_shadow_default: Dictionary = {}
 var _moon_mode: DirectionalLight3D.ShadowMode
 var _moon_distance: float
 
@@ -57,6 +64,9 @@ func _ready() -> void:
 	if moon:
 		_moon_mode = moon.directional_shadow_mode
 		_moon_distance = moon.directional_shadow_max_distance
+	for l in basement_lights:
+		if l:
+			_basement_shadow_default[l] = l.shadow_enabled
 	_update(true)
 
 
@@ -79,9 +89,13 @@ func _update(force: bool) -> void:
 		zone = "stairs"
 	elif p.y < basement_below_y:
 		zone = "basement"
+	if zone == "basement" or zone == "stairs":
+		_update_basement_shadows(p)
 	if zone == _zone and not force:
 		return
 	_zone = zone
+	if zone != "basement" and zone != "stairs":
+		_restore_basement_shadows()
 
 	_set_all(basement_lights, zone == "basement" or zone == "stairs")
 	_set_all(ground_lights, zone != "basement")
@@ -92,6 +106,31 @@ func _update(force: bool) -> void:
 		var outside := zone == "outside"
 		moon.directional_shadow_mode = _moon_mode if outside else DirectionalLight3D.SHADOW_ORTHOGONAL
 		moon.directional_shadow_max_distance = _moon_distance if outside else moon_indoor_max_distance
+
+
+## Schatten nur fuer die basement_shadow_count Lampen, die dem Spieler am naechsten sind.
+func _update_basement_shadows(p: Vector3) -> void:
+	var lights: Array = []
+	for l in basement_lights:
+		if l and _basement_shadow_default.get(l, false):
+			lights.append(l)
+	lights.sort_custom(func(a: Light3D, b: Light3D) -> bool:
+		return a.global_position.distance_squared_to(p) < b.global_position.distance_squared_to(p))
+	var nearest := lights.slice(0, maxi(basement_shadow_count, 0))
+	if nearest == _shadow_set:
+		return
+	_shadow_set = nearest
+	for l in lights:
+		(l as Light3D).shadow_enabled = nearest.has(l)
+
+
+func _restore_basement_shadows() -> void:
+	if _shadow_set.is_empty():
+		return
+	_shadow_set = []
+	for l in basement_lights:
+		if l:
+			l.shadow_enabled = _basement_shadow_default.get(l, l.shadow_enabled)
 
 
 func _set_all(lights: Array[Light3D], on: bool) -> void:

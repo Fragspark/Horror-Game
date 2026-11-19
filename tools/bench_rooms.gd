@@ -38,6 +38,12 @@ func _ready() -> void:
 		for g in player.find_children("*", "GeometryInstance3D", true, false):
 			print("Spieler-Geometrie: ", g.get_path(), " shadow=", (g as GeometryInstance3D).cast_shadow)
 			(g as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var n := OS.get_environment("BENCH_N")
+	if n != "":
+		for z in main.find_children("*", "Node", true, false):
+			if z.get("basement_shadow_count") != null:
+				z.basement_shadow_count = int(n)
+				print("basement_shadow_count=", n)
 	print("== kill: ", kill)
 	for nm in spots:
 		await _run(nm + " laufen", spots[nm], true, false)
