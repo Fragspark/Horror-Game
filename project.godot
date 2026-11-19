@@ -33,6 +33,7 @@ GraphicsSettings="*res://scripts/graphics_settings.gd"
 
 window/size/viewport_width=1600
 window/size/viewport_height=900
+window/size/mode=4
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

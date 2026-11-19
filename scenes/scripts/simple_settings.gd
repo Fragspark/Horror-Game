@@ -24,6 +24,7 @@ signal closed
 const MAIN_MENU_SCENE := "res://scenes/main_menu.tscn"
 const SETTINGS_FILE := "user://horror_settings.cfg"
 const MIGRATION_KEY := "simplified_controls_v2"
+const FULLSCREEN_MIGRATION_KEY := "fullscreen_default_v2"
 
 ## Index von "1600x900 (16:9)" in CogitoGameConfig.RESOLUTION_DICTIONARY.
 const DEFAULT_RESOLUTION_INDEX := 11
@@ -93,6 +94,9 @@ var _invert_check: CheckBox
 var _toggle_crouch_check: CheckBox
 var _fullscreen_check: CheckBox
 var _vsync_check: CheckBox
+var _screen_option: OptionButton
+var _resolution_option: OptionButton
+var _resolution_hint: Label
 var _headbob_option: OptionButton
 var _profile_option: OptionButton
 var _aa_option: OptionButton
@@ -132,6 +136,7 @@ func _ready() -> void:
 	_file.load(SETTINGS_FILE)
 
 	_migrate_controls_once()
+	_migrate_fullscreen_default_once()
 	_build_ui()
 	_update_panel_height()
 	_select_category(0)
@@ -173,7 +178,37 @@ func _migrate_controls_once() -> void:
 	cfg.save_options()
 
 
+## Einmalig: Spiel startet im Vollbild (auch bei alten Configs mit Fenstermodus).
+func _migrate_fullscreen_default_once() -> void:
+	var cfg := CogitoGameConfig
+	if cfg == null or cfg.config == null:
+		return
+	if cfg.config.has_section_key(OptionsConstants.section_name, FULLSCREEN_MIGRATION_KEY):
+		return
+	_prepare_windowed_size()
+	cfg.toggle_fullscreen(true)
+	# Moduswechsel braucht einen Moment; sonst speichert save_options noch "Fenster".
+	await get_tree().create_timer(0.5).timeout
+	cfg.fullscreen_mode = true
+	cfg.config.set_value(OptionsConstants.section_name, FULLSCREEN_MIGRATION_KEY, 1)
+	cfg.save_options()
+	if not cfg.is_fullscreen():
+		# Sicherheitsnetz: gewuenschten Zustand trotzdem in die Datei schreiben.
+		cfg.config.set_value(OptionsConstants.section_name, OptionsConstants.fullscreen_mode_key_name, true)
+		cfg.config.save(OptionsConstants.config_file_name)
+
+
+## Stellt sicher, dass windowed_resolution gesetzt ist, bevor in den Fenstermodus gewechselt wird.
+func _prepare_windowed_size() -> void:
+	var cfg := CogitoGameConfig
+	var values := cfg.RESOLUTION_DICTIONARY.values()
+	var idx := clampi(int(cfg.current_resolution_index), 0, values.size() - 1)
+	cfg.windowed_resolution = values[idx]
+
+
 func _apply_window_size() -> void:
+	if CogitoGameConfig.is_fullscreen():
+		return
 	var window := get_window()
 	window.size = Vector2i(1600, 900)
 	window.content_scale_size = Vector2i.ZERO
@@ -325,6 +360,17 @@ func _build_graphics_page(page: Control) -> void:
 	_exposure_slider = _add_slider_row(page, "Helligkeit (Exposure)", EXPOSURE_MIN, EXPOSURE_MAX, 0.01, "exposure",
 		_on_exposure_changed, func(v: float) -> String: return "%.2f" % v)
 	_fullscreen_check = _add_toggle_row(page, "Vollbild", _on_fullscreen_toggled)
+	var screen_labels: Array = []
+	for i in DisplayServer.get_screen_count():
+		var sz := DisplayServer.screen_get_size(i)
+		screen_labels.append("Bildschirm %d (%d×%d)" % [i + 1, sz.x, sz.y])
+	_screen_option = _add_option_row(page, "Bildschirm", screen_labels, _on_screen_selected)
+	_resolution_option = _add_option_row(page, "Fenster-Auflösung",
+		CogitoGameConfig.RESOLUTION_DICTIONARY.keys(), _on_resolution_selected)
+	_resolution_hint = UIStyle.label(
+		"Im Vollbild gilt die Bildschirmauflösung; die Renderauflösung stellst du unter „3D-Auflösung“ ein.",
+		13, UIStyle.C_DIM)
+	page.add_child(_resolution_hint)
 	_vsync_check = _add_toggle_row(page, "V-Sync", _on_vsync_toggled)
 
 	page.add_child(_rule())
@@ -543,6 +589,7 @@ func _sync_from_config() -> void:
 		_toggle_crouch_check.set_pressed_no_signal(CogitoGameConfig.toggle_crouching)
 	if _fullscreen_check:
 		_fullscreen_check.set_pressed_no_signal(CogitoGameConfig.is_fullscreen())
+	_sync_resolution()
 	if _vsync_check:
 		_vsync_check.set_pressed_no_signal(DisplayServer.window_get_vsync_mode() != DisplayServer.VSYNC_DISABLED)
 	if _headbob_option:
@@ -667,7 +714,35 @@ func _quality_changed() -> void:
 
 
 func _on_fullscreen_toggled(pressed: bool) -> void:
+	if not pressed:
+		_prepare_windowed_size()
 	CogitoGameConfig.toggle_fullscreen(pressed)
+	_sync_resolution(pressed)
+
+
+func _on_screen_selected(index: int) -> void:
+	GraphicsSettings.screen_index = index
+	GraphicsSettings.apply_screen()
+
+
+func _on_resolution_selected(index: int) -> void:
+	CogitoGameConfig._on_resolution_selected(index)
+
+
+## Auflösungsliste nur im Fenstermodus bedienbar.
+func _sync_resolution(fullscreen: bool = CogitoGameConfig.is_fullscreen()) -> void:
+	if _resolution_option == null:
+		return
+	if _screen_option:
+		var cur := GraphicsSettings.screen_index
+		if cur < 0 or cur >= _screen_option.item_count:
+			cur = DisplayServer.window_get_current_screen()
+		_screen_option.select(clampi(cur, 0, _screen_option.item_count - 1))
+		_screen_option.disabled = _screen_option.item_count < 2
+	var idx := clampi(int(CogitoGameConfig.current_resolution_index), 0, _resolution_option.item_count - 1)
+	_resolution_option.select(idx)
+	_resolution_option.disabled = fullscreen
+	_resolution_hint.visible = fullscreen
 
 
 func _on_vsync_toggled(pressed: bool) -> void:

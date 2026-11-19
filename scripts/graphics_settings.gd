@@ -43,9 +43,39 @@ var af_index: int = PROFILES[DEFAULT_PROFILE]["af"]
 var render_scale: float = PROFILES[DEFAULT_PROFILE]["scale"]
 
 
+## Gewuenschter Monitor (-1 = nicht gesetzt, Spiel startet dort, wo Godot es oeffnet).
+var screen_index: int = -1
+
+
 func _ready() -> void:
 	load_from_file()
 	apply()
+	if screen_index >= 0:
+		# Erst nach dem Fenstermodus, den CogitoGameConfig beim Start setzt.
+		await get_tree().create_timer(0.7).timeout
+		apply_screen()
+
+
+## Verschiebt das Fenster auf den gewaehlten Monitor und behaelt den Fenstermodus bei.
+func apply_screen() -> void:
+	if screen_index < 0 or screen_index >= DisplayServer.get_screen_count():
+		return
+	var win := DisplayServer.MAIN_WINDOW_ID
+	if DisplayServer.window_get_current_screen(win) == screen_index:
+		return
+	var mode := DisplayServer.window_get_mode(win)
+	var was_fullscreen := mode == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN \
+			or mode == DisplayServer.WINDOW_MODE_FULLSCREEN
+	if was_fullscreen:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED, win)
+		await get_tree().create_timer(0.2).timeout
+	DisplayServer.window_set_current_screen(screen_index, win)
+	if was_fullscreen:
+		await get_tree().create_timer(0.2).timeout
+		DisplayServer.window_set_mode(mode, win)
+	else:
+		var center := DisplayServer.screen_get_position(screen_index) + DisplayServer.screen_get_size(screen_index) / 2
+		DisplayServer.window_set_position(center - DisplayServer.window_get_size_with_decorations(win) / 2, win)
 
 
 func load_from_file() -> void:
@@ -56,6 +86,7 @@ func load_from_file() -> void:
 	msaa_index = clampi(file.get_value(SECTION, "msaa", msaa_index), 0, MSAA_LABELS.size() - 1)
 	af_index = clampi(file.get_value(SECTION, "af", af_index), 0, AF_LABELS.size() - 1)
 	render_scale = clampf(file.get_value(SECTION, "scale", render_scale), SCALE_MIN, SCALE_MAX)
+	screen_index = int(file.get_value(SECTION, "screen", screen_index))
 
 
 ## Schreibt die Werte in das uebergebene ConfigFile (der Menue-Code speichert).
@@ -64,6 +95,7 @@ func store(file: ConfigFile) -> void:
 	file.set_value(SECTION, "msaa", msaa_index)
 	file.set_value(SECTION, "af", af_index)
 	file.set_value(SECTION, "scale", render_scale)
+	file.set_value(SECTION, "screen", screen_index)
 
 
 func apply_profile(profile: int) -> void:
