@@ -39,3 +39,44 @@ func _ready() -> void:
 			copy.name = String(child.name) + "_Mirror"
 			add_child(copy)
 			copy.transform = mirror * child.transform
+	_connect_shadow_switch()
+
+
+## Schattenwurf nur bei geschlossener, ruhender Tuer.
+## Eine bewegte Tuer invalidiert jedes Frame den Schatten-Cache aller Lampen in
+## Reichweite; jede dieser Lampen rendert dann ihre Schattenkarte mit allen
+## CSG-Teilen neu (gemessen: ~2,5k -> 8-16k Draw-Calls waehrend die Tuer schwingt).
+## Offen/in Bewegung wirft sie deshalb keinen Schatten; sobald sie wieder zu
+## ist, schaltet er einmalig zurueck, damit sie Licht der Nachbarraeume blockt.
+var _shadow_gen: int = 0
+
+
+func _connect_shadow_switch() -> void:
+	var door := get_parent()
+	if door == null or not door.has_signal("door_state_changed"):
+		return
+	door.door_state_changed.connect(_on_door_state_changed.bind(door))
+	if door.get("is_open"):
+		_set_shadows(false)
+
+
+func _on_door_state_changed(is_open: bool, door: Node) -> void:
+	_shadow_gen += 1
+	var gen := _shadow_gen
+	if is_open:
+		_set_shadows(false)
+		return
+	# Schliessen: Schatten erst wieder an, wenn die Drehung fertig ist.
+	var tw = door.get("_rotation_tween")
+	if tw is Tween and (tw as Tween).is_valid() and (tw as Tween).is_running():
+		await (tw as Tween).finished
+	if gen == _shadow_gen:
+		_set_shadows(true)
+
+
+func _set_shadows(on: bool) -> void:
+	var mode := GeometryInstance3D.SHADOW_CASTING_SETTING_ON if on \
+			else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for child in get_children():
+		if child is GeometryInstance3D:
+			(child as GeometryInstance3D).cast_shadow = mode
