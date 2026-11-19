@@ -40,6 +40,7 @@
 [ext_resource type="PackedScene" path="res://assets/props/dining_chair.tscn" id="prop_dining_chair"]
 [ext_resource type="PackedScene" path="res://assets/props/dining_table.tscn" id="prop_dining_table"]
 [ext_resource type="PackedScene" path="res://assets/props/gas_stove.tscn" id="prop_gas_stove"]
+[ext_resource type="PackedScene" path="res://assets/props/refrigerator.tscn" id="prop_refrigerator"]
 [ext_resource type="PackedScene" path="res://assets/props/gothic_bed.tscn" id="prop_gothic_bed"]
 [ext_resource type="PackedScene" path="res://assets/props/gothic_commode.tscn" id="prop_gothic_commode"]
 [ext_resource type="PackedScene" path="res://assets/props/lounge_chair.tscn" id="prop_lounge_chair"]
@@ -3846,16 +3847,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2, 2.5, -10.67)
 size = Vector3(0.22, 1.2, 0.22)
 material = SubResource("Material_metal")
 
-[node name="Fridge" type="CSGBox3D" parent="House/Furniture/KitchenFurniture" unique_id=1491903613]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.38, 0.93, -6.4)
-use_collision = true
-size = Vector3(0.7, 1.86, 0.7)
-material = SubResource("Material_white_goods")
-
-[node name="FridgeHandle" type="CSGBox3D" parent="House/Furniture/KitchenFurniture" unique_id=2045570932]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.01, 1.25, -6.65)
-size = Vector3(0.03, 0.5, 0.03)
-material = SubResource("Material_metal")
+[node name="Fridge" parent="House/Furniture/KitchenFurniture" unique_id=1491903613 instance=ExtResource("prop_refrigerator")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -8.226, 0, -6.32)
 
 [node name="BarCounter" type="CSGBox3D" parent="House/Furniture/KitchenFurniture" unique_id=196202063]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.825, 0.5, -5.2)
