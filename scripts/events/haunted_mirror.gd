@@ -20,6 +20,8 @@ const APPARITION_LAYER := 2
 ## Ab dieser Entfernung (m) wird die Spiegelung nicht mehr gerendert.
 @export var max_render_distance: float = 9.0
 @export var mirror_tint: Color = Color(0.82, 0.88, 0.86)
+## Helligkeits-Faktor der Spiegelung (1.0 = wie die Welt).
+@export_range(1.0, 4.0, 0.05) var mirror_brightness: float = 2.2
 
 @export_group("Erscheinung")
 @export var appear_delay: Vector2 = Vector2(0.4, 2.0)
@@ -62,6 +64,9 @@ func _ready() -> void:
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.albedo_texture = viewport.get_texture()
 	mat.albedo_color = mirror_tint
+	# Spiegel kehren links/rechts um: Kamerabild horizontal spiegeln.
+	mat.uv1_scale = Vector3(-1.0, 1.0, 1.0)
+	mat.uv1_offset = Vector3(1.0, 0.0, 0.0)
 	surface.material_override = mat
 	# Die Spiegelflaeche zeichnet die Spiegelkamera nie selbst (Layer 20).
 	surface.layers = 1 << 19
@@ -94,7 +99,11 @@ func _hide_apparition_layer_from_player_camera() -> void:
 func _ensure_cheap_environment() -> void:
 	if mirror_camera.environment != null:
 		return
-	var src: Environment = viewport.world_3d.environment if viewport.world_3d else null
+	var world := get_viewport().world_3d
+	var src: Environment = world.environment if world else null
+	if src == null:
+		var we := get_tree().root.find_child("WorldEnvironment", true, false) as WorldEnvironment
+		src = we.environment if we else null
 	if src == null:
 		return
 	var env := src.duplicate() as Environment
@@ -103,6 +112,10 @@ func _ensure_cheap_environment() -> void:
 	env.ssil_enabled = false
 	env.sdfgi_enabled = false
 	env.glow_enabled = false
+	# Spiegelbild aufhellen: das dunkle Haus soll im Spiegel erkennbar bleiben.
+	env.adjustment_enabled = true
+	env.adjustment_brightness = mirror_brightness
+	env.adjustment_contrast = 1.05
 	mirror_camera.environment = env
 
 
@@ -117,7 +130,7 @@ func _update_mirror_camera() -> void:
 	var dist := (eye - plane_origin).dot(normal)
 
 	var visible_now := dist > 0.05 and dist < max_render_distance \
-			and cam.is_position_in_frustum(plane_origin)
+			and _surface_in_view(cam, plane_origin)
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS if visible_now \
 			else SubViewport.UPDATE_DISABLED
 	if not visible_now:
@@ -138,6 +151,21 @@ func _update_mirror_camera() -> void:
 	mirror_camera.near = maxf(dist, 0.02)
 	mirror_camera.size = mirror_size.x
 	mirror_camera.frustum_offset = Vector2(center_cam.x, center_cam.y)
+
+
+## Liegt irgendein Teil der Spiegelflaeche im Blickfeld der Kamera? Prueft die
+## Umkugel der Flaeche gegen die Frustum-Ebenen (nicht nur den Mittelpunkt, sonst
+## friert das Spiegelbild ein, sobald nur noch der Rand sichtbar ist).
+func _surface_in_view(cam: Camera3D, center: Vector3) -> bool:
+	var radius := mirror_size.length() * 0.5 * maxf(surface.global_transform.basis.get_scale().x, 0.001)
+	var inside_point := cam.global_position - cam.global_transform.basis.z * (cam.near + 1.0)
+	for plane in cam.get_frustum():
+		var p := plane as Plane
+		# Ebenen-Orientierung robust bestimmen: Auf der Innenseite liegt ein Punkt vor der Kamera.
+		var sign_in := 1.0 if p.distance_to(inside_point) >= 0.0 else -1.0
+		if p.distance_to(center) * sign_in < -radius:
+			return false
+	return true
 
 
 func _on_trigger_entered(body: Node3D) -> void:
