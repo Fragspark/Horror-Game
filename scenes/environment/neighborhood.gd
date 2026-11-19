@@ -821,6 +821,9 @@ func _pine_material(src: Material) -> StandardMaterial3D:
 	mat.albedo_color = Color(0.42, 0.5, 0.45)
 	mat.roughness = 1.0
 	mat.metallic_specular = 0.0
+	# Nadeln sind Alpha-Maske: Alpha to Coverage glaettet die Kanten mit MSAA.
+	if mat.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR:
+		mat.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_ALPHA_TO_COVERAGE
 	return mat
 
 
@@ -884,6 +887,7 @@ func _build_garden_models() -> void:
 		var gmat := (grass_parts[v]["mat"] as StandardMaterial3D).duplicate() as StandardMaterial3D
 		gmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 		gmat.alpha_scissor_threshold = 0.5
+		gmat.alpha_antialiasing_mode = BaseMaterial3D.ALPHA_ANTIALIASING_ALPHA_TO_COVERAGE
 		gmat.cull_mode = BaseMaterial3D.CULL_DISABLED
 		gmat.albedo_color = Color(0.4, 0.46, 0.38)
 		gmat.roughness = 1.0
