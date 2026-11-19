@@ -21,6 +21,7 @@
 [ext_resource type="Script" uid="uid://ccxqc2vifa5gb" path="res://scenes/scripts/navigation_baker.gd" id="24_navbaker"]
 [ext_resource type="PackedScene" path="res://scenes/items/pickup_fuse.tscn" id="27_fuse"]
 [ext_resource type="Script" uid="uid://cw0qi8dqmmces" path="res://scenes/scripts/horror_player.gd" id="30_horrorplayer"]
+[ext_resource type="PackedScene" path="res://scenes/props/player_body.tscn" id="99_playerbody"]
 [ext_resource type="Script" uid="uid://di15gqemrkk0x" path="res://addons/cogito/InventoryPD/CustomResources/InventorySlotPD.gd" id="43_ld0w3"]
 [ext_resource type="Script" uid="uid://btnha2whsheir" path="res://addons/cogito/InventoryPD/cogito_inventory.gd" id="44_o24o1"]
 [ext_resource type="Material" uid="uid://cr23dtuaxrcdm" path="res://assets/materials/wood_ceiling.tres" id="mat_ceiling_plaster"]
@@ -7157,6 +7158,8 @@ shape = SubResource("Capsule_player_crouch")
 
 [node name="Neck" parent="Player/Body" parent_id_path=PackedInt32Array(1738501955, 552824626) index="0" unique_id=1719105960]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.92, 0)
+
+[node name="PlayerBody" parent="Player/Body" index="1" instance=ExtResource("99_playerbody")]
 
 [node name="Camera" parent="Player/Body/Neck/Head/Eyes" parent_id_path=PackedInt32Array(1738501955, 766246711) index="1" unique_id=944936599]
 fov = 85.0

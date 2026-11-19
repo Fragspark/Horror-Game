@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/scripts/player_body.gd" id="1_body"]
+[ext_resource type="PackedScene" path="res://assets/player/Standard Walk_withSkin.fbx" id="2_fbx"]
+
+[node name="PlayerBody" type="Node3D"]
+script = ExtResource("1_body")
+
+[node name="Model" parent="." instance=ExtResource("2_fbx")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
