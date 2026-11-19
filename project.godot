@@ -27,6 +27,7 @@ InputHelper="*uid://cholww48njaeh"
 Audio="*uid://cujwm7u5pvogl"
 GameEvents="*res://scenes/scripts/game_events.gd"
 HorrorDirector="*res://scripts/horror_director.gd"
+GraphicsSettings="*res://scripts/graphics_settings.gd"
 
 [display]
 
